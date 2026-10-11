@@ -1,0 +1,247 @@
+schema_version: 1
+kind: question_bank
+id: ats035-domain-review
+course_id: ATS035
+exam_code: CKS
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: domain
+  id: domain-review
+  title: Supply Chain Security
+placement:
+  position: after
+  reading: sections/section-040/module-01/course-02-summary.md
+questions:
+- id: ats035-domain-review-q01
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain image layers and immutable digests.
+  source_readings:
+  - sections/section-010/module-01/course-01-layers-tags-and-digests.md
+  prompt: Which reference identifies exact image content rather than a mutable label?
+  options:
+  - id: a
+    text: An image digest
+    explanation: A digest identifies particular content and is useful when exact artifact identity matters.
+  - id: b
+    text: A short tag such as latest
+    explanation: A mutable tag can point to different content over time.
+  - id: c
+    text: The Deployment name
+    explanation: A workload name does not identify the image bytes it runs.
+  correct_option: a
+  explanation: A digest identifies particular content and is useful when exact artifact identity matters.
+- id: ats035-domain-review-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Diagnose image selection and pull failures.
+  source_readings:
+  - sections/section-010/module-01/course-02-from-build-to-image-pull.md
+  prompt: An image exists on the author's laptop but a node cannot retrieve it. What should be examined
+    first?
+  options:
+  - id: a
+    text: The readiness response path
+    explanation: Readiness is relevant after the process can start.
+  - id: b
+    text: The Service's host routing rule
+    explanation: Service routing does not retrieve container images.
+  - id: c
+    text: The node's image reference and registry access
+    explanation: Node preparation needs an available image and appropriate registry access.
+  correct_option: c
+  explanation: Node preparation needs an available image and appropriate registry access.
+- id: ats035-domain-review-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Trace image retrieval and registry authentication.
+  source_readings:
+  - sections/section-010/module-01/course-01-layers-tags-and-digests.md
+  prompt: Why can a multi-stage build reduce runtime image exposure?
+  options:
+  - id: a
+    text: It guarantees no credential ever appears in build history.
+    explanation: Sensitive inputs still need deliberate handling.
+  - id: b
+    text: It can leave build tools out of the final runtime image.
+    explanation: The final stage can retain only required runtime files.
+  - id: c
+    text: It removes every vulnerability automatically.
+    explanation: Required code can still have defects.
+  correct_option: b
+  explanation: The final stage can retain only required runtime files.
+- id: ats035-domain-review-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain continued maintenance after an artifact is approved.
+  source_readings:
+  - sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
+  prompt: An image passed a scan last month, but a relevant vulnerability is disclosed today. What is
+    needed?
+  options:
+  - id: a
+    text: Reassessment of affected deployed content and a maintenance response.
+    explanation: Historical evidence does not freeze future vulnerability knowledge.
+  - id: b
+    text: Assume the old result permanently approves it.
+    explanation: The risk context has changed.
+  - id: c
+    text: Only switching to a different tag name for the same bytes.
+    explanation: Renaming does not remediate content.
+  correct_option: a
+  explanation: Historical evidence does not freeze future vulnerability knowledge.
+- id: ats035-domain-review-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Trace source, build, publication and deployment trust boundaries.
+  source_readings:
+  - sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
+  prompt: A build process can publish images and administer production clusters. Which separation reduces
+    compromise impact?
+  options:
+  - id: a
+    text: One permanent administrator token for every stage.
+    explanation: That combines trust boundaries and broadens exposure.
+  - id: b
+    text: Only changing the registry hostname spelling.
+    explanation: Naming does not alter permissions.
+  - id: c
+    text: Distinct scoped build and delivery identities.
+    explanation: The stages need different authority and should not unnecessarily share it.
+  correct_option: c
+  explanation: The stages need different authority and should not unnecessarily share it.
+- id: ats035-domain-review-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish provenance, signatures, inventories and vulnerability findings.
+  source_readings:
+  - sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
+  prompt: Provenance describes a build but has no trustworthy link to the selected artifact. What is missing?
+  options:
+  - id: a
+    text: A requirement that all provenance be application logs.
+    explanation: These records serve different purposes.
+  - id: b
+    text: Reliable producer trust and exact content association.
+    explanation: Plausible metadata alone does not establish assurance.
+  - id: c
+    text: A guarantee that every tag is immutable.
+    explanation: Tags can move unless policy supplies a restriction.
+  correct_option: b
+  explanation: Plausible metadata alone does not establish assurance.
+- id: ats035-domain-review-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Relate failure policy and exemptions to effective enforcement.
+  source_readings:
+  - sections/section-030/module-01/course-01-admission-as-a-controlled-resource-decision.md
+  prompt: An identity can broaden the admission exception that applies to its workload. What should be
+    protected?
+  options:
+  - id: a
+    text: Authority over the exception and policy configuration.
+    explanation: A control can be undermined through its own management boundary.
+  - id: b
+    text: All workloads must receive the same broad exemption.
+    explanation: That expands rather than narrows the bypass.
+  - id: c
+    text: Only the image's display tag.
+    explanation: That does not constrain exception changes.
+  correct_option: a
+  explanation: A control can be undermined through its own management boundary.
+- id: ats035-domain-review-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish mutation, validation and authorization.
+  source_readings:
+  - sections/section-030/module-01/course-01-admission-as-a-controlled-resource-decision.md
+  prompt: A webhook adds defaults, then another policy checks the final declaration. Which roles are represented?
+  options:
+  - id: a
+    text: Authentication followed by image building.
+    explanation: Those are different stages and responsibilities.
+  - id: b
+    text: Scheduling followed by datastore backup.
+    explanation: Neither describes the stated admission behavior.
+  - id: c
+    text: Mutation followed by validation.
+    explanation: Changing supported fields and accepting or rejecting them are distinct functions.
+  correct_option: c
+  explanation: Changing supported fields and accepting or rejecting them are distinct functions.
+- id: ats035-domain-review-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain built-in, declarative and webhook admission mechanisms.
+  source_readings:
+  - sections/section-030/module-01/course-01-admission-as-a-controlled-resource-decision.md
+  prompt: A webhook excludes some namespaces from matching. What should be assessed?
+  options:
+  - id: a
+    text: Only whether the service has a short name.
+    explanation: Naming does not prove coverage.
+  - id: b
+    text: Whether the effective coverage and exceptions fit the intended control.
+    explanation: Registration alone does not establish universal request coverage.
+  - id: c
+    text: Assume every request is still evaluated identically.
+    explanation: Matching scope determines which requests reach the rule.
+  correct_option: b
+  explanation: Registration alone does not establish universal request coverage.
+- id: ats035-domain-review-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish manifest linting from vulnerability and runtime assessment.
+  source_readings:
+  - sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
+  prompt: What can manifest analysis establish most directly?
+  options:
+  - id: a
+    text: Whether declared settings match selected security checks.
+    explanation: It evaluates configuration intent rather than all later runtime behavior.
+  - id: b
+    text: That no application input can trigger a vulnerability.
+    explanation: Static configuration checks do not prove application correctness.
+  - id: c
+    text: That every node actually enforces every declaration.
+    explanation: Runtime prerequisites need separate evidence.
+  correct_option: a
+  explanation: It evaluates configuration intent rather than all later runtime behavior.
+- id: ats035-domain-review-q11
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain how Kubesec and KubeLinter identify risky declarations.
+  source_readings:
+  - sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
+  prompt: Why can Kubesec and KubeLinter reports differ?
+  options:
+  - id: a
+    text: One tool automatically observes every running syscall.
+    explanation: These are static assessment tools rather than complete runtime sensors.
+  - id: b
+    text: Different reports prove the Kubernetes API changed the file silently.
+    explanation: Different checks alone do not establish mutation of the input.
+  - id: c
+    text: They apply different checks and assessment models.
+    explanation: A score or finding is meaningful in the context of the selected tool and rules.
+  correct_option: c
+  explanation: A score or finding is meaningful in the context of the selected tool and rules.
+- id: ats035-domain-review-q12
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Bind image findings to artifact identity and scanner evidence.
+  source_readings:
+  - sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
+  prompt: What should identify an image vulnerability report?
+  options:
+  - id: a
+    text: Only the registry's display color.
+    explanation: A presentation label does not bind analysis to an artifact.
+  - id: b
+    text: The analyzed digest and relevant scanner and database evidence.
+    explanation: Tags can move and findings depend on the analysis inputs.
+  - id: c
+    text: Only a mutable latest tag.
+    explanation: That may refer to different bytes at deployment time.
+  correct_option: b
+  explanation: Tags can move and findings depend on the analysis inputs.
