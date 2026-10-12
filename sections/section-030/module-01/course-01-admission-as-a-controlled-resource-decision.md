@@ -5,6 +5,20 @@ exam_objectives:
 ---
 # Admission As A Controlled Resource Decision
 
+A validating webhook cannot be reached. Its configured failure policy determines whether affected requests are rejected or can continue. Policy availability and security coverage therefore interact.
+
+## Learning objectives
+
+- Distinguish mutation, validation and authorization.
+- Explain built-in, declarative and webhook admission mechanisms.
+- Relate failure policy and exemptions to effective enforcement.
+
+## Before you start
+
+This chapter is standalone reading material; no running cluster or installed tools are required. A Pod is the Kubernetes unit for running one or more containers, and a namespace groups namespaced objects. Treat the worked configurations as teaching examples rather than recorded observations from a provisioned environment.
+
+## Responsible components and behavior
+
 A caller has permission to create Pods, but the platform requires approved runtime privileges and image evidence. Admission is a decision stage for relevant application programming interface (API) changes after authentication and authorization. It can modify supported fields or reject a proposed resource according to policy.
 
 ## Mutation And Validation
@@ -36,6 +50,29 @@ Before tightening enforcement, identify affected templates and the resulting acc
 Observe policy service health and rejection reasons. An unavailable webhook can become a control-plane availability issue, while an incorrect match can silently omit intended coverage. Retain evidence sufficient to explain a decision without logging secrets unnecessarily.
 
 A complete admission review states the matching scope, decision logic, trusted implementation, failure behavior and exceptions. This turns an intended rule into a testable operating contract and reveals which risks still belong to runtime and application controls.
+
+## Work through the decision
+
+Admission evaluates relevant authorized resource-changing requests. Mutation can alter requested fields, while validation can reject the resulting declaration. A webhook is itself a service with transport trust, runtime dependencies and credentials, rather than an infallible rule stored in a name.
+
+Review matching resources, namespace selectors, exclusions, supported versions and failure behavior. A narrow match can leave a risky path unchecked; a broad fail-closed policy can also block necessary operation during an outage. Test the intended covered and excluded cases, protect the extension's code and authority, and record justified exception boundaries. Admission does not replace caller authorization or runtime detection.
+
+```mermaid
+flowchart TB
+    N0["Authorized resource request"]
+    N1["Admission match and exclusions"]
+    N2["Mutation or validation service"]
+    N3["Configured failure behavior"]
+    N4["Accepted or rejected declaration"]
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+```
+
+An admission policy's effect depends on coverage, trusted implementation and behavior when its dependencies fail.
+
+An admission policy's effect depends on coverage, trusted implementation and behavior when its dependencies fail.
 
 ## Common pitfalls
 
