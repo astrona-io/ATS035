@@ -5,6 +5,20 @@ exam_objectives:
 ---
 # Static Workload And Image Analysis In A Release Decision
 
+A template appears restricted, but the production overlay adds a writable host mount. Analysis of the source base alone did not evaluate the effective deployment input.
+
+## Learning objectives
+
+- Distinguish manifest linting from vulnerability and runtime assessment.
+- Explain how Kubesec and KubeLinter identify risky declarations.
+- Bind image findings to artifact identity and scanner evidence.
+
+## Before you start
+
+This chapter is standalone reading material; no running cluster or installed tools are required. A Pod is the Kubernetes unit for running one or more containers, and a namespace groups namespaced objects. Treat the worked configurations as teaching examples rather than recorded observations from a provisioned environment.
+
+## Responsible components and behavior
+
 Static analysis evaluates software or configuration without observing the complete running application's behavior. In a Kubernetes release process, it can identify risky workload declarations and known defects in image contents before deployment. Its value depends on the selected rules, analyzed artifact identity and a policy for interpreting findings.
 
 ## Analyze Workload Intent
@@ -34,6 +48,29 @@ Admission enforcement can ensure that deployment requests satisfy policy, but it
 ## Preserve Complementary Controls
 
 Publisher verification, provenance, least privilege, network restrictions and runtime detection address different risks. Static analysis supports those controls rather than replacing them. Review whether the resulting deployment uses the analyzed bytes and configuration, and retain evidence for later incident or upgrade decisions. The aim is a justified release decision with known limits, not merely an attractive score.
+
+## Work through the decision
+
+Static analysis inspects declarations or software content without observing complete runtime behavior. Render the intended chart or overlay output before evaluating workload settings. Then identify the exact image bytes for component and vulnerability analysis rather than checking a tag's older content.
+
+Tools such as Kubesec and KubeLinter apply their supported checks; a score is not a universal safety probability. Review findings against application requirements and policy, with controlled exceptions and updated issue data. A successful static check can still miss runtime compromise, application logic faults or a different delivery path. Preserve complementary admission and observation controls.
+
+```mermaid
+flowchart TB
+    N0["Effective rendered workload"]
+    N1["Exact image identity"]
+    N2["Supported static checks"]
+    N3["Reviewed findings and exceptions"]
+    N4["Controlled deployment decision"]
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+```
+
+Static findings support a release decision only within their actual input, rule and artifact scope.
+
+Static findings support a release decision only within their actual input, rule and artifact scope.
 
 ## Common pitfalls
 
