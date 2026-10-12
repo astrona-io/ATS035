@@ -5,6 +5,20 @@ exam_objectives:
 ---
 # Connecting Verification To Execution Policy
 
+A scanner approves yesterday's digest, but the deployment still uses a tag that now resolves to different content. The successful result no longer describes the selected execution input.
+
+## Learning objectives
+
+- Trace source, build, publication and deployment trust boundaries.
+- Distinguish provenance, signatures, inventories and vulnerability findings.
+- Relate admission decisions to exact artifact identity.
+
+## Before you start
+
+This chapter is standalone reading material; no running cluster or installed tools are required. A Pod is the Kubernetes unit for running one or more containers, and a namespace groups namespaced objects. Treat the worked configurations as teaching examples rather than recorded observations from a provisioned environment.
+
+## Responsible components and behavior
+
 A supply chain is the sequence of people, systems and inputs that produces and distributes software. For `scout`, it includes source review, dependencies, build tools, publication credentials, registry content and the deployment process. A trustworthy release requires evidence across these boundaries, not only a trusted repository hostname.
 
 ## Inputs And Build Authority
@@ -38,6 +52,29 @@ New vulnerability information can appear after release. Reassess deployed artifa
 If a build was compromised, investigate published artifacts, credentials and deployments connected to it. Correct source and build trust, replace exposed authority and promote reviewed replacement content. Running a new Pod from the same untrusted artifact does not restore confidence.
 
 A useful supply chain explanation connects inputs, evidence and enforcement to the deployed digest. It should identify what the evidence proves, who can alter it and which application risks remain after policy acceptance.
+
+## Work through the decision
+
+Policy needs a decision point that evaluates relevant evidence for the actual selected artifact. Image digests provide content identity; verified attestations can add origin or build claims. The policy must define trusted producers, acceptable findings and supported exceptions.
+
+Admission can participate in that decision, but its coverage depends on resource matching, failure behavior and the installed implementation. Build-time checks alone can be bypassed by another delivery path. A permissive exception can also widen authority beyond its stated purpose. Preserve the artifact-to-evidence relationship through submission and runtime observation rather than relying on a familiar tag name.
+
+```mermaid
+flowchart TB
+    N0["Selected artifact identity"]
+    N1["Trusted current evidence"]
+    N2["Matched execution policy"]
+    N3["Controlled admission decision"]
+    N4["Realized runtime artifact"]
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+```
+
+Verification protects execution through an enforced, covered decision about the same artifact that actually runs.
+
+Verification protects execution through an enforced, covered decision about the same artifact that actually runs.
 
 ## Common pitfalls
 

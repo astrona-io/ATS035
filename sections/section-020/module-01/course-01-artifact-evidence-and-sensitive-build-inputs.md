@@ -5,6 +5,20 @@ exam_objectives:
 ---
 # Artifact Evidence And Sensitive Build Inputs
 
+A compiler stage uses a private credential, then a later layer deletes its file. The deletion does not prove that earlier distributed image content never exposed it.
+
+## Learning objectives
+
+- Trace source, build, publication and deployment trust boundaries.
+- Distinguish provenance, signatures, inventories and vulnerability findings.
+- Relate admission decisions to exact artifact identity.
+
+## Before you start
+
+This chapter is standalone reading material; no running cluster or installed tools are required. A Pod is the Kubernetes unit for running one or more containers, and a namespace groups namespaced objects. Treat the worked configurations as teaching examples rather than recorded observations from a provisioned environment.
+
+## Responsible components and behavior
+
 A database password should reach only the process that needs it. Least privilege applies to credential readers, mounted files, ServiceAccounts and network access as well as application programming interface (API) permissions. Do not put secrets in an image merely to avoid configuring them at deployment time; image access can expose all embedded layers.
 
 A Kubernetes Secret requires access control and appropriate encryption at rest. Applications should avoid writing sensitive values into logs, error pages or diagnostic bundles. Rotation needs coordination between the credential issuer and consumers so old values stop working without causing an unnecessary outage.
@@ -32,6 +46,29 @@ A credential can leak through source files, build inputs, registry layers, mount
 Rotation must also remove old authority at the issuer. Updating a stored value while leaving the previous credential valid indefinitely does not revoke it. New consumers need to adopt the replacement according to their configuration delivery mechanism. Verification should use successful intended access and rejected old access where appropriate, without publishing the secret value.
 
 Supply chain controls and least privilege support different phases of defense. The first narrows what software and credentials enter the system; the second limits what a compromised process can do. A coherent security answer connects both rather than treating a signed artifact as permission to run with unrestricted host access.
+
+## Work through the decision
+
+Build inputs include source, dependencies, tools and credentials used to retrieve private material. A build can execute untrusted scripts, so its authority must be constrained independently of deployment authority. Avoid including sensitive inputs in distributed layers or uncontrolled build output.
+
+Provenance, signatures, component inventory and vulnerability findings describe different artifact properties. Link each result to the exact content selected for release. A trusted signature does not remove a known dependency vulnerability, and a scan with no findings does not identify a trusted publisher. Review both the evidence producer's authority and the runtime privileges granted to the resulting workload.
+
+```mermaid
+flowchart TB
+    N0["Controlled build inputs"]
+    N1["Constrained build authority"]
+    N2["Identified artifact"]
+    N3["Linked verification evidence"]
+    N4["Deliberate release decision"]
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+```
+
+A supply-chain decision needs protected inputs and evidence about the exact artifact, with each check's limits stated.
+
+A supply-chain decision needs protected inputs and evidence about the exact artifact, with each check's limits stated.
 
 ## Common pitfalls
 
