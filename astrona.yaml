@@ -2,7 +2,7 @@ training:
   id: ATS035
   title: 'CKS: Supply Chain Security'
   description: 'Detailed reading material and reusable YAML knowledge checks for CKS:
-    Supply Chain Security. Technical content remains draft. No labs or playgrounds.'
+    Supply Chain Security. Technical content remains draft. Each module has a playground, a graded lab and a knowledge check.'
   certification:
     name: Certified Kubernetes Security Specialist
     code: CKS
@@ -35,23 +35,29 @@ modules:
     path: sections/intro/course-03-how-this-course-is-made.md
 - id: module-010
   title: Minimize base image footprint
-  description: Developed reading and reasoning for Minimize base image footprint.
+  description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
-    title: Minimize base image footprint
+    title: 'Minimize base image footprint'
     path: sections/section-010/README.md
   - type: reading
-    title: Image Identity And Distribution
+    title: 'Minimize The Base Image Footprint'
     path: sections/section-010/module-01/course.md
   - type: reading
-    title: Layers, Tags And Digests
+    title: 'Layers, Tags And Digests'
     path: sections/section-010/module-01/course-01-layers-tags-and-digests.md
   - type: reading
-    title: From Build To Image Pull
-    path: sections/section-010/module-01/course-02-from-build-to-image-pull.md
+    title: 'Multi-Stage Builds And Minimal Base Images'
+    path: sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
   - type: reading
-    title: Serve Content With A Minimal Runtime — Task
+    title: 'Hardening A Dockerfile'
+    path: sections/section-010/module-01/course-03-hardening-a-dockerfile.md
+  - type: reading
+    title: 'Running Minimal Images In A Cluster'
+    path: sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
+  - type: reading
+    title: 'Serve Content With A Minimal Runtime — Task'
     path: sections/section-010/module-01/labs/lab-01/question.md
   - type: lab
     title: Serve Content With A Minimal Runtime
@@ -67,34 +73,34 @@ modules:
     - cks
     - minimal-image
   - type: reading
-    title: Serve Content With A Minimal Runtime — Solution
+    title: 'Serve Content With A Minimal Runtime — Solution'
     path: sections/section-010/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Guided Practice: Serve Content With A Minimal Runtime'
-    path: sections/section-010/module-01/course-03-guided-practice.md
-  - type: reading
     title: Summary
-    path: sections/section-010/module-01/course-04-summary.md
+    path: sections/section-010/module-01/course-05-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Minimize The Base Image Footprint'
+    path: sections/section-010/module-01/quiz.yaml
+    question_count: 10
 - id: module-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
-  description: Developed reading and reasoning for Understand your supply chain (e.g.
-    SBOM, CI/CD, artifact repositories).
+  description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
-    title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
+    title: 'Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)'
     path: sections/section-020/README.md
   - type: reading
-    title: Supply Chain Trust And Verification
+    title: 'Understand The Software Supply Chain'
     path: sections/section-020/module-01/course.md
   - type: reading
-    title: Artifact Evidence And Sensitive Build Inputs
-    path: sections/section-020/module-01/course-01-artifact-evidence-and-sensitive-build-inputs.md
+    title: 'Stages, Trust Boundaries And Evidence'
+    path: sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
   - type: reading
-    title: Connecting Verification To Execution Policy
-    path: sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
+    title: 'Software Bills Of Materials With Syft'
+    path: sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
   - type: reading
-    title: Bind A Package Inventory To A Running Image — Task
+    title: 'Bind A Package Inventory To A Running Image — Task'
     path: sections/section-020/module-01/labs/lab-01/question.md
   - type: lab
     title: Bind A Package Inventory To A Running Image
@@ -110,36 +116,41 @@ modules:
     - cks
     - package-inventory
   - type: reading
-    title: Bind A Package Inventory To A Running Image — Solution
+    title: 'Bind A Package Inventory To A Running Image — Solution'
     path: sections/section-020/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Guided Practice: Bind A Package Inventory To A Running Image'
-    path: sections/section-020/module-01/course-03-guided-practice.md
+    title: 'Vulnerability Scanning With Trivy'
+    path: sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
+  - type: reading
+    title: 'CI/CD Pipelines And Artifact Repositories'
+    path: sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
   - type: reading
     title: Summary
-    path: sections/section-020/module-01/course-04-summary.md
+    path: sections/section-020/module-01/course-05-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Understand The Software Supply Chain'
+    path: sections/section-020/module-01/quiz.yaml
+    question_count: 10
 - id: module-030
   title: Secure your supply chain (permitted registries, sign and validate artifacts,
     etc.)
-  description: Developed reading and reasoning for Secure your supply chain (permitted
-    registries, sign and validate artifacts, etc.).
+  description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
-    title: Secure your supply chain (permitted registries, sign and validate artifacts,
-      etc.)
+    title: 'Secure your supply chain (permitted registries, sign and validate artifacts, etc.)'
     path: sections/section-030/README.md
   - type: reading
-    title: Admission Policy And Extension Trust
+    title: 'Admission Control, Permitted Registries And Signed Images'
     path: sections/section-030/module-01/course.md
   - type: reading
-    title: Admission As A Controlled Resource Decision
-    path: sections/section-030/module-01/course-01-admission-as-a-controlled-resource-decision.md
+    title: 'The Admission Pipeline And ValidatingAdmissionPolicy'
+    path: sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
   - type: reading
-    title: Connecting Verification To Execution Policy
-    path: sections/section-030/module-01/course-02-connecting-verification-to-execution-policy.md
+    title: 'Enforcing Permitted Registries'
+    path: sections/section-030/module-01/course-02-enforcing-permitted-registries.md
   - type: reading
-    title: Enforce An Approved Image Registry — Task
+    title: 'Enforce An Approved Image Registry — Task'
     path: sections/section-030/module-01/labs/lab-01/question.md
   - type: lab
     title: Enforce An Approved Image Registry
@@ -155,33 +166,47 @@ modules:
     - cks
     - registry-admission
   - type: reading
-    title: Enforce An Approved Image Registry — Solution
+    title: 'Enforce An Approved Image Registry — Solution'
     path: sections/section-030/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Guided Practice: Enforce An Approved Image Registry'
-    path: sections/section-030/module-01/course-03-guided-practice.md
+    title: 'Policy Engines And Admission Webhooks'
+    path: sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
+  - type: reading
+    title: 'Signing And Verifying Images With cosign'
+    path: sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
   - type: reading
     title: Summary
-    path: sections/section-030/module-01/course-04-summary.md
+    path: sections/section-030/module-01/course-05-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Admission Control, Permitted Registries And Signed Images'
+    path: sections/section-030/module-01/quiz.yaml
+    question_count: 10
 - id: module-040
   title: Perform static analysis of user workloads and container images (e.g. Kubesec,
     KubeLinter)
-  description: Developed reading and reasoning for Perform static analysis of user
-    workloads and container images (e.g. Kubesec, KubeLinter).
+  description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
-    title: Perform static analysis of user workloads and container images (e.g. Kubesec,
-      KubeLinter)
+    title: 'Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)'
     path: sections/section-040/README.md
   - type: reading
-    title: Static Workload And Image Analysis In A Release Decision
+    title: 'Static Analysis Of Workloads And Images'
     path: sections/section-040/module-01/course.md
   - type: reading
-    title: Static Workload And Image Analysis In A Release Decision
-    path: sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
+    title: 'What Static Analysis Can And Cannot Show'
+    path: sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
   - type: reading
-    title: Analyze And Correct A Workload Security Document — Task
+    title: 'Scanning Manifests With Kubesec'
+    path: sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
+  - type: reading
+    title: 'Linting Manifests With KubeLinter'
+    path: sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
+  - type: reading
+    title: 'A Release Decision With Image Scans And Pod Security Admission'
+    path: sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
+  - type: reading
+    title: 'Analyze And Correct A Workload Security Document — Task'
     path: sections/section-040/module-01/labs/lab-01/question.md
   - type: lab
     title: Analyze And Correct A Workload Security Document
@@ -197,11 +222,12 @@ modules:
     - cks
     - static-workload-analysis
   - type: reading
-    title: Analyze And Correct A Workload Security Document — Solution
+    title: 'Analyze And Correct A Workload Security Document — Solution'
     path: sections/section-040/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Guided Practice: Analyze And Correct A Workload Security Document'
-    path: sections/section-040/module-01/course-02-guided-practice.md
-  - type: reading
     title: Summary
-    path: sections/section-040/module-01/course-03-summary.md
+    path: sections/section-040/module-01/course-05-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Static Analysis Of Workloads And Images'
+    path: sections/section-040/module-01/quiz.yaml
+    question_count: 10

@@ -1,0 +1,68 @@
+{
+  "context": "kind-astro-ats-035-playground-010-01",
+  "resources": [
+    {
+      "kind": "configmap",
+      "name": "minimal-content",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "minimal-content",
+          "namespace": "starfleet"
+        },
+        "data": {
+          "index.html": "minimal-version=v1\n"
+        }
+      }
+    },
+    {
+      "kind": "pod",
+      "name": "minimal-server",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "minimal-server",
+          "namespace": "starfleet"
+        },
+        "spec": {
+          "restartPolicy": "Never",
+          "containers": [
+            {
+              "name": "web",
+              "image": "docker.io/library/busybox:1.37.0",
+              "command": [
+                "httpd",
+                "-f",
+                "-p",
+                "8080",
+                "-h",
+                "/site"
+              ],
+              "volumeMounts": [
+                {
+                  "name": "site",
+                  "mountPath": "/site",
+                  "readOnly": true
+                }
+              ]
+            }
+          ],
+          "volumes": [
+            {
+              "name": "site",
+              "configMap": {
+                "name": "minimal-content"
+              }
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

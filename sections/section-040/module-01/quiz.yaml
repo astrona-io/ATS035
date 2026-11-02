@@ -1,0 +1,244 @@
+# Knowledge check for section 040, module 01. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-040-01
+course_id: ATS035
+exam_code: CKS
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-040/module-01
+  title: Static Analysis Of Workloads And Images
+questions:
+  - id: ats035-040-01-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Say what static analysis reads."
+    source_readings:
+      - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
+    prompt: "What does a manifest static check read?"
+    options:
+      - id: a
+        text: "The fields of the YAML or JSON document"
+        explanation: "Correct. It never starts the workload."
+      - id: b
+        text: "The memory of the running container"
+        explanation: "That is run-time analysis."
+      - id: c
+        text: "The network traffic of the pod"
+        explanation: "Static tools do not see traffic."
+      - id: d
+        text: "The logs of the node"
+        explanation: "Logs are not an input of a manifest check."
+    correct_option: a
+    explanation: "Static analysis tests declared fields only."
+
+  - id: ats035-040-01-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Choose the right scan input."
+    source_readings:
+      - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
+    prompt: "A team uses Kustomize overlays. Which input should the scanner read?"
+    options:
+      - id: a
+        text: "Only the base file"
+        explanation: "Overlays change fields after the base."
+      - id: b
+        text: "The rendered output, for example from `kubectl kustomize`"
+        explanation: "Correct. It is what the cluster receives."
+      - id: c
+        text: "The Dockerfile"
+        explanation: "It does not describe the Kubernetes object."
+      - id: d
+        text: "The README"
+        explanation: "It holds no fields to test."
+    correct_option: b
+    explanation: "Scan the final manifest."
+
+  - id: ats035-040-01-q03
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Read the Kubesec report groups."
+    source_readings:
+      - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
+    prompt: "In a Kubesec report, what does the `critical` group hold?"
+    options:
+      - id: a
+        text: "Settings that make the pod dangerous, such as `privileged: true`"
+        explanation: "Correct. They lower the score."
+      - id: b
+        text: "Rules the manifest passes"
+        explanation: "These are in `passed`."
+      - id: c
+        text: "Optional improvements"
+        explanation: "These are in `advise`."
+      - id: d
+        text: "Image vulnerabilities"
+        explanation: "Kubesec does not scan images."
+    correct_option: a
+    explanation: "Read the critical list first."
+
+  - id: ats035-040-01-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Interpret a high score."
+    source_readings:
+      - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
+    prompt: "A Deployment has a high Kubesec score and uses an image with a known critical vulnerability. What follows?"
+    options:
+      - id: a
+        text: "It is safe because the score is high"
+        explanation: "The score ignores image content."
+      - id: b
+        text: "Kubesec will block the image"
+        explanation: "Kubesec does not scan images."
+      - id: c
+        text: "The score is invalid"
+        explanation: "The score is valid for the declarations."
+      - id: d
+        text: "The manifest is well hardened, and the image still needs its own scan"
+        explanation: "Correct. Manifest and image evidence are separate."
+    correct_option: d
+    explanation: "A score ranks declarations only."
+
+  - id: ats035-040-01-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use the KubeLinter exit code."
+    source_readings:
+      - sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
+    prompt: "Why does the exit code of `kube-linter lint` matter in a pipeline?"
+    options:
+      - id: a
+        text: "A non-zero code on findings fails the step and gates the release"
+        explanation: "Correct."
+      - id: b
+        text: "It prints the report in colour"
+        explanation: "The exit code does not change output colour."
+      - id: c
+        text: "It selects the checks"
+        explanation: "Checks come from the configuration."
+      - id: d
+        text: "It fixes the manifest"
+        explanation: "KubeLinter does not edit files."
+    correct_option: a
+    explanation: "A gate needs a failing exit code."
+
+  - id: ats035-040-01-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Scope an exception."
+    source_readings:
+      - sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
+    prompt: "One Deployment must write cache files, so `no-read-only-root-fs` must not fail for it. What is the narrowest way to record this?"
+    options:
+      - id: a
+        text: "Exclude the check in `.kube-linter.yaml`"
+        explanation: "This applies to every object."
+      - id: b
+        text: "Delete the check from the tool"
+        explanation: "Not possible and not wise."
+      - id: c
+        text: "Add `ignore-check.kube-linter.io/no-read-only-root-fs` with a reason to that object"
+        explanation: "Correct. It affects one object and keeps the reason in the manifest."
+      - id: d
+        text: "Stop linting the namespace"
+        explanation: "This drops all checks."
+    correct_option: c
+    explanation: "Use an object annotation with a reason and owner."
+
+  - id: ats035-040-01-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Pick Pod Security Admission behaviour."
+    source_readings:
+      - sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
+    prompt: "A namespace has only the label `pod-security.kubernetes.io/warn: restricted`. A privileged pod is applied. What happens?"
+    options:
+      - id: a
+        text: "The pod is rejected"
+        explanation: "Only `enforce` rejects."
+      - id: b
+        text: "The pod is accepted and the client receives a warning"
+        explanation: "Correct. `warn` does not block."
+      - id: c
+        text: "The pod runs without a warning"
+        explanation: "`warn` sends a warning."
+      - id: d
+        text: "The namespace is deleted"
+        explanation: "PSA never deletes namespaces."
+    correct_option: b
+    explanation: "Use `enforce` to reject."
+
+  - id: ats035-040-01-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Interpret a scan over time."
+    source_readings:
+      - sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
+    prompt: "A Trivy scan of an image digest was clean last month. Why scan again before release?"
+    options:
+      - id: a
+        text: "The digest changes on its own"
+        explanation: "A digest is fixed to the content."
+      - id: b
+        text: "Trivy results expire after one day by rule"
+        explanation: "There is no such rule."
+      - id: c
+        text: "New vulnerabilities are published, and the database changes"
+        explanation: "Correct. The same digest can have new findings."
+      - id: d
+        text: "The tag was renamed"
+        explanation: "A renamed tag does not change a scan of the digest."
+    correct_option: c
+    explanation: "Record date, version and digest with each result."
+
+  - id: ats035-040-01-q09
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Reason about a restricted level failure."
+    source_readings:
+      - sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
+    prompt: "A pod sets `runAsNonRoot: true` and has no `runAsUser`. The image runs as root. In a `restricted` namespace, what is the result?"
+    options:
+      - id: a
+        text: "The pod is admitted, and the kubelet refuses to start the container because the image user is root"
+        explanation: "Correct. Admission checks the declaration and the kubelet checks the run user."
+      - id: b
+        text: "The pod starts as root"
+        explanation: "`runAsNonRoot` prevents this."
+      - id: c
+        text: "PSA changes the user to 1000"
+        explanation: "PSA does not mutate users."
+      - id: d
+        text: "The API server rejects it as privileged"
+        explanation: "The pod is not privileged."
+    correct_option: a
+    explanation: "Set a numeric `runAsUser` or fix the image."
+
+  - id: ats035-040-01-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Join evidence in a decision."
+    source_readings:
+      - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
+      - sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
+    prompt: "Which release decision uses the evidence correctly?"
+    options:
+      - id: a
+        text: "Pass when Kubesec scores above zero"
+        explanation: "One input is not enough."
+      - id: b
+        text: "Pass when the namespace enforces `restricted`, ignoring image scans"
+        explanation: "Enforcement does not show vulnerable packages."
+      - id: c
+        text: "Pass when the image has no vulnerabilities, ignoring the manifest"
+        explanation: "The manifest can still be risky."
+      - id: d
+        text: "Pass when the digest scan, the manifest findings and the namespace enforcement all meet policy, with exceptions recorded"
+        explanation: "Correct. Each tool answers a separate question."
+    correct_option: d
+    explanation: "Combine manifest, image and cluster evidence."

@@ -1,0 +1,244 @@
+# Knowledge check for section 030, module 01. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-030-01
+course_id: ATS035
+exam_code: CKS
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-030/module-01
+  title: Admission Control, Permitted Registries And Signed Images
+questions:
+  - id: ats035-030-01-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Place admission in the request path."
+    source_readings:
+      - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
+    prompt: "In which order does the API server process a create request?"
+    options:
+      - id: a
+        text: "Validating admission, mutating admission, authorization, authentication"
+        explanation: "This order is reversed."
+      - id: b
+        text: "Authentication, authorization, mutating admission, schema validation, validating admission"
+        explanation: "Correct. Validating admission runs last, so it sees the final object."
+      - id: c
+        text: "Authorization, mutating admission, authentication, validating admission"
+        explanation: "Authentication comes before authorization."
+      - id: d
+        text: "Mutating admission, authentication, validating admission, authorization"
+        explanation: "Admission runs after authentication and authorization."
+    correct_option: b
+    explanation: "Mutation runs before validation so that rules check the final object."
+
+  - id: ats035-030-01-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Know what makes a ValidatingAdmissionPolicy active."
+    source_readings:
+      - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
+    prompt: "A cluster administrator creates a ValidatingAdmissionPolicy and sees no effect on new pods. What is missing?"
+    options:
+      - id: a
+        text: "A ValidatingAdmissionPolicyBinding that names the policy"
+        explanation: "Correct. The binding turns the policy on and sets the actions."
+      - id: b
+        text: "A restart of the kube-apiserver"
+        explanation: "Policies take effect without a restart."
+      - id: c
+        text: "A webhook certificate"
+        explanation: "A policy runs inside the API server and needs no certificate."
+      - id: d
+        text: "A RoleBinding for the policy"
+        explanation: "RBAC does not enable policies."
+    correct_option: a
+    explanation: "Policy plus binding make an active rule."
+
+  - id: ats035-030-01-q03
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Describe ImagePolicyWebhook."
+    source_readings:
+      - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
+    prompt: "What does the `defaultAllow: false` setting of ImagePolicyWebhook do?"
+    options:
+      - id: a
+        text: "It rejects pods when the external backend cannot be reached"
+        explanation: "Correct. This is the fail-closed choice."
+      - id: b
+        text: "It allows only images with the `latest` tag"
+        explanation: "The setting does not look at tags."
+      - id: c
+        text: "It disables the plugin"
+        explanation: "The plugin is enabled with an API server flag."
+      - id: d
+        text: "It skips init containers"
+        explanation: "Containers are all sent in the ImageReview."
+    correct_option: a
+    explanation: "With `true`, an unreachable backend lets pods through."
+
+  - id: ats035-030-01-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use warning mode before enforcement."
+    source_readings:
+      - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
+    prompt: "You want to see which existing manifests a new registry rule would block without breaking any deployment. Which `validationActions` do you set first?"
+    options:
+      - id: a
+        text: "`Deny`"
+        explanation: "This blocks requests immediately."
+      - id: b
+        text: "`Deny` and `Audit`"
+        explanation: "This still blocks requests."
+      - id: c
+        text: "`Warn` and `Audit`"
+        explanation: "Correct. Requests are accepted, and violations show as warnings and audit annotations."
+      - id: d
+        text: "An empty list"
+        explanation: "An empty list is not a valid choice for a binding."
+    correct_option: c
+    explanation: "Observe first with `Warn` and `Audit`, then move to `Deny`."
+
+  - id: ats035-030-01-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write a safe prefix."
+    source_readings:
+      - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
+    prompt: "Which prefix is the safest in a registry rule that uses `startsWith`?"
+    options:
+      - id: a
+        text: "`docker.io/lib`"
+        explanation: "It also matches `docker.io/library-evil/app`."
+      - id: b
+        text: "`library`"
+        explanation: "It matches many unrelated strings."
+      - id: c
+        text: "`docker.io`"
+        explanation: "It allows every repository on the registry."
+      - id: d
+        text: "`docker.io/library/`"
+        explanation: "Correct. The trailing slash limits the match to that repository path."
+    correct_option: d
+    explanation: "End the prefix with a slash."
+
+  - id: ats035-030-01-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain the Deployment gap."
+    source_readings:
+      - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
+    prompt: "A registry policy denies pods with an unapproved image. A user applies a Deployment that uses such an image. `kubectl apply` succeeds, and no pods appear. Why?"
+    options:
+      - id: a
+        text: "The Deployment is admitted because the policy matches only pods, and the ReplicaSet fails to create the pods"
+        explanation: "Correct. The events of the ReplicaSet carry the policy message."
+      - id: b
+        text: "The API server ignores Deployments in all namespaces"
+        explanation: "Deployments are admitted normally."
+      - id: c
+        text: "The binding uses `Audit`, which hides errors"
+        explanation: "The pods are denied, so the action is `Deny`."
+      - id: d
+        text: "The scheduler rejects the image"
+        explanation: "The scheduler does not check registries."
+    correct_option: a
+    explanation: "Check events when a rollout stalls after a clean apply."
+
+  - id: ats035-030-01-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose a failure policy."
+    source_readings:
+      - sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
+    prompt: "A security webhook uses `failurePolicy: Ignore`. What is the risk?"
+    options:
+      - id: a
+        text: "Requests are slower"
+        explanation: "The setting does not change speed."
+      - id: b
+        text: "If the webhook is down or can be made to fail, requests pass without the rule"
+        explanation: "Correct. The rule turns off silently."
+      - id: c
+        text: "All requests are rejected when the webhook is down"
+        explanation: "That is `Fail`."
+      - id: d
+        text: "The webhook can no longer mutate objects"
+        explanation: "The setting does not affect mutation."
+    correct_option: b
+    explanation: "Use `Fail` for security rules and run the webhook with several replicas."
+
+  - id: ats035-030-01-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Pick the right tool for signature checks."
+    source_readings:
+      - sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
+      - sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
+    prompt: "A team must reject pods whose image has no valid signature from their key. Which choice can do that?"
+    options:
+      - id: a
+        text: "A ValidatingAdmissionPolicy with a CEL expression"
+        explanation: "CEL cannot contact a registry to fetch a signature."
+      - id: b
+        text: "A NetworkPolicy"
+        explanation: "NetworkPolicy filters traffic, not admission."
+      - id: c
+        text: "A Kyverno `verifyImages` rule or a signature-verifying admission controller"
+        explanation: "Correct. It checks the signature at admission."
+      - id: d
+        text: "A readiness probe"
+        explanation: "Probes run after the pod starts."
+    correct_option: c
+    explanation: "Signature checks need an admission webhook that talks to the registry."
+
+  - id: ats035-030-01-q09
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Apply cosign to a digest."
+    source_readings:
+      - sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
+    prompt: "A pipeline signs `registry.example/app:1.0` with cosign. Later the tag is moved to other content. What does a verifier that resolves the tag find?"
+    options:
+      - id: a
+        text: "The signature still applies to the new content"
+        explanation: "A signature covers one digest."
+      - id: b
+        text: "Cosign updates the signature on its own"
+        explanation: "Cosign does not follow tags."
+      - id: c
+        text: "The registry deletes the signature"
+        explanation: "The signature stays, tied to the old digest."
+      - id: d
+        text: "No valid signature for the new digest, because the signature covers the old digest"
+        explanation: "Correct. Sign and verify digests to avoid this."
+    correct_option: d
+    explanation: "A signature is tied to the digest."
+
+  - id: ats035-030-01-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Compare keyless and key-based signing."
+    source_readings:
+      - sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
+    prompt: "What does a verifier check in keyless signing that it does not check with a key pair?"
+    options:
+      - id: a
+        text: "The signer identity and OIDC issuer in a short-lived certificate"
+        explanation: "Correct. Fulcio binds the key to that identity, and Rekor records the signature."
+      - id: b
+        text: "The password of the private key"
+        explanation: "The password is never sent to the verifier."
+      - id: c
+        text: "The size of the image"
+        explanation: "The size is not part of verification."
+      - id: d
+        text: "The node architecture"
+        explanation: "Architecture does not affect signature checks."
+    correct_option: a
+    explanation: "The verifier names the identity and issuer, since there is no long-lived key."

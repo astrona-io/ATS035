@@ -11,7 +11,7 @@ scope:
   title: Supply Chain Security
 placement:
   position: after
-  reading: sections/section-040/module-01/course-02-summary.md
+  reading: sections/section-040/module-01/course-05-summary.md
 questions:
 - id: ats035-domain-review-q01
   type: single_choice
@@ -37,7 +37,7 @@ questions:
   difficulty: intermediate
   learning_objective: Diagnose image selection and pull failures.
   source_readings:
-  - sections/section-010/module-01/course-02-from-build-to-image-pull.md
+  - sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
   prompt: An image exists on the author's laptop but a node cannot retrieve it. What should be examined
     first?
   options:
@@ -57,7 +57,7 @@ questions:
   difficulty: intermediate
   learning_objective: Trace image retrieval and registry authentication.
   source_readings:
-  - sections/section-010/module-01/course-01-layers-tags-and-digests.md
+  - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
   prompt: Why can a multi-stage build reduce runtime image exposure?
   options:
   - id: a
@@ -76,7 +76,7 @@ questions:
   difficulty: intermediate
   learning_objective: Explain continued maintenance after an artifact is approved.
   source_readings:
-  - sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
+  - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
   prompt: An image passed a scan last month, but a relevant vulnerability is disclosed today. What is
     needed?
   options:
@@ -96,7 +96,7 @@ questions:
   difficulty: intermediate
   learning_objective: Trace source, build, publication and deployment trust boundaries.
   source_readings:
-  - sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
+  - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
   prompt: A build process can publish images and administer production clusters. Which separation reduces
     compromise impact?
   options:
@@ -116,7 +116,7 @@ questions:
   difficulty: intermediate
   learning_objective: Distinguish provenance, signatures, inventories and vulnerability findings.
   source_readings:
-  - sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
+  - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
   prompt: Provenance describes a build but has no trustworthy link to the selected artifact. What is missing?
   options:
   - id: a
@@ -135,7 +135,7 @@ questions:
   difficulty: intermediate
   learning_objective: Relate failure policy and exemptions to effective enforcement.
   source_readings:
-  - sections/section-030/module-01/course-01-admission-as-a-controlled-resource-decision.md
+  - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
   prompt: An identity can broaden the admission exception that applies to its workload. What should be
     protected?
   options:
@@ -155,7 +155,7 @@ questions:
   difficulty: intermediate
   learning_objective: Distinguish mutation, validation and authorization.
   source_readings:
-  - sections/section-030/module-01/course-01-admission-as-a-controlled-resource-decision.md
+  - sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
   prompt: A webhook adds defaults, then another policy checks the final declaration. Which roles are represented?
   options:
   - id: a
@@ -174,7 +174,7 @@ questions:
   difficulty: intermediate
   learning_objective: Explain built-in, declarative and webhook admission mechanisms.
   source_readings:
-  - sections/section-030/module-01/course-01-admission-as-a-controlled-resource-decision.md
+  - sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
   prompt: A webhook excludes some namespaces from matching. What should be assessed?
   options:
   - id: a
@@ -193,7 +193,7 @@ questions:
   difficulty: intermediate
   learning_objective: Distinguish manifest linting from vulnerability and runtime assessment.
   source_readings:
-  - sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
+  - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
   prompt: What can manifest analysis establish most directly?
   options:
   - id: a
@@ -212,7 +212,7 @@ questions:
   difficulty: intermediate
   learning_objective: Explain how Kubesec and KubeLinter identify risky declarations.
   source_readings:
-  - sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
+  - sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
   prompt: Why can Kubesec and KubeLinter reports differ?
   options:
   - id: a
@@ -231,7 +231,7 @@ questions:
   difficulty: intermediate
   learning_objective: Bind image findings to artifact identity and scanner evidence.
   source_readings:
-  - sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
+  - sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
   prompt: What should identify an image vulnerability report?
   options:
   - id: a

@@ -5,15 +5,13 @@ exam_objectives:
 ---
 # Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
 
-A template appears restricted, but the production overlay adds a writable host mount. Analysis of the source base alone did not evaluate the effective deployment input.
+This section covers: what static analysis shows, Kubesec, KubeLinter, Trivy config and Pod Security Admission in a release decision.
 
-The explanations identify the responsible components, compare intended and observed state, and work through the decisions needed to preserve the requirement. Read the worked examples as reasoning about a proposed system; no environment is started by this section.
-
-Read the module goals, teaching and closing summary in order. YAML checks are indexed separately and appear after designated summaries. Larger domains include an intermediate checkpoint before the final review.
+The section has one module with a playground, four reading parts, a graded lab, a summary and a knowledge check.
 
 ## Learning Outcomes
 
-- Distinguish manifest linting from vulnerability and runtime assessment.
-- Explain how Kubesec and KubeLinter identify risky declarations.
-- Bind image findings to artifact identity and scanner evidence.
-- Evaluate exceptions and admission enforcement without equating scores with safety.
+- State what static analysis reads and what it cannot see.
+- Scan a manifest with Kubesec and read the report.
+- Lint with KubeLinter and record a scoped exception.
+- Combine manifest, image and cluster evidence in a release decision.

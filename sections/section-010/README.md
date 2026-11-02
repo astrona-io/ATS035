@@ -5,15 +5,13 @@ exam_objectives:
 ---
 # Minimize base image footprint
 
-Two `probe` Pods can show the same image tag while using different downloaded content. To explain that difference, separate the image name from the content it identifies and separate the image filesystem from files changed during execution.
+This section covers: layers, tags and digests, multi-stage builds, Dockerfile hardening and minimal images in a cluster.
 
-The explanations identify the responsible components, compare intended and observed state, and work through the decisions needed to preserve the requirement. Read the worked examples as reasoning about a proposed system; no environment is started by this section.
-
-Read the module goals, teaching and closing summary in order. YAML checks are indexed separately and appear after designated summaries. Larger domains include an intermediate checkpoint before the final review.
+The section has one module with a playground, four reading parts, a graded lab, a summary and a knowledge check.
 
 ## Learning Outcomes
 
-- Explain image layers and immutable digests.
-- Distinguish tags from exact image identity.
-- Trace image retrieval and registry authentication.
-- Diagnose image selection and pull failures.
+- Explain image layers, tags and digests.
+- Build a multi-stage image with a distroless or scratch final stage.
+- Harden a Dockerfile and lint it.
+- Run a minimal image with a restricted security context and diagnose pull failures.

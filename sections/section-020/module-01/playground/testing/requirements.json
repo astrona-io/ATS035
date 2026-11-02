@@ -1,0 +1,22 @@
+{
+  "context": "kind-astro-ats-035-playground-020-01",
+  "resources": [
+    {
+      "kind": "configmap",
+      "name": "supply-inventory",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "supply-inventory",
+          "namespace": "starfleet"
+        },
+        "data": {
+          "image": "docker.io/library/python:3.13-alpine"
+        }
+      }
+    }
+  ],
+  "behavior": []
+}
