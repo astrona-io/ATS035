@@ -36,7 +36,7 @@ modules:
 - id: module-010
   title: Minimize base image footprint
   description: Developed reading and reasoning for Minimize base image footprint.
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Minimize base image footprint
@@ -79,7 +79,7 @@ modules:
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
   description: Developed reading and reasoning for Understand your supply chain (e.g.
     SBOM, CI/CD, artifact repositories).
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
@@ -123,7 +123,7 @@ modules:
     etc.)
   description: Developed reading and reasoning for Secure your supply chain (permitted
     registries, sign and validate artifacts, etc.).
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Secure your supply chain (permitted registries, sign and validate artifacts,
@@ -168,7 +168,7 @@ modules:
     KubeLinter)
   description: Developed reading and reasoning for Perform static analysis of user
     workloads and container images (e.g. Kubesec, KubeLinter).
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Perform static analysis of user workloads and container images (e.g. Kubesec,
