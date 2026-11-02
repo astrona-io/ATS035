@@ -1,0 +1,112 @@
+version: 1
+approval: CKS requested 2026-10-11; established reading-only scope
+course:
+  id: ATS035
+  certification:
+    name: Certified Kubernetes Security Specialist
+    code: CKS
+    provider: CNCF / Linux Foundation
+    domain: Supply Chain Security
+    weight: 20
+    competencies:
+    - Minimize base image footprint
+    - Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
+    - Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
+    - Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
+defaults:
+  playground: false
+  module_lab: false
+  capstone: false
+  section_quiz: false
+  final_quiz: true
+assessment_format: YAML question banks v1, registered in assessments/index.yaml
+sections:
+- id: section-010
+  title: Minimize base image footprint
+  curriculum_item: Minimize base image footprint
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Image Identity And Distribution
+    objectives:
+    - Explain image layers and immutable digests.
+    - Distinguish tags from exact image identity.
+    - Trace image retrieval and registry authentication.
+    - Diagnose image selection and pull failures.
+    outline:
+    - Layers, Tags And Digests
+    - From Build To Image Pull
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-010/module-01/course-01-layers-tags-and-digests.md
+      adapted_from: ATS027/sections/section-010/module-01/course-01-layers-tags-and-digests.md
+    - reading: sections/section-010/module-01/course-02-from-build-to-image-pull.md
+      adapted_from: ATS027/sections/section-010/module-01/course-02-from-build-to-image-pull.md
+- id: section-020
+  title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
+  curriculum_item: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Supply Chain Trust And Verification
+    objectives:
+    - Trace source, build, publication and deployment trust boundaries.
+    - Distinguish provenance, signatures, inventories and vulnerability findings.
+    - Relate admission decisions to exact artifact identity.
+    - Explain continued maintenance after an artifact is approved.
+    outline:
+    - Artifact Evidence And Sensitive Build Inputs
+    - Connecting Verification To Execution Policy
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-020/module-01/course-01-artifact-evidence-and-sensitive-build-inputs.md
+      adapted_from: ATS045/sections/section-010/module-01/course-01-artifact-evidence-and-sensitive-build-inputs.md
+    - reading: sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
+      adapted_from: ATS045/sections/section-010/module-01/course-02-connecting-verification-to-execution-policy.md
+- id: section-030
+  title: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
+  curriculum_item: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Admission Policy And Extension Trust
+    objectives:
+    - Distinguish mutation, validation and authorization.
+    - Explain built-in, declarative and webhook admission mechanisms.
+    - Relate failure policy and exemptions to effective enforcement.
+    - Identify extension credentials, transport and availability requirements.
+    outline:
+    - Admission As A Controlled Resource Decision
+    - Connecting Verification To Execution Policy
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-030/module-01/course-01-admission-as-a-controlled-resource-decision.md
+      adapted_from: ATS045/sections/section-070/module-01/course-01-admission-as-a-controlled-resource-decision.md
+    - reading: sections/section-030/module-01/course-02-connecting-verification-to-execution-policy.md
+      adapted_from: ATS045/sections/section-010/module-01/course-02-connecting-verification-to-execution-policy.md
+- id: section-040
+  title: Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
+  curriculum_item: Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Static Workload And Image Analysis In A Release Decision
+    objectives:
+    - Distinguish manifest linting from vulnerability and runtime assessment.
+    - Explain how Kubesec and KubeLinter identify risky declarations.
+    - Bind image findings to artifact identity and scanner evidence.
+    - Evaluate exceptions and admission enforcement without equating scores with safety.
+    outline:
+    - Static Workload And Image Analysis In A Release Decision
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
+      adapted_from: null
