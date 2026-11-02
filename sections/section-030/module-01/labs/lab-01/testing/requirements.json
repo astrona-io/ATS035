@@ -1,0 +1,132 @@
+{
+  "context": "kind-astro-ats-035-lab-030-01-01",
+  "resources": [
+    {
+      "kind": "namespace",
+      "name": "approved-images",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "approved-images",
+          "labels": {
+            "training.astrona.io/registry-policy": "enabled"
+          }
+        }
+      }
+    },
+    {
+      "kind": "validatingadmissionpolicy",
+      "name": "training-registry",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "admissionregistration.k8s.io/v1",
+        "kind": "ValidatingAdmissionPolicy",
+        "metadata": {
+          "name": "training-registry"
+        },
+        "spec": {
+          "failurePolicy": "Fail",
+          "matchConstraints": {
+            "resourceRules": [
+              {
+                "apiGroups": [
+                  ""
+                ],
+                "apiVersions": [
+                  "v1"
+                ],
+                "operations": [
+                  "CREATE",
+                  "UPDATE"
+                ],
+                "resources": [
+                  "pods",
+                  "pods/ephemeralcontainers"
+                ]
+              }
+            ]
+          },
+          "validations": [
+            {
+              "expression": "object.spec.containers.all(c, c.image.startsWith('docker.io/library/'))",
+              "message": "only the training approved registry prefix is allowed"
+            },
+            {
+              "expression": "!has(object.spec.initContainers) || object.spec.initContainers.all(c, c.image.startsWith('docker.io/library/'))",
+              "message": "only the training approved registry prefix is allowed"
+            },
+            {
+              "expression": "!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c, c.image.startsWith('docker.io/library/'))",
+              "message": "only the training approved registry prefix is allowed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "kind": "validatingadmissionpolicybinding",
+      "name": "training-registry",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "admissionregistration.k8s.io/v1",
+        "kind": "ValidatingAdmissionPolicyBinding",
+        "metadata": {
+          "name": "training-registry"
+        },
+        "spec": {
+          "policyName": "training-registry",
+          "validationActions": [
+            "Deny"
+          ],
+          "matchResources": {
+            "namespaceSelector": {
+              "matchLabels": {
+                "training.astrona.io/registry-policy": "enabled"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "kind": "pod",
+      "name": "approved-reader",
+      "namespace": "approved-images",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "approved-reader",
+          "namespace": "approved-images"
+        },
+        "spec": {
+          "restartPolicy": "Never",
+          "containers": [
+            {
+              "name": "reader",
+              "image": "docker.io/library/busybox:1.37.0",
+              "command": [
+                "sh",
+                "-c",
+                "sleep 3600"
+              ]
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": [
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'blocked-reader', 'namespace': 'approved-images'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'reader', 'image': 'unapproved.example/reader:v1', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and 'only the training approved registry prefix' in result.stderr; print('unapproved-image-denied')"
+      ],
+      "equals": "unapproved-image-denied"
+    }
+  ]
+}
