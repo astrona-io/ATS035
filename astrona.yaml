@@ -82,6 +82,7 @@ modules:
     title: 'Knowledge Check: Minimize The Base Image Footprint'
     path: sections/section-010/module-01/quiz.yaml
     question_count: 10
+    pass_score: 70
 - id: module-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
   description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
@@ -131,6 +132,7 @@ modules:
     title: 'Knowledge Check: Understand The Software Supply Chain'
     path: sections/section-020/module-01/quiz.yaml
     question_count: 10
+    pass_score: 70
 - id: module-030
   title: Secure your supply chain (permitted registries, sign and validate artifacts,
     etc.)
@@ -181,6 +183,7 @@ modules:
     title: 'Knowledge Check: Admission Control, Permitted Registries And Signed Images'
     path: sections/section-030/module-01/quiz.yaml
     question_count: 10
+    pass_score: 70
 - id: module-040
   title: Perform static analysis of user workloads and container images (e.g. Kubesec,
     KubeLinter)
@@ -231,3 +234,8 @@ modules:
     title: 'Knowledge Check: Static Analysis Of Workloads And Images'
     path: sections/section-040/module-01/quiz.yaml
     question_count: 10
+    pass_score: 70
+  - type: quiz
+    title: Final Domain Quiz
+    path: sections/final-domain-quiz.yaml
+    pass_score: 70
