@@ -1,0 +1,62 @@
+{
+  "context": "kind-astro-ats-035-lab-020-03-01",
+  "resources": [
+    {
+      "kind": "secret",
+      "name": "registry-credentials",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Secret",
+        "type": "kubernetes.io/dockerconfigjson",
+        "metadata": {
+          "name": "registry-credentials",
+          "namespace": "starfleet"
+        }
+      }
+    },
+    {
+      "kind": "serviceaccount",
+      "name": "probe-runner",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ServiceAccount",
+        "metadata": {
+          "name": "probe-runner",
+          "namespace": "starfleet"
+        },
+        "imagePullSecrets": [
+          {
+            "name": "registry-credentials"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "pod",
+      "name": "release-check",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "release-check",
+          "namespace": "starfleet"
+        },
+        "spec": {
+          "serviceAccountName": "probe-runner",
+          "restartPolicy": "Never",
+          "containers": [
+            {
+              "name": "client",
+              "image": "docker.io/library/busybox:1.37.0"
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

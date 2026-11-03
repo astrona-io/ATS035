@@ -1,5 +1,5 @@
-# Knowledge check for section 010, module 01. Contract:
-# schemas/question-bank.schema.json. Keep question ids stable once published.
+# Knowledge check for section 010. Contract: schemas/question-bank.schema.json.
+# Keep question ids stable once published.
 schema_version: 1
 kind: question_bank
 id: ats035-010-01
@@ -8,9 +8,9 @@ exam_code: CKS
 status: draft
 provenance: Original practice material written for this course; not official exam questions.
 scope:
-  type: module
-  id: section-010/module-01
-  title: Minimize The Base Image Footprint
+  type: section
+  id: section-010
+  title: Minimize base image footprint
 questions:
   - id: ats035-010-01-q01
     type: single_choice
@@ -35,29 +35,6 @@ questions:
     correct_option: b
     explanation: "A digest is computed from the content. A tag is only a name that can be moved."
 
-  - id: ats035-010-01-q02
-    type: single_choice
-    difficulty: beginner
-    learning_objective: "Find which image content a running container uses."
-    source_readings:
-      - sections/section-010/module-01/course-01-layers-tags-and-digests.md
-    prompt: "You must record exactly which image content a running container started from. Which pod field do you read?"
-    options:
-      - id: a
-        text: "`spec.containers[].image`"
-        explanation: "This field holds the reference you asked for, often a tag that can move."
-      - id: b
-        text: "`spec.containers[].imagePullPolicy`"
-        explanation: "This field holds the pull policy, not an image identity."
-      - id: c
-        text: "`metadata.labels`"
-        explanation: "Labels are free text and do not come from the container runtime."
-      - id: d
-        text: "`status.containerStatuses[].imageID`"
-        explanation: "Correct. The container runtime reports the resolved content, normally with the repository digest."
-    correct_option: d
-    explanation: "The `imageID` field in the pod status shows what the runtime resolved. The spec only shows the request."
-
   - id: ats035-010-01-q03
     type: single_choice
     difficulty: beginner
@@ -80,29 +57,6 @@ questions:
         explanation: "The engine does not delete anything in a single-stage build."
     correct_option: a
     explanation: "Each stage starts a new filesystem. The final image has only the last stage plus what it copied."
-
-  - id: ats035-010-01-q04
-    type: single_choice
-    difficulty: intermediate
-    learning_objective: "Pick the right final base image for a static binary."
-    source_readings:
-      - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
-    prompt: "A team ships a Go service compiled with `CGO_ENABLED=0`. It must run as non-root, and the image must have no shell or package manager. Which final base image fits?"
-    options:
-      - id: a
-        text: "`docker.io/library/ubuntu`"
-        explanation: "Ubuntu has a shell and a package manager, which the team wants to remove."
-      - id: b
-        text: "`gcr.io/distroless/static-debian12:nonroot`"
-        explanation: "Correct. It holds no shell, no package manager and defaults to a non-root user, and a static binary needs nothing more."
-      - id: c
-        text: "`docker.io/library/golang`"
-        explanation: "This is the build image with the whole toolchain."
-      - id: d
-        text: "`docker.io/library/alpine`"
-        explanation: "Alpine is small but includes BusyBox and `apk`."
-    correct_option: b
-    explanation: "A static binary runs on distroless `static` or `scratch`. The `nonroot` tag sets the user."
 
   - id: ats035-010-01-q05
     type: single_choice
@@ -151,95 +105,140 @@ questions:
     correct_option: d
     explanation: "The kubelet checks user IDs. A user name is not enough for that check."
 
-  - id: ats035-010-01-q07
+  - id: ats035-010-01-q11
     type: single_choice
-    difficulty: intermediate
-    learning_objective: "Debug a pod whose image has no shell."
+    difficulty: beginner
+    learning_objective: "Describe what the scratch base image contains."
     source_readings:
-      - sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
-    prompt: "A production pod runs a distroless image. `kubectl exec -it pod -- sh` fails. You must inspect the running processes without changing the image. What do you do?"
+      - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    prompt: "Which base image contains no files at all, so that only a static binary can run on it?"
     options:
       - id: a
-        text: "Rebuild the image on `ubuntu` and redeploy"
-        explanation: "This enlarges the production image to solve a debugging need."
+        text: "`debian:bookworm-slim`"
+        explanation: "This image holds a full user space with a shell and the `apt` package manager."
       - id: b
-        text: "Run `kubectl debug` with an image that has the tools and `--target` for the application container"
-        explanation: "Correct. An ephemeral container adds tools to the running pod without changing the production image."
+        text: "`alpine`"
+        explanation: "This image holds BusyBox, the musl library and the `apk` package manager."
       - id: c
-        text: "Set `readOnlyRootFilesystem: false`"
-        explanation: "This does not add a shell."
+        text: "`scratch`"
+        explanation: "Correct. It is empty, so a program runs on it only if it is a static binary."
       - id: d
-        text: "Delete the pod until `sh` works"
-        explanation: "A new pod from the same image still has no shell."
-    correct_option: b
-    explanation: "Ephemeral containers keep the production image minimal and bring the tools only when needed."
+        text: "A distroless base image"
+        explanation: "Distroless images hold the files a program needs, such as CA certificates and a passwd file."
+    correct_option: c
+    explanation: "The `scratch` image is empty. A dynamic binary fails there because its loader and libraries are missing."
 
-  - id: ats035-010-01-q08
+  - id: ats035-010-01-q12
     type: single_choice
     difficulty: intermediate
-    learning_objective: "Tell the stages of an image pull failure apart."
+    learning_objective: "Explain the difference between the musl and glibc C libraries."
     source_readings:
-      - sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
-    prompt: "A new pod shows `ImagePullBackOff`. What should you read first to choose the fix?"
+      - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    prompt: "A binary built against `glibc` is copied to an Alpine image. The file exists, but the container fails at start with a message that the file is not found. What is the most likely cause?"
     options:
       - id: a
-        text: "The message of the `Failed` event from `kubectl describe pod`"
-        explanation: "Correct. It names the reason: name resolution, missing tag, authorization or platform."
+        text: "The binary asks for a `glibc` dynamic loader that does not exist on a `musl` based image"
+        explanation: "Correct. The missing file is the loader that the binary names, not the binary itself."
       - id: b
-        text: "The Service selector"
-        explanation: "Services do not take part in pulling images."
+        text: "The root filesystem is read-only"
+        explanation: "A read-only filesystem blocks writes and does not hide an existing file."
       - id: c
-        text: "The readiness probe"
-        explanation: "Probes run after the container starts."
+        text: "The pod has no seccomp profile"
+        explanation: "A missing seccomp profile does not stop a program from loading."
       - id: d
-        text: "The `resources.limits.memory` value"
-        explanation: "Memory limits apply to running containers."
+        text: "The image tag is `latest`"
+        explanation: "The tag does not change how a binary loads its libraries."
     correct_option: a
-    explanation: "The event message decides whether the fix is a name, a tag, credentials or an architecture variant."
+    explanation: "`musl` and `glibc` are different C libraries. A dynamic binary needs the loader and libraries that it was linked against."
 
-  - id: ats035-010-01-q09
+  - id: ats035-010-01-q13
     type: single_choice
-    difficulty: advanced
-    learning_objective: "Explain why a mutable tag with IfNotPresent runs different content."
+    difficulty: intermediate
+    learning_objective: "Restrict a pod with a non-root numeric user."
     source_readings:
-      - sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
-      - sections/section-010/module-01/course-01-layers-tags-and-digests.md
-    prompt: "Two nodes run pods from `registry.example/scout:stable` with the default pull policy. The publisher moved the tag last week. The pods behave differently. What is the most likely cause?"
+      - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+    prompt: "Which pod settings make the kubelet refuse a container that would run as root and give the process a user ID that it can verify?"
     options:
       - id: a
-        text: "The pods use different Service accounts"
-        explanation: "Service accounts do not change the image content."
+        text: "`readOnlyRootFilesystem: true` and `privileged: false`"
+        explanation: "These settings limit writes and privilege, but they do not choose the user."
       - id: b
-        text: "Each node kept the content it pulled first, because `IfNotPresent` reuses an image held under the same reference"
-        explanation: "Correct. The tag is not `latest`, so the default is `IfNotPresent`, and the nodes pulled at different times."
+        text: "`allowPrivilegeEscalation: false` only"
+        explanation: "This setting blocks gaining rights, but a process can still start as root."
       - id: c
-        text: "The registry always serves different content to each node"
-        explanation: "A registry serves the content the tag points to at the time of the pull."
+        text: "`seccompProfile: RuntimeDefault` only"
+        explanation: "This setting filters system calls and does not choose the user."
       - id: d
-        text: "The scheduler rewrites the tag"
-        explanation: "The scheduler does not change image references."
-    correct_option: b
-    explanation: "A digest reference removes the problem, because only content with that digest matches."
+        text: "`runAsNonRoot: true` with a numeric `runAsUser`"
+        explanation: "Correct. The kubelet can compare a number with 0, but it cannot verify a name."
+    correct_option: d
+    explanation: "`runAsNonRoot` checks the numeric user ID. A numeric `runAsUser` gives it something to check."
 
-  - id: ats035-010-01-q10
+  - id: ats035-010-01-q14
     type: single_choice
     difficulty: advanced
-    learning_objective: "Judge image size against freshness."
+    learning_objective: "Run a program that must write with a read-only root filesystem."
     source_readings:
-      - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
-    prompt: "A team shrinks an image to a quarter of its size by moving to a small base image, but never rebuilds it. A year later a scanner reports many findings. What does this show?"
+      - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+    prompt: "A pod sets `readOnlyRootFilesystem: true`. The application crashes because it writes cache files to `/var/cache/app`. What is the best fix?"
     options:
       - id: a
-        text: "Small images cannot be scanned"
-        explanation: "Scanners work on small images too."
+        text: "Remove `readOnlyRootFilesystem` from the container"
+        explanation: "This restores the writable root filesystem for every path, not only the cache."
       - id: b
-        text: "A small image on an unpatched base still carries the known vulnerabilities of that base"
-        explanation: "Correct. Size reduces exposure, but fixes come only from rebuilding on a current base."
+        text: "Run the container as root"
+        explanation: "Root can still not write to a read-only filesystem, and root adds risk."
       - id: c
-        text: "Multi-stage builds add vulnerabilities"
-        explanation: "A multi-stage build does not add packages to the final image."
+        text: "Mount an `emptyDir` volume at `/var/cache/app`"
+        explanation: "Correct. Only the cache path is writable and the rest of the root filesystem stays read-only."
       - id: d
-        text: "The digest changed because of the scan"
-        explanation: "A scan does not change the image or its digest."
+        text: "Add the `CHOWN` capability"
+        explanation: "A capability does not make a read-only filesystem writable."
+    correct_option: c
+    explanation: "A writable volume at the one path that needs it keeps the benefit of a read-only root filesystem."
+
+  - id: ats035-010-01-q15
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain how a digest and a tag work together in a reference."
+    source_readings:
+      - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+    prompt: "An image reference is `busybox:1.37.0@sha256:<digest>`. Which statement is correct?"
+    options:
+      - id: a
+        text: "The runtime uses the tag and ignores the digest"
+        explanation: "The digest is the identity, so the runtime uses it."
+      - id: b
+        text: "The runtime uses the digest and ignores the tag, which only helps a reader"
+        explanation: "Correct. The digest selects the content and the runtime rejects bytes that do not match it."
+      - id: c
+        text: "The reference is invalid because it has both parts"
+        explanation: "A reference may carry both, and update tools rely on this form."
+      - id: d
+        text: "The runtime pulls both and keeps the newer image"
+        explanation: "The runtime does not compare two images."
     correct_option: b
-    explanation: "Footprint and freshness are separate. Rebuild regularly on a patched base."
+    explanation: "A digest selects exact content. The tag stays as a readable hint that update tools can use."
+
+  - id: ats035-010-01-q16
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Describe how a base image fix reaches a running workload."
+    source_readings:
+      - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+    prompt: "The publisher fixes a vulnerability in the base image. Your workload runs an image built on the old base and pinned by digest. What must happen before the fix runs in the cluster?"
+    options:
+      - id: a
+        text: "Nothing, because the registry updates every pinned image"
+        explanation: "A registry never changes content that a digest selects."
+      - id: b
+        text: "Restart the pods so the node pulls the fix"
+        explanation: "A restart starts the same pinned content again."
+      - id: c
+        text: "Change `imagePullPolicy` to `Always`"
+        explanation: "The digest still selects the old content."
+      - id: d
+        text: "Rebuild the image on the new base, publish its new digest and redeploy with that digest"
+        explanation: "Correct. The fix exists only in new layers, so a rebuild, a new digest and a redeployment are needed."
+    correct_option: d
+    explanation: "An image keeps the base layers from its build time. A new digest in the manifest replaces the old content."

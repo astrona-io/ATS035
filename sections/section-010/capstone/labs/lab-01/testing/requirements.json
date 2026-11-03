@@ -1,0 +1,122 @@
+{
+  "context": "kind-astro-ats-035-capstone-010",
+  "resources": [
+    {
+      "kind": "configmap",
+      "name": "minimal-site",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "minimal-site",
+          "namespace": "starfleet"
+        },
+        "data": {
+          "index.html": "capstone-version=v1\n"
+        }
+      }
+    },
+    {
+      "kind": "deployment",
+      "name": "minimal-web",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "name": "minimal-web",
+          "namespace": "starfleet"
+        },
+        "spec": {
+          "replicas": 1,
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "minimal-web"
+              }
+            },
+            "spec": {
+              "securityContext": {
+                "runAsNonRoot": true,
+                "runAsUser": 10001,
+                "seccompProfile": {
+                  "type": "RuntimeDefault"
+                }
+              },
+              "containers": [
+                {
+                  "name": "web",
+                  "imagePullPolicy": "IfNotPresent",
+                  "command": [
+                    "httpd",
+                    "-f",
+                    "-p",
+                    "8080",
+                    "-h",
+                    "/site"
+                  ],
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "readOnlyRootFilesystem": true,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    }
+                  },
+                  "resources": {
+                    "limits": {
+                      "memory": "64Mi"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "name": "site",
+                      "mountPath": "/site",
+                      "readOnly": true
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "name": "site",
+                  "configMap": {
+                    "name": "minimal-site"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "state": "deployment"
+    },
+    {
+      "kind": "service",
+      "name": "minimal-web",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Service",
+        "metadata": {
+          "name": "minimal-web",
+          "namespace": "starfleet"
+        },
+        "spec": {
+          "selector": {
+            "app": "minimal-web"
+          },
+          "ports": [
+            {
+              "port": 80,
+              "targetPort": "http"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "behavior": []
+}

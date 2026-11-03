@@ -1,0 +1,44 @@
+{
+  "context": "kind-astro-ats-035-playground-010-02",
+  "resources": [
+    {
+      "kind": "pod",
+      "name": "restricted-runner",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "restricted-runner",
+          "namespace": "starfleet"
+        },
+        "spec": {
+          "securityContext": {
+            "runAsNonRoot": true,
+            "runAsUser": 10001,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "containers": [
+            {
+              "name": "app",
+              "image": "docker.io/library/busybox:1.37.0",
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "readOnlyRootFilesystem": true,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

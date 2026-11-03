@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: release-line
+  labels:
+    training.astrona.io/supply-chain: enforced
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: supply-chain-rules
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:
+      - ''
+      apiVersions:
+      - v1
+      operations:
+      - CREATE
+      - UPDATE
+      resources:
+      - pods
+  variables:
+  - name: images
+    expression: >-
+      object.spec.containers.map(c, c.image) +
+      (has(object.spec.initContainers) ? object.spec.initContainers.map(c, c.image) : []) +
+      (has(object.spec.ephemeralContainers) ? object.spec.ephemeralContainers.map(c, c.image) : [])
+  validations:
+  - expression: variables.images.all(i, i.startsWith('docker.io/library/'))
+    message: image registry is not approved
+  - expression: variables.images.all(i, i.matches('@sha256:[a-f0-9]{64}$'))
+    message: every image must be referenced by digest
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: supply-chain-rules
+spec:
+  policyName: supply-chain-rules
+  validationActions:
+  - Deny
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        training.astrona.io/supply-chain: enforced

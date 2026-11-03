@@ -1,0 +1,117 @@
+{
+  "context": "kind-astro-ats-035-capstone-030",
+  "resources": [
+    {
+      "kind": "namespace",
+      "name": "release-line",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "release-line",
+          "labels": {
+            "training.astrona.io/supply-chain": "enforced"
+          }
+        }
+      }
+    },
+    {
+      "kind": "namespace",
+      "name": "supply-system",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "supply-system",
+          "labels": {
+            "training.astrona.io/supply-chain": "exempt"
+          }
+        }
+      }
+    },
+    {
+      "kind": "validatingadmissionpolicy",
+      "name": "supply-chain-rules",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "admissionregistration.k8s.io/v1",
+        "kind": "ValidatingAdmissionPolicy",
+        "metadata": {
+          "name": "supply-chain-rules"
+        },
+        "spec": {
+          "failurePolicy": "Fail"
+        }
+      }
+    },
+    {
+      "kind": "validatingadmissionpolicybinding",
+      "name": "supply-chain-rules",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "admissionregistration.k8s.io/v1",
+        "kind": "ValidatingAdmissionPolicyBinding",
+        "metadata": {
+          "name": "supply-chain-rules"
+        },
+        "spec": {
+          "policyName": "supply-chain-rules",
+          "validationActions": [
+            "Deny"
+          ],
+          "matchResources": {
+            "namespaceSelector": {
+              "matchLabels": {
+                "training.astrona.io/supply-chain": "enforced"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "behavior": [
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'tag-only', 'namespace': 'release-line'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox:1.37.0', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and 'must be referenced by digest' in result.stderr; print('denied')"
+      ],
+      "equals": "denied"
+    },
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'tag-init', 'namespace': 'release-line'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'command': ['sh', '-c', 'sleep 3600']}], 'initContainers': [{'name': 'prepare', 'image': 'docker.io/library/busybox:1.37.0', 'command': ['sh', '-c', 'true']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and 'must be referenced by digest' in result.stderr; print('denied')"
+      ],
+      "equals": "denied"
+    },
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'wrong-registry', 'namespace': 'release-line'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'unapproved.example/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and 'registry is not approved' in result.stderr; print('denied')"
+      ],
+      "equals": "denied"
+    },
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'compliant', 'namespace': 'release-line'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode==0, result.stderr; print('allowed')"
+      ],
+      "equals": "allowed"
+    },
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'exempt-tag', 'namespace': 'supply-system'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox:1.37.0', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode==0, result.stderr; print('allowed')"
+      ],
+      "equals": "allowed"
+    }
+  ]
+}

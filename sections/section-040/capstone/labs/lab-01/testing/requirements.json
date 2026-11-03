@@ -1,0 +1,108 @@
+{
+  "context": "kind-astro-ats-035-capstone-040",
+  "resources": [
+    {
+      "kind": "namespace",
+      "name": "bay",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "bay",
+          "labels": {
+            "pod-security.kubernetes.io/enforce": "restricted",
+            "pod-security.kubernetes.io/enforce-version": "v1.35",
+            "pod-security.kubernetes.io/warn": "restricted",
+            "pod-security.kubernetes.io/audit": "restricted"
+          }
+        }
+      }
+    },
+    {
+      "kind": "configmap",
+      "name": "analysis-findings",
+      "namespace": "bay",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "analysis-findings",
+          "namespace": "bay"
+        },
+        "data": {
+          "privileged": "true",
+          "runAsNonRoot": "missing",
+          "allowPrivilegeEscalation": "missing",
+          "imageTag": "latest"
+        }
+      }
+    },
+    {
+      "kind": "configmap",
+      "name": "scan-gate",
+      "namespace": "bay",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "scan-gate",
+          "namespace": "bay"
+        },
+        "data": {
+          "decision": "fail",
+          "blocking": "FIXTURE-0001,FIXTURE-0002",
+          "waived": "FIXTURE-0005",
+          "unfixed": "FIXTURE-0003",
+          "severity": "HIGH,CRITICAL",
+          "ignoreUnfixed": "true"
+        }
+      }
+    },
+    {
+      "kind": "pod",
+      "name": "corrected-reader",
+      "namespace": "bay",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "corrected-reader",
+          "namespace": "bay"
+        },
+        "spec": {
+          "restartPolicy": "Never",
+          "securityContext": {
+            "runAsNonRoot": true,
+            "runAsUser": 1000,
+            "runAsGroup": 1000,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "containers": [
+            {
+              "name": "reader",
+              "image": "docker.io/library/busybox:1.37.0",
+              "command": [
+                "sh",
+                "-c",
+                "sleep 3600"
+              ],
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

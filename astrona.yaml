@@ -78,11 +78,91 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-010/module-01/course-05-summary.md
+  - type: reading
+    title: Compare Base Images And Their Attack Surface
+    path: sections/section-010/module-02/course.md
+  - type: reading
+    title: What Each Base Image Contains
+    path: sections/section-010/module-02/course-01-what-each-base-image-contains.md
+  - type: reading
+    title: Measure What A Running Container Can Reach
+    path: sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+  - type: reading
+    title: Run A Pod With A Restricted Security Context — Task
+    path: sections/section-010/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Run A Pod With A Restricted Security Context
+    path: sections/section-010/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: restricted-security-context
+    task_kind: build
+    learning_goals:
+    - Run a BusyBox pod as a numeric non-root user with a read-only root filesystem,
+      no capabilities and the runtime default seccomp profile.
+    tags:
+    - cks
+    - restricted-security-context
+  - type: reading
+    title: Run A Pod With A Restricted Security Context — Solution
+    path: sections/section-010/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-010/module-02/course-03-summary.md
+  - type: reading
+    title: Keep Images Small And Fresh Over Time
+    path: sections/section-010/module-03/course.md
+  - type: reading
+    title: Pin Images By Digest And Keep The Pin Current
+    path: sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+  - type: reading
+    title: Pin An Image To The Digest The Node Reports — Task
+    path: sections/section-010/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Pin An Image To The Digest The Node Reports
+    path: sections/section-010/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: digest-pinning
+    task_kind: build
+    learning_goals:
+    - Start a pod that refers to the BusyBox image by the digest that the node reports.
+    tags:
+    - cks
+    - digest-pinning
+  - type: reading
+    title: Pin An Image To The Digest The Node Reports — Solution
+    path: sections/section-010/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Pull Policy, Rebuild Cadence And Size Budgets
+    path: sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+  - type: reading
+    title: Summary
+    path: sections/section-010/module-03/course-03-summary.md
   - type: quiz
     title: 'Knowledge Check: Minimize The Base Image Footprint'
     path: sections/section-010/module-01/quiz.yaml
     question_count: 10
     pass_score: 70
+  - type: reading
+    title: Run A Hardened Minimal Web Server — Task
+    path: sections/section-010/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Run A Hardened Minimal Web Server
+    path: sections/section-010/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: minimal-image-capstone
+    task_kind: build
+    learning_goals:
+    - Combine a digest-pinned minimal image, a restricted security context, resource
+      limits and a Service.
+    tags:
+    - cks
+    - minimal-image-capstone
+  - type: reading
+    title: Run A Hardened Minimal Web Server — Solution
+    path: sections/section-010/capstone/labs/lab-01/solution.md
 - id: module-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
   description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
@@ -128,11 +208,95 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-020/module-01/course-05-summary.md
+  - type: reading
+    title: Generate And Read Software Bills Of Materials
+    path: sections/section-020/module-02/course.md
+  - type: reading
+    title: Reading SPDX And CycloneDX Documents
+    path: sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+  - type: reading
+    title: Record A Structured Package Inventory — Task
+    path: sections/section-020/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Record A Structured Package Inventory
+    path: sections/section-020/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: sbom-inventory
+    task_kind: build
+    learning_goals:
+    - Record a CycloneDX-style component list for the running probe image, bound to
+      its image identity.
+    tags:
+    - cks
+    - sbom-inventory
+  - type: reading
+    title: Record A Structured Package Inventory — Solution
+    path: sections/section-020/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Matching An SBOM To Vulnerabilities And An Image Digest
+    path: sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+  - type: reading
+    title: Summary
+    path: sections/section-020/module-02/course-03-summary.md
+  - type: reading
+    title: Provenance, Artifact Repositories And Pull Access
+    path: sections/section-020/module-03/course.md
+  - type: reading
+    title: Registries, Repositories And Who May Push Or Pull
+    path: sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+  - type: reading
+    title: Pull Secrets And Service Accounts
+    path: sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+  - type: reading
+    title: Give A Service Account Registry Pull Access — Task
+    path: sections/section-020/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Give A Service Account Registry Pull Access
+    path: sections/section-020/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: registry-pull-access
+    task_kind: build
+    learning_goals:
+    - Create a registry pull secret, attach it to a service account and run a pod that
+      receives it.
+    tags:
+    - cks
+    - registry-pull-access
+  - type: reading
+    title: Give A Service Account Registry Pull Access — Solution
+    path: sections/section-020/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Build Provenance And SLSA Levels
+    path: sections/section-020/module-03/course-03-build-provenance-and-slsa-levels.md
+  - type: reading
+    title: Summary
+    path: sections/section-020/module-03/course-04-summary.md
   - type: quiz
     title: 'Knowledge Check: Understand The Software Supply Chain'
     path: sections/section-020/module-01/quiz.yaml
     question_count: 10
     pass_score: 70
+  - type: reading
+    title: Record A Release With Inventory, Digest And Pull Access — Task
+    path: sections/section-020/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Record A Release With Inventory, Digest And Pull Access
+    path: sections/section-020/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: release-record-capstone
+    task_kind: build
+    learning_goals:
+    - Combine a package inventory, an image digest, an SBOM format and registry pull
+      access into one release record.
+    tags:
+    - cks
+    - release-record-capstone
+  - type: reading
+    title: Record A Release With Inventory, Digest And Pull Access — Solution
+    path: sections/section-020/capstone/labs/lab-01/solution.md
 - id: module-030
   title: Secure your supply chain (permitted registries, sign and validate artifacts,
     etc.)
@@ -179,11 +343,98 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-030/module-01/course-05-summary.md
+  - type: reading
+    title: Require Image Digests And Verify Signatures
+    path: sections/section-030/module-02/course.md
+  - type: reading
+    title: A Digest Rule With ValidatingAdmissionPolicy
+    path: sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
+  - type: reading
+    title: Require Image Digests In A Namespace — Task
+    path: sections/section-030/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Require Image Digests In A Namespace
+    path: sections/section-030/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: digest-policy
+    task_kind: build
+    learning_goals:
+    - Deny a pod whose image is not referenced by digest and admit a pod whose image
+      is.
+    tags:
+    - cks
+    - digest-policy
+  - type: reading
+    title: Require Image Digests In A Namespace — Solution
+    path: sections/section-030/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Signatures, Attestations And Keyless Signing
+    path: sections/section-030/module-02/course-02-signatures-attestations-and-keyless-signing.md
+  - type: reading
+    title: Enforcing Verification And Its Limits
+    path: sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
+  - type: reading
+    title: Summary
+    path: sections/section-030/module-02/course-04-summary.md
+  - type: reading
+    title: ImagePullSecrets, ImagePolicyWebhook And Admission Failure Modes
+    path: sections/section-030/module-03/course.md
+  - type: reading
+    title: Pull Credentials For Private Registries
+    path: sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+  - type: reading
+    title: The ImagePolicyWebhook Admission Plugin
+    path: sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+  - type: reading
+    title: Admission Failure Modes And Exemptions
+    path: sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+  - type: reading
+    title: Enforce A Registry Policy And Attach Pull Credentials — Task
+    path: sections/section-030/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Enforce A Registry Policy And Attach Pull Credentials
+    path: sections/section-030/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: admission-failure-modes
+    task_kind: repair
+    learning_goals:
+    - Change an audit-only registry binding to enforcement and attach registry pull
+      credentials to a ServiceAccount.
+    tags:
+    - cks
+    - admission-failure-modes
+  - type: reading
+    title: Enforce A Registry Policy And Attach Pull Credentials — Solution
+    path: sections/section-030/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-030/module-03/course-04-summary.md
   - type: quiz
     title: 'Knowledge Check: Admission Control, Permitted Registries And Signed Images'
     path: sections/section-030/module-01/quiz.yaml
     question_count: 10
     pass_score: 70
+  - type: reading
+    title: Enforce Approved Registries And Digests In One Policy Set — Task
+    path: sections/section-030/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Enforce Approved Registries And Digests In One Policy Set
+    path: sections/section-030/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: supply-chain-capstone
+    task_kind: build
+    learning_goals:
+    - Enforce an approved registry and a digest requirement together in one namespace
+      while one system namespace stays exempt.
+    tags:
+    - cks
+    - supply-chain-capstone
+  - type: reading
+    title: Enforce Approved Registries And Digests In One Policy Set — Solution
+    path: sections/section-030/capstone/labs/lab-01/solution.md
 - id: module-040
   title: Perform static analysis of user workloads and container images (e.g. Kubesec,
     KubeLinter)
@@ -230,11 +481,100 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-040/module-01/course-05-summary.md
+  - type: reading
+    title: Scan Images And Configuration With Trivy
+    path: sections/section-040/module-02/course.md
+  - type: reading
+    title: 'What Trivy Scans: Images, Folders And Configuration'
+    path: sections/section-040/module-02/course-01-what-trivy-scans-images-folders-and-configuration.md
+  - type: reading
+    title: Severity Filters, Unfixed Findings And Exit Codes
+    path: sections/section-040/module-02/course-02-severity-filters-unfixed-findings-and-exit-codes.md
+  - type: reading
+    title: Exceptions, Database Freshness And What A Finding Proves
+    path: sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
+  - type: reading
+    title: Decide A Scan Gate From Scan Results — Task
+    path: sections/section-040/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Decide A Scan Gate From Scan Results
+    path: sections/section-040/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: trivy-scan-gate
+    task_kind: build
+    learning_goals:
+    - Compute a gate decision from scan results, an unfixed filter and an ignore list,
+      and record it.
+    tags:
+    - cks
+    - trivy-scan-gate
+  - type: reading
+    title: Decide A Scan Gate From Scan Results — Solution
+    path: sections/section-040/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-040/module-02/course-04-summary.md
+  - type: reading
+    title: Enforce Workload Standards With Pod Security Admission
+    path: sections/section-040/module-03/course.md
+  - type: reading
+    title: The Pod Security Standards
+    path: sections/section-040/module-03/course-01-the-pod-security-standards.md
+  - type: reading
+    title: Namespace Labels, Modes And Versions
+    path: sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+  - type: reading
+    title: Meeting The Restricted Standard, Exemptions And Limits
+    path: sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+  - type: reading
+    title: Enforce The Restricted Pod Security Standard — Task
+    path: sections/section-040/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Enforce The Restricted Pod Security Standard
+    path: sections/section-040/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: pod-security-admission
+    task_kind: build
+    learning_goals:
+    - Enforce the restricted standard on a namespace, run a compliant pod and show that
+      an unrestricted pod is rejected.
+    tags:
+    - cks
+    - pod-security-admission
+  - type: reading
+    title: Enforce The Restricted Pod Security Standard — Solution
+    path: sections/section-040/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-040/module-03/course-04-summary.md
   - type: quiz
     title: 'Knowledge Check: Static Analysis Of Workloads And Images'
     path: sections/section-040/module-01/quiz.yaml
     question_count: 10
     pass_score: 70
+  - type: reading
+    title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
+      — Task
+    path: sections/section-040/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
+    path: sections/section-040/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: release-capstone
+    task_kind: build
+    learning_goals:
+    - Combine static analysis findings, a scan gate decision and restricted admission
+      to release a corrected workload.
+    tags:
+    - cks
+    - release-capstone
+  - type: reading
+    title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
+      — Solution
+    path: sections/section-040/capstone/labs/lab-01/solution.md
   - type: quiz
     title: Final Domain Quiz
     path: sections/final-domain-quiz.yaml

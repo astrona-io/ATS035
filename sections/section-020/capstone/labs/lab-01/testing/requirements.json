@@ -1,0 +1,78 @@
+{
+  "context": "kind-astro-ats-035-capstone-020",
+  "resources": [
+    {
+      "kind": "configmap",
+      "name": "release-record",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "release-record",
+          "namespace": "starfleet"
+        },
+        "data": {
+          "image": "docker.io/library/python:3.13-alpine"
+        }
+      }
+    },
+    {
+      "kind": "secret",
+      "name": "registry-credentials",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Secret",
+        "type": "kubernetes.io/dockerconfigjson",
+        "metadata": {
+          "name": "registry-credentials",
+          "namespace": "starfleet"
+        }
+      }
+    },
+    {
+      "kind": "serviceaccount",
+      "name": "probe-runner",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ServiceAccount",
+        "metadata": {
+          "name": "probe-runner",
+          "namespace": "starfleet"
+        },
+        "imagePullSecrets": [
+          {
+            "name": "registry-credentials"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "pod",
+      "name": "release-runner",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "release-runner",
+          "namespace": "starfleet"
+        },
+        "spec": {
+          "serviceAccountName": "probe-runner",
+          "restartPolicy": "Never",
+          "containers": [
+            {
+              "name": "client",
+              "image": "docker.io/library/busybox:1.37.0"
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

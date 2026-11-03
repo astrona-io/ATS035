@@ -1,0 +1,27 @@
+{
+  "context": "kind-astro-ats-035-lab-040-02-01",
+  "resources": [
+    {
+      "kind": "configmap",
+      "name": "scan-gate",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "scan-gate",
+          "namespace": "starfleet"
+        },
+        "data": {
+          "decision": "fail",
+          "blocking": "FIXTURE-0001,FIXTURE-0002",
+          "waived": "FIXTURE-0005",
+          "unfixed": "FIXTURE-0003",
+          "severity": "HIGH,CRITICAL",
+          "ignoreUnfixed": "true"
+        }
+      }
+    }
+  ],
+  "behavior": []
+}

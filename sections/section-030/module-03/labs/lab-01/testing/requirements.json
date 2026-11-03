@@ -1,0 +1,88 @@
+{
+  "context": "kind-astro-ats-035-lab-030-03-01",
+  "resources": [
+    {
+      "kind": "validatingadmissionpolicybinding",
+      "name": "gated-registry",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "admissionregistration.k8s.io/v1",
+        "kind": "ValidatingAdmissionPolicyBinding",
+        "metadata": {
+          "name": "gated-registry"
+        },
+        "spec": {
+          "policyName": "gated-registry",
+          "validationActions": [
+            "Deny"
+          ],
+          "matchResources": {
+            "namespaceSelector": {
+              "matchLabels": {
+                "training.astrona.io/gated": "enabled"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "kind": "secret",
+      "name": "registry-credentials",
+      "namespace": "gated-images",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Secret",
+        "metadata": {
+          "name": "registry-credentials",
+          "namespace": "gated-images"
+        },
+        "type": "kubernetes.io/dockerconfigjson"
+      }
+    },
+    {
+      "kind": "serviceaccount",
+      "name": "deployer",
+      "namespace": "gated-images",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ServiceAccount",
+        "metadata": {
+          "name": "deployer",
+          "namespace": "gated-images"
+        },
+        "imagePullSecrets": [
+          {
+            "name": "registry-credentials"
+          }
+        ]
+      }
+    }
+  ],
+  "behavior": [
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess,base64; r=subprocess.run(['kubectl','-n','gated-images','get','secret','registry-credentials','-o','json'],capture_output=True,text=True,timeout=15); assert r.returncode==0, r.stderr; s=json.loads(r.stdout); cfg=json.loads(base64.b64decode(s['data']['.dockerconfigjson'])); entry=cfg['auths']['registry.example.com']; assert entry['username']=='reader' and entry['password']; print('credentials-present')"
+      ],
+      "equals": "credentials-present"
+    },
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'blocked', 'namespace': 'gated-images'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'unapproved.example/reader:v1', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and 'image registry is not approved' in result.stderr; print('denied')"
+      ],
+      "equals": "denied"
+    },
+    {
+      "args": [
+        "python3",
+        "-c",
+        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'approved', 'namespace': 'gated-images'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox:1.37.0', 'command': ['sh', '-c', 'sleep 3600']}], 'serviceAccountName': 'deployer'}}; result=subprocess.run(['kubectl','create','--dry-run=server','-o','json','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode==0, result.stderr; secrets=json.loads(result.stdout)['spec'].get('imagePullSecrets',[]); print(secrets[0]['name'] if secrets else 'none')"
+      ],
+      "equals": "registry-credentials"
+    }
+  ]
+}

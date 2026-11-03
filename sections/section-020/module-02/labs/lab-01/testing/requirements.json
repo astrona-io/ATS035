@@ -1,0 +1,23 @@
+{
+  "context": "kind-astro-ats-035-lab-020-02-01",
+  "resources": [
+    {
+      "kind": "configmap",
+      "name": "sbom-record",
+      "namespace": "starfleet",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "sbom-record",
+          "namespace": "starfleet"
+        },
+        "data": {
+          "format": "CycloneDX",
+          "specVersion": "1.5"
+        }
+      }
+    }
+  ],
+  "behavior": []
+}

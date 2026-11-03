@@ -1,0 +1,68 @@
+{
+  "context": "kind-astro-ats-035-playground-040-03",
+  "resources": [
+    {
+      "kind": "namespace",
+      "name": "hangar",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "hangar",
+          "labels": {
+            "pod-security.kubernetes.io/enforce": "restricted",
+            "pod-security.kubernetes.io/enforce-version": "v1.35",
+            "pod-security.kubernetes.io/warn": "restricted",
+            "pod-security.kubernetes.io/audit": "restricted"
+          }
+        }
+      }
+    },
+    {
+      "kind": "pod",
+      "name": "restricted-reader",
+      "namespace": "hangar",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "restricted-reader",
+          "namespace": "hangar"
+        },
+        "spec": {
+          "restartPolicy": "Never",
+          "securityContext": {
+            "runAsNonRoot": true,
+            "runAsUser": 1000,
+            "runAsGroup": 1000,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "containers": [
+            {
+              "name": "reader",
+              "image": "docker.io/library/busybox:1.37.0",
+              "command": [
+                "sh",
+                "-c",
+                "sleep 3600"
+              ],
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

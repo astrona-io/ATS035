@@ -5,7 +5,8 @@ id: ats035-final
 course_id: ATS035
 exam_code: CKS
 status: draft
-provenance: Original practice material written for this course; not official exam questions.
+provenance: Original practice material written for this course; not official exam
+  questions.
 scope:
   type: domain
   id: final
@@ -17,134 +18,81 @@ questions:
   learning_objective: Distinguish a tag from a digest.
   source_readings:
   - sections/section-010/module-01/course-01-layers-tags-and-digests.md
-  prompt: Which part of an image reference always selects the same content, even if the publisher pushes a new build?
+  prompt: Which part of an image reference always selects the same content, even if
+    the publisher pushes a new build?
   options:
   - id: a
     text: The tag, for example `1.37.0`
     explanation: A publisher can move a tag to different content at any time.
   - id: b
     text: The digest, written as `@sha256:` and a hash
-    explanation: Correct. A digest is the hash of the manifest, so different content has a different digest.
+    explanation: Correct. A digest is the hash of the manifest, so different content
+      has a different digest.
   - id: c
     text: The repository name
     explanation: The repository name selects a collection of images, not one build.
   - id: d
     text: The `imagePullPolicy` field
-    explanation: The pull policy decides when the node pulls, not which content a reference selects.
+    explanation: The pull policy decides when the node pulls, not which content a
+      reference selects.
   correct_option: b
-  explanation: A digest is computed from the content. A tag is only a name that can be moved.
+  explanation: A digest is computed from the content. A tag is only a name that can
+    be moved.
 - id: ats035-final-q02
   type: single_choice
-  difficulty: beginner
-  learning_objective: Find which image content a running container uses.
+  difficulty: intermediate
+  learning_objective: Restrict a pod with a non-root numeric user.
   source_readings:
-  - sections/section-010/module-01/course-01-layers-tags-and-digests.md
-  prompt: You must record exactly which image content a running container started from. Which pod field do you read?
+  - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+  prompt: Which pod settings make the kubelet refuse a container that would run as
+    root and give the process a user ID that it can verify?
   options:
   - id: a
-    text: "`spec.containers[].image`"
-    explanation: This field holds the reference you asked for, often a tag that can move.
+    text: "`readOnlyRootFilesystem: true` and `privileged: false`"
+    explanation: These settings limit writes and privilege, but they do not choose
+      the user.
   - id: b
-    text: "`spec.containers[].imagePullPolicy`"
-    explanation: This field holds the pull policy, not an image identity.
+    text: "`allowPrivilegeEscalation: false` only"
+    explanation: This setting blocks gaining rights, but a process can still start
+      as root.
   - id: c
-    text: "`metadata.labels`"
-    explanation: Labels are free text and do not come from the container runtime.
+    text: "`seccompProfile: RuntimeDefault` only"
+    explanation: This setting filters system calls and does not choose the user.
   - id: d
-    text: "`status.containerStatuses[].imageID`"
-    explanation: Correct. The container runtime reports the resolved content, normally with the repository digest.
+    text: "`runAsNonRoot: true` with a numeric `runAsUser`"
+    explanation: Correct. The kubelet can compare a number with 0, but it cannot verify
+      a name.
   correct_option: d
-  explanation: The `imageID` field in the pod status shows what the runtime resolved. The spec only shows the request.
+  explanation: "`runAsNonRoot` checks the numeric user ID. A numeric `runAsUser` gives
+    it something to check."
 - id: ats035-final-q03
   type: single_choice
-  difficulty: beginner
-  learning_objective: Explain what a multi-stage build removes from the final image.
+  difficulty: advanced
+  learning_objective: Describe how a base image fix reaches a running workload.
   source_readings:
-  - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
-  prompt: Why does a multi-stage build produce a smaller and safer final image?
+  - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+  prompt: The publisher fixes a vulnerability in the base image. Your workload runs
+    an image built on the old base and pinned by digest. What must happen before the
+    fix runs in the cluster?
   options:
   - id: a
-    text: Only the files copied with `COPY --from` reach the final stage, so the compiler and build files stay out
-    explanation: Correct. The earlier stages are not part of the final image.
+    text: Nothing, because the registry updates every pinned image
+    explanation: A registry never changes content that a digest selects.
   - id: b
-    text: The engine compresses every layer twice
-    explanation: Compression is not what changes the content of the image.
+    text: Restart the pods so the node pulls the fix
+    explanation: A restart starts the same pinned content again.
   - id: c
-    text: The final stage gets a newer kernel
-    explanation: Images do not contain a kernel. The node kernel runs the container.
+    text: Change `imagePullPolicy` to `Always`
+    explanation: The digest still selects the old content.
   - id: d
-    text: The engine deletes the source code after the build in every case
-    explanation: The engine does not delete anything in a single-stage build.
-  correct_option: a
-  explanation: Each stage starts a new filesystem. The final image has only the last stage plus what it copied.
-- id: ats035-final-q04
-  type: single_choice
-  difficulty: intermediate
-  learning_objective: Pick the right final base image for a static binary.
-  source_readings:
-  - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
-  prompt: A team ships a Go service compiled with `CGO_ENABLED=0`. It must run as non-root, and the image must have no shell or package manager. Which final base image fits?
-  options:
-  - id: a
-    text: "`docker.io/library/ubuntu`"
-    explanation: Ubuntu has a shell and a package manager, which the team wants to remove.
-  - id: b
-    text: "`gcr.io/distroless/static-debian12:nonroot`"
-    explanation: Correct. It holds no shell, no package manager and defaults to a non-root user, and a static binary needs nothing more.
-  - id: c
-    text: "`docker.io/library/golang`"
-    explanation: This is the build image with the whole toolchain.
-  - id: d
-    text: "`docker.io/library/alpine`"
-    explanation: Alpine is small but includes BusyBox and `apk`.
-  correct_option: b
-  explanation: A static binary runs on distroless `static` or `scratch`. The `nonroot` tag sets the user.
-- id: ats035-final-q05
-  type: single_choice
-  difficulty: intermediate
-  learning_objective: Explain why a secret removed in a later instruction stays in the image.
-  source_readings:
-  - sections/section-010/module-01/course-03-hardening-a-dockerfile.md
-  prompt: A Dockerfile has `COPY token.txt /token.txt` and, in the next instruction, `RUN rm /token.txt`. The final image has no `/token.txt`. Is the token safe?
-  options:
-  - id: a
-    text: Yes, because the final filesystem has no such file
-    explanation: The file is hidden in the final view only.
-  - id: b
-    text: Yes, but only if the image is pushed over TLS
-    explanation: TLS protects transport and does not change what the layers contain.
-  - id: c
-    text: No, because the `COPY` layer still contains the file and anyone who pulls the image can extract it
-    explanation: Correct. Layers are permanent archives, and the history also records the instruction.
-  - id: d
-    text: No, but only if the registry is public
-    explanation: A private registry limits who can pull but the layer still holds the secret.
-  correct_option: c
-  explanation: Use a secret mount (`RUN --mount=type=secret`) so the value is never written into a layer.
-- id: ats035-final-q06
-  type: single_choice
-  difficulty: intermediate
-  learning_objective: Use numeric users with runAsNonRoot.
-  source_readings:
-  - sections/section-010/module-01/course-03-hardening-a-dockerfile.md
-  - sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
-  prompt: 'A pod sets `runAsNonRoot: true`. The image has `USER app` and no `runAsUser` in the pod. The container fails to start with an error that the user cannot be verified. What is the best fix?'
-  options:
-  - id: a
-    text: Remove `runAsNonRoot` from the pod
-    explanation: This hides the check and permits root.
-  - id: b
-    text: 'Set `privileged: true`'
-    explanation: This makes the container less safe and does not address the user.
-  - id: c
-    text: 'Use `imagePullPolicy: Always`'
-    explanation: The pull policy does not affect how the user is verified.
-  - id: d
-    text: Use a numeric `USER` in the image or set `runAsUser` in the pod
-    explanation: Correct. The kubelet can verify a numeric user ID is not 0, but it cannot map a name.
+    text: Rebuild the image on the new base, publish its new digest and redeploy with
+      that digest
+    explanation: Correct. The fix exists only in new layers, so a rebuild, a new digest
+      and a redeployment are needed.
   correct_option: d
-  explanation: The kubelet checks user IDs. A user name is not enough for that check.
-- id: ats035-final-q07
+  explanation: An image keeps the base layers from its build time. A new digest in
+    the manifest replaces the old content.
+- id: ats035-final-q04
   type: single_choice
   difficulty: beginner
   learning_objective: Name what an SBOM proves.
@@ -154,10 +102,12 @@ questions:
   options:
   - id: a
     text: The components inside it, with versions
-    explanation: Correct. It is a list of components. Vulnerability status needs a separate scan.
+    explanation: Correct. It is a list of components. Vulnerability status needs a
+      separate scan.
   - id: b
     text: Whether the image is free of vulnerabilities
-    explanation: An SBOM lists components and does not match them to vulnerability data.
+    explanation: An SBOM lists components and does not match them to vulnerability
+      data.
   - id: c
     text: Who signed the image
     explanation: A signature is separate evidence.
@@ -166,117 +116,55 @@ questions:
     explanation: That is provenance, a separate statement.
   correct_option: a
   explanation: An SBOM answers what is in the artifact.
-- id: ats035-final-q08
-  type: single_choice
-  difficulty: beginner
-  learning_objective: Tell SPDX and CycloneDX apart.
-  source_readings:
-  - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
-  prompt: Which pair correctly matches SBOM formats with their origin?
-  options:
-  - id: a
-    text: SPDX with OWASP and CycloneDX with the Linux Foundation
-    explanation: The origins are swapped.
-  - id: b
-    text: SPDX with the Linux Foundation and CycloneDX with OWASP
-    explanation: Correct. SPDX started with license compliance, and CycloneDX was designed for security use.
-  - id: c
-    text: Both are formats of the Kubernetes project
-    explanation: Neither format belongs to the Kubernetes project.
-  - id: d
-    text: SPDX is only for container images and CycloneDX is only for source code
-    explanation: Both formats describe many kinds of software.
-  correct_option: b
-  explanation: SPDX is from the Linux Foundation and CycloneDX is from OWASP.
-- id: ats035-final-q09
-  type: single_choice
-  difficulty: beginner
-  learning_objective: Choose the field that shows what a node ran.
-  source_readings:
-  - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
-  prompt: You need an inventory of the exact image content that runs in a cluster. Which data do you collect?
-  options:
-  - id: a
-    text: The image tags in `spec.containers[].image`
-    explanation: Tags can move.
-  - id: b
-    text: The pod names
-    explanation: Pod names do not identify content.
-  - id: c
-    text: The `imageID` values from the container statuses
-    explanation: Correct. The runtime resolved these to content digests.
-  - id: d
-    text: The namespace labels
-    explanation: Labels say nothing about image content.
-  correct_option: c
-  explanation: Use `status.containerStatuses[].imageID`, and also the init and ephemeral container statuses.
-- id: ats035-final-q10
+- id: ats035-final-q05
   type: single_choice
   difficulty: intermediate
-  learning_objective: Generate several SBOM formats with Syft.
+  learning_objective: Split a package line from `apk info -v` into name and version.
   source_readings:
-  - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
-  prompt: Which Syft command writes an SPDX JSON file and a CycloneDX JSON file in one run?
+  - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+  prompt: A line from `apk info -v` reads `ca-certificates-bundle-20240705-r0`. What
+    is the package name?
   options:
   - id: a
-    text: "`syft scan IMAGE -o spdx-json=a.json -o cyclonedx-json=b.json`"
-    explanation: Correct. The `-o` option takes `format=file` and can repeat.
+    text: "`ca`"
+    explanation: Splitting at the first dash cuts the name too early.
   - id: b
-    text: "`syft sign IMAGE --spdx --cyclonedx`"
-    explanation: Syft does not sign images.
+    text: "`ca-certificates-bundle-20240705`"
+    explanation: This keeps the version `20240705` in the name. The version and release
+      are the last two parts.
   - id: c
-    text: "`syft scan IMAGE --format both`"
-    explanation: There is no `both` format.
+    text: "`ca-certificates`"
+    explanation: The word `bundle` is part of the name.
   - id: d
-    text: "`syft verify IMAGE -o spdx-json`"
-    explanation: Syft does not verify; it creates SBOMs.
-  correct_option: a
-  explanation: Syft writes several outputs when `-o` repeats with `format=file`.
-- id: ats035-final-q11
-  type: single_choice
-  difficulty: intermediate
-  learning_objective: Interpret a mismatch between an SBOM and a pod.
-  source_readings:
-  - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
-  prompt: The package list from `apk info -v` in a running pod differs from the Alpine packages in an SBOM that you made last week from the same tag. What is the most likely cause?
-  options:
-  - id: a
-    text: The SBOM format is wrong
-    explanation: Both formats list the same packages.
-  - id: b
-    text: "`apk` prints packages in random order"
-    explanation: Sorting removes order differences.
-  - id: c
-    text: Kubernetes edits the packages when it starts a pod
-    explanation: Kubernetes does not change image content.
-  - id: d
-    text: The tag moved, so the SBOM describes different content than the pod runs
-    explanation: Correct. Scan the digest from `imageID` to tie the two together.
+    text: "`ca-certificates-bundle`"
+    explanation: Correct. The version and release are the last two dash-separated
+      parts.
   correct_option: d
-  explanation: An SBOM must refer to the digest that runs.
-- id: ats035-final-q12
+  explanation: The name is everything before the last two dashes.
+- id: ats035-final-q06
   type: single_choice
   difficulty: intermediate
-  learning_objective: Filter a Trivy report for a pipeline gate.
+  learning_objective: Separate push rights from pull rights on a registry.
   source_readings:
-  - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
-  prompt: A pipeline must fail only on high or critical findings that have a fix available. Which command does this?
+  - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+  prompt: Which registry design limits the damage when the cluster pull credential
+    leaks?
   options:
   - id: a
-    text: "`trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 IMAGE`"
-    explanation: Correct. The filters select the findings and `--exit-code 1` fails the step.
+    text: One administrator account shared by the pipeline and the cluster
+    explanation: A leak then gives write and delete rights to every repository.
   - id: b
-    text: "`trivy image --exit-code 0 IMAGE`"
-    explanation: Exit code 0 never fails the step.
+    text: A password that never changes, stored in every namespace
+    explanation: Wide distribution and no rotation increase the risk.
   - id: c
-    text: "`trivy image --severity LOW IMAGE`"
-    explanation: This selects low findings only and does not set an exit code.
+    text: Anonymous pull access for the production repositories
+    explanation: Anyone could then read the images.
   - id: d
-    text: "`trivy image --list-only IMAGE`"
-    explanation: This is not a Trivy option.
-  correct_option: a
-  explanation: Combine `--severity`, `--ignore-unfixed` and `--exit-code 1`.
-- id: ats035-final-q13
+    text: A read-only identity limited to the repositories the workload needs
+    explanation: Correct. A leaked pull credential cannot push or delete.
+  correct_option: d
+  explanation: Give each purpose its own narrow identity.
+- id: ats035-final-q07
   type: single_choice
   difficulty: beginner
   learning_objective: Place admission in the request path.
@@ -288,7 +176,8 @@ questions:
     text: Validating admission, mutating admission, authorization, authentication
     explanation: This order is reversed.
   - id: b
-    text: Authentication, authorization, mutating admission, schema validation, validating admission
+    text: Authentication, authorization, mutating admission, schema validation, validating
+      admission
     explanation: Correct. Validating admission runs last, so it sees the final object.
   - id: c
     text: Authorization, mutating admission, authentication, validating admission
@@ -298,245 +187,126 @@ questions:
     explanation: Admission runs after authentication and authorization.
   correct_option: b
   explanation: Mutation runs before validation so that rules check the final object.
-- id: ats035-final-q14
-  type: single_choice
-  difficulty: beginner
-  learning_objective: Know what makes a ValidatingAdmissionPolicy active.
-  source_readings:
-  - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
-  prompt: A cluster administrator creates a ValidatingAdmissionPolicy and sees no effect on new pods. What is missing?
-  options:
-  - id: a
-    text: A ValidatingAdmissionPolicyBinding that names the policy
-    explanation: Correct. The binding turns the policy on and sets the actions.
-  - id: b
-    text: A restart of the kube-apiserver
-    explanation: Policies take effect without a restart.
-  - id: c
-    text: A webhook certificate
-    explanation: A policy runs inside the API server and needs no certificate.
-  - id: d
-    text: A RoleBinding for the policy
-    explanation: RBAC does not enable policies.
-  correct_option: a
-  explanation: Policy plus binding make an active rule.
-- id: ats035-final-q15
-  type: single_choice
-  difficulty: beginner
-  learning_objective: Describe ImagePolicyWebhook.
-  source_readings:
-  - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
-  prompt: 'What does the `defaultAllow: false` setting of ImagePolicyWebhook do?'
-  options:
-  - id: a
-    text: It rejects pods when the external backend cannot be reached
-    explanation: Correct. This is the fail-closed choice.
-  - id: b
-    text: It allows only images with the `latest` tag
-    explanation: The setting does not look at tags.
-  - id: c
-    text: It disables the plugin
-    explanation: The plugin is enabled with an API server flag.
-  - id: d
-    text: It skips init containers
-    explanation: Containers are all sent in the ImageReview.
-  correct_option: a
-  explanation: With `true`, an unreachable backend lets pods through.
-- id: ats035-final-q16
+- id: ats035-final-q08
   type: single_choice
   difficulty: intermediate
-  learning_objective: Use warning mode before enforcement.
+  learning_objective: State what a digest rule can and cannot check.
   source_readings:
-  - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
-  prompt: You want to see which existing manifests a new registry rule would block without breaking any deployment. Which `validationActions` do you set first?
+  - sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
+  prompt: Can a ValidatingAdmissionPolicy confirm that the digest in an image reference
+    exists in the registry?
   options:
   - id: a
-    text: "`Deny`"
-    explanation: This blocks requests immediately.
+    text: No. The API server only reads the text of the reference and does not pull
+      images
+    explanation: Correct. CEL has no registry access.
   - id: b
-    text: "`Deny` and `Audit`"
-    explanation: This still blocks requests.
+    text: Yes. The API server pulls the manifest before admission
+    explanation: The API server does not pull images; nodes do.
   - id: c
-    text: "`Warn` and `Audit`"
-    explanation: Correct. Requests are accepted, and violations show as warnings and audit annotations.
+    text: Yes, when the binding uses `Deny`
+    explanation: The validation action does not add registry access.
   - id: d
-    text: An empty list
-    explanation: An empty list is not a valid choice for a binding.
+    text: Yes, when `failurePolicy` is `Fail`
+    explanation: "`failurePolicy` decides what happens on evaluation errors only."
+  correct_option: a
+  explanation: The rule checks the form of the reference. A signature check or a pull
+    is needed to learn more.
+- id: ats035-final-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Explain the effect of defaultAllow on ImagePolicyWebhook.
+  source_readings:
+  - sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+  prompt: 'ImagePolicyWebhook is enabled with `defaultAllow: true`, and its backend
+    service is down. What happens to new pods?'
+  options:
+  - id: a
+    text: The plugin admits them without an image decision, so the check fails open
+    explanation: Correct. Users see no error and the control is off.
+  - id: b
+    text: The plugin rejects every pod
+    explanation: 'That is the result of `defaultAllow: false`.'
+  - id: c
+    text: The API server stops until the backend returns
+    explanation: The API server keeps running and applies the default.
+  - id: d
+    text: Only pods from private registries are rejected
+    explanation: The default does not depend on the registry.
+  correct_option: a
+  explanation: 'Security controls use `defaultAllow: false` so that an outage blocks
+    pods instead of disabling the check.'
+- id: ats035-final-q10
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose the Trivy command for an input.
+  source_readings:
+  - sections/section-040/module-02/course-01-what-trivy-scans-images-folders-and-configuration.md
+  prompt: You want to find risky settings, such as a privileged container, in a folder
+    of Kubernetes manifests. Which command fits?
+  options:
+  - id: a
+    text: "`trivy image` with the image name"
+    explanation: It reads the packages inside an image, not the settings in a manifest.
+  - id: b
+    text: "`trivy fs` with the folder and the default scanners"
+    explanation: It looks for vulnerable dependencies and secrets, not for manifest
+      misconfigurations.
+  - id: c
+    text: "`trivy config` with the folder"
+    explanation: Correct. The `config` command applies misconfiguration rules to Kubernetes
+      YAML.
+  - id: d
+    text: "`trivy version`"
+    explanation: It prints version information and scans nothing.
   correct_option: c
-  explanation: Observe first with `Warn` and `Audit`, then move to `Deny`.
-- id: ats035-final-q17
+  explanation: 'Each Trivy command reads a different input: image, folder or configuration.'
+- id: ats035-final-q11
   type: single_choice
-  difficulty: intermediate
-  learning_objective: Write a safe prefix.
+  difficulty: beginner
+  learning_objective: Name the Pod Security Standards.
   source_readings:
-  - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
-  prompt: Which prefix is the safest in a registry rule that uses `startsWith`?
+  - sections/section-040/module-03/course-01-the-pod-security-standards.md
+  prompt: Which list names the three Pod Security Standards from least to most strict?
   options:
   - id: a
-    text: "`docker.io/lib`"
-    explanation: It also matches `docker.io/library-evil/app`.
+    text: "`open`, `closed`, `locked`"
+    explanation: These are not Pod Security Standard names.
   - id: b
-    text: "`library`"
-    explanation: It matches many unrelated strings.
+    text: "`audit`, `warn`, `enforce`"
+    explanation: These are modes, not standards.
   - id: c
-    text: "`docker.io`"
-    explanation: It allows every repository on the registry.
+    text: "`restricted`, `baseline`, `privileged`"
+    explanation: This lists the standards from most to least strict.
   - id: d
-    text: "`docker.io/library/`"
-    explanation: Correct. The trailing slash limits the match to that repository path.
+    text: "`privileged`, `baseline`, `restricted`"
+    explanation: Correct. Each level contains the limits of the one before it.
   correct_option: d
-  explanation: End the prefix with a slash.
-- id: ats035-final-q18
+  explanation: privileged has no limits, baseline blocks known escalation paths, and
+    restricted adds hardening requirements.
+- id: ats035-final-q12
   type: single_choice
-  difficulty: intermediate
-  learning_objective: Explain the Deployment gap.
+  difficulty: advanced
+  learning_objective: Fix a pod that fails the restricted standard.
   source_readings:
-  - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
-  prompt: A registry policy denies pods with an unapproved image. A user applies a Deployment that uses such an image. `kubectl apply` succeeds, and no pods appear. Why?
+  - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+  prompt: 'A pod sets only `runAsNonRoot: true` and `runAsUser: 1000`. It is rejected
+    in a `restricted` namespace. Which set of changes fixes it?'
   options:
   - id: a
-    text: The Deployment is admitted because the policy matches only pods, and the ReplicaSet fails to create the pods
-    explanation: Correct. The events of the ReplicaSet carry the policy message.
+    text: 'Add `privileged: false` and `readOnlyRootFilesystem: true`'
+    explanation: No standard requires a read-only file system, and the other required
+      fields are still missing.
   - id: b
-    text: The API server ignores Deployments in all namespaces
-    explanation: Deployments are admitted normally.
+    text: 'Add `allowPrivilegeEscalation: false`, drop all capabilities and set the
+      `RuntimeDefault` seccomp profile'
+    explanation: Correct. These are the remaining requirements of the restricted standard.
   - id: c
-    text: The binding uses `Audit`, which hides errors
-    explanation: The pods are denied, so the action is `Deny`.
+    text: Label the namespace with `warn` instead of `enforce`
+    explanation: This lets the pod in but does not make it meet the standard.
   - id: d
-    text: The scheduler rejects the image
-    explanation: The scheduler does not check registries.
-  correct_option: a
-  explanation: Check events when a rollout stalls after a clean apply.
-- id: ats035-final-q19
-  type: single_choice
-  difficulty: beginner
-  learning_objective: Say what static analysis reads.
-  source_readings:
-  - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
-  prompt: What does a manifest static check read?
-  options:
-  - id: a
-    text: The fields of the YAML or JSON document
-    explanation: Correct. It never starts the workload.
-  - id: b
-    text: The memory of the running container
-    explanation: That is run-time analysis.
-  - id: c
-    text: The network traffic of the pod
-    explanation: Static tools do not see traffic.
-  - id: d
-    text: The logs of the node
-    explanation: Logs are not an input of a manifest check.
-  correct_option: a
-  explanation: Static analysis tests declared fields only.
-- id: ats035-final-q20
-  type: single_choice
-  difficulty: beginner
-  learning_objective: Choose the right scan input.
-  source_readings:
-  - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
-  prompt: A team uses Kustomize overlays. Which input should the scanner read?
-  options:
-  - id: a
-    text: Only the base file
-    explanation: Overlays change fields after the base.
-  - id: b
-    text: The rendered output, for example from `kubectl kustomize`
-    explanation: Correct. It is what the cluster receives.
-  - id: c
-    text: The Dockerfile
-    explanation: It does not describe the Kubernetes object.
-  - id: d
-    text: The README
-    explanation: It holds no fields to test.
+    text: 'Set `hostNetwork: true`'
+    explanation: Host networking is forbidden by baseline and restricted.
   correct_option: b
-  explanation: Scan the final manifest.
-- id: ats035-final-q21
-  type: single_choice
-  difficulty: beginner
-  learning_objective: Read the Kubesec report groups.
-  source_readings:
-  - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
-  prompt: In a Kubesec report, what does the `critical` group hold?
-  options:
-  - id: a
-    text: 'Settings that make the pod dangerous, such as `privileged: true`'
-    explanation: Correct. They lower the score.
-  - id: b
-    text: Rules the manifest passes
-    explanation: These are in `passed`.
-  - id: c
-    text: Optional improvements
-    explanation: These are in `advise`.
-  - id: d
-    text: Image vulnerabilities
-    explanation: Kubesec does not scan images.
-  correct_option: a
-  explanation: Read the critical list first.
-- id: ats035-final-q22
-  type: single_choice
-  difficulty: intermediate
-  learning_objective: Interpret a high score.
-  source_readings:
-  - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
-  prompt: A Deployment has a high Kubesec score and uses an image with a known critical vulnerability. What follows?
-  options:
-  - id: a
-    text: It is safe because the score is high
-    explanation: The score ignores image content.
-  - id: b
-    text: Kubesec will block the image
-    explanation: Kubesec does not scan images.
-  - id: c
-    text: The score is invalid
-    explanation: The score is valid for the declarations.
-  - id: d
-    text: The manifest is well hardened, and the image still needs its own scan
-    explanation: Correct. Manifest and image evidence are separate.
-  correct_option: d
-  explanation: A score ranks declarations only.
-- id: ats035-final-q23
-  type: single_choice
-  difficulty: intermediate
-  learning_objective: Use the KubeLinter exit code.
-  source_readings:
-  - sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
-  prompt: Why does the exit code of `kube-linter lint` matter in a pipeline?
-  options:
-  - id: a
-    text: A non-zero code on findings fails the step and gates the release
-    explanation: Correct.
-  - id: b
-    text: It prints the report in colour
-    explanation: The exit code does not change output colour.
-  - id: c
-    text: It selects the checks
-    explanation: Checks come from the configuration.
-  - id: d
-    text: It fixes the manifest
-    explanation: KubeLinter does not edit files.
-  correct_option: a
-  explanation: A gate needs a failing exit code.
-- id: ats035-final-q24
-  type: single_choice
-  difficulty: intermediate
-  learning_objective: Scope an exception.
-  source_readings:
-  - sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
-  prompt: One Deployment must write cache files, so `no-read-only-root-fs` must not fail for it. What is the narrowest way to record this?
-  options:
-  - id: a
-    text: Exclude the check in `.kube-linter.yaml`
-    explanation: This applies to every object.
-  - id: b
-    text: Delete the check from the tool
-    explanation: Not possible and not wise.
-  - id: c
-    text: Add `ignore-check.kube-linter.io/no-read-only-root-fs` with a reason to that object
-    explanation: Correct. It affects one object and keeps the reason in the manifest.
-  - id: d
-    text: Stop linting the namespace
-    explanation: This drops all checks.
-  correct_option: c
-  explanation: Use an object annotation with a reason and owner.
+  explanation: The error message lists every violated field, and the fix is to set
+    each of them.

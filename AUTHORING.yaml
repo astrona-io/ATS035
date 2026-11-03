@@ -1,3 +1,4 @@
+---
 version: 1
 approval: Maintainer requested CKA and CKS playgrounds and graded labs on 2026-10-13,
   superseding the earlier reading-only scope.
@@ -19,16 +20,16 @@ course:
 defaults:
   playground: true
   module_lab: false
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
   final_quiz: true
 assessment_format: YAML question banks v1, registered in assessments/index.yaml
 sections:
 - id: section-010
   title: Minimize base image footprint
   curriculum_item: Minimize base image footprint
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
   modules:
   - id: module-01
     title: Image Identity And Distribution
@@ -48,7 +49,7 @@ sections:
     - reading: sections/section-010/module-01/course-02-from-build-to-image-pull.md
       adapted_from: ATS027/sections/section-010/module-01/course-02-from-build-to-image-pull.md
     - reading: sections/section-010/module-01/course-03-guided-practice.md
-      adapted_from: null
+      adapted_from: 
     labs:
     - id: lab-01
       path: sections/section-010/module-01/labs/lab-01
@@ -59,11 +60,66 @@ sections:
       runtime_verification: pending
     practice_readings:
     - sections/section-010/module-01/course-03-guided-practice.md
+  - id: module-02
+    title: Compare Base Images And Their Attack Surface
+    objectives:
+    - Describe what Debian, Alpine, distroless and scratch base images contain.
+    - Explain the difference between musl and glibc and static binaries.
+    - Read the user, capabilities and filesystem state of a running container.
+    - Restrict a pod with a non-root user, read-only root filesystem, dropped capabilities
+      and seccomp.
+    outline:
+    - What Each Base Image Contains
+    - Measure What A Running Container Can Reach
+    playground: true
+    module_lab: true
+    sources:
+    - reading: sections/section-010/module-02/course-01-what-each-base-image-contains.md
+      adapted_from: 
+    - reading: sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+      adapted_from: 
+    labs:
+    - id: lab-01
+      path: sections/section-010/module-02/labs/lab-01
+      after_reading: sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+      objective: Run a BusyBox pod as a numeric non-root user with a read-only root
+        filesystem, no capabilities and the runtime default seccomp profile.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-010/module-02/playground/docs/overview.md
+  - id: module-03
+    title: Keep Images Small And Fresh Over Time
+    objectives:
+    - Read a digest from a running container and write a digest reference.
+    - Explain digest pin maintenance with update tools.
+    - Explain imagePullPolicy defaults and behavior.
+    - Describe rebuild rules, size budgets and registry retention.
+    outline:
+    - Pin Images By Digest And Keep The Pin Current
+    - Pull Policy, Rebuild Cadence And Size Budgets
+    playground: true
+    module_lab: true
+    sources:
+    - reading: sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+      adapted_from: 
+    - reading: sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+      adapted_from: 
+    labs:
+    - id: lab-01
+      path: sections/section-010/module-03/labs/lab-01
+      after_reading: sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+      objective: Start a pod that refers to the BusyBox image by the digest that the
+        node reports.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-010/module-03/playground/docs/overview.md
 - id: section-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
   curriculum_item: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
   modules:
   - id: module-01
     title: Supply Chain Trust And Verification
@@ -83,7 +139,7 @@ sections:
     - reading: sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
       adapted_from: ATS045/sections/section-010/module-01/course-02-connecting-verification-to-execution-policy.md
     - reading: sections/section-020/module-01/course-03-guided-practice.md
-      adapted_from: null
+      adapted_from: 
     labs:
     - id: lab-01
       path: sections/section-020/module-01/labs/lab-01
@@ -94,13 +150,65 @@ sections:
       runtime_verification: pending
     practice_readings:
     - sections/section-020/module-01/course-03-guided-practice.md
+  - id: module-02
+    title: Generate And Read Software Bills Of Materials
+    objectives:
+    - Name the main fields of SPDX and CycloneDX documents.
+    - Write the package URL of an Alpine package.
+    - Explain how an SBOM is matched to vulnerabilities and bound to an image digest.
+    - State what an SBOM does not prove.
+    outline:
+    - Reading SPDX And CycloneDX Documents
+    - Matching An SBOM To Vulnerabilities And An Image Digest
+    playground: true
+    module_lab: true
+    sources:
+    - reading: sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+      adapted_from: 
+    - reading: sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+      adapted_from: 
+    labs:
+    - id: lab-01
+      path: sections/section-020/module-02/labs/lab-01
+      after_reading: sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+      objective: Record a CycloneDX-style component list for the running probe image,
+        bound to its image identity.
+      status: draft
+      runtime_verification: pending
+  - id: module-03
+    title: Provenance, Artifact Repositories And Pull Access
+    objectives:
+    - Describe registry controls and separate push rights from pull rights.
+    - Attach a registry pull secret to a service account.
+    - Explain build provenance and the SLSA build levels.
+    outline:
+    - Registries, Repositories And Who May Push Or Pull
+    - Pull Secrets And Service Accounts
+    - Build Provenance And SLSA Levels
+    playground: true
+    module_lab: true
+    sources:
+    - reading: sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+      adapted_from: 
+    - reading: sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+      adapted_from: 
+    - reading: sections/section-020/module-03/course-03-build-provenance-and-slsa-levels.md
+      adapted_from: 
+    labs:
+    - id: lab-01
+      path: sections/section-020/module-03/labs/lab-01
+      after_reading: sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+      objective: Create a registry pull secret, attach it to a service account and
+        run a pod that receives it.
+      status: draft
+      runtime_verification: pending
 - id: section-030
   title: Secure your supply chain (permitted registries, sign and validate artifacts,
     etc.)
   curriculum_item: Secure your supply chain (permitted registries, sign and validate
     artifacts, etc.)
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
   modules:
   - id: module-01
     title: Admission Policy And Extension Trust
@@ -120,7 +228,7 @@ sections:
     - reading: sections/section-030/module-01/course-02-connecting-verification-to-execution-policy.md
       adapted_from: ATS045/sections/section-010/module-01/course-02-connecting-verification-to-execution-policy.md
     - reading: sections/section-030/module-01/course-03-guided-practice.md
-      adapted_from: null
+      adapted_from: 
     labs:
     - id: lab-01
       path: sections/section-030/module-01/labs/lab-01
@@ -131,13 +239,77 @@ sections:
       runtime_verification: pending
     practice_readings:
     - sections/section-030/module-01/course-03-guided-practice.md
+  - id: module-02
+    title: Require Image Digests And Verify Signatures
+    objectives:
+    - Require digest references with a ValidatingAdmissionPolicy and roll the rule
+      out with Warn, Audit and Deny.
+    - Explain where cosign stores signatures and attestations and what a verifier
+      compares.
+    - Compare key-based and keyless signing, including identity, issuer and the transparency
+      log.
+    - Name the components that verify signatures at admission and the limits of the
+      check.
+    outline:
+    - A Digest Rule With ValidatingAdmissionPolicy
+    - Signatures, Attestations And Keyless Signing
+    - Enforcing Verification And Its Limits
+    playground: true
+    module_lab: true
+    sources:
+    - reading: sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
+      adapted_from: 
+    - reading: sections/section-030/module-02/course-02-signatures-attestations-and-keyless-signing.md
+      adapted_from: 
+    - reading: sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
+      adapted_from: 
+    labs:
+    - id: lab-01
+      path: sections/section-030/module-02/labs/lab-01
+      after_reading: sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
+      objective: Deny a pod whose image is not referenced by digest and admit a pod
+        whose image is.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-030/module-02/playground/docs/overview.md
+  - id: module-03
+    title: ImagePullSecrets, ImagePolicyWebhook And Admission Failure Modes
+    objectives:
+    - Create and attach image pull secrets and explain how the kubelet uses them.
+    - Describe the ImagePolicyWebhook configuration files and the defaultAllow setting.
+    - Distinguish Audit, Warn and Deny and explain failurePolicy and namespace selectors.
+    - Find and repair audit-only, fail-open and exempted checks.
+    outline:
+    - Pull Credentials For Private Registries
+    - The ImagePolicyWebhook Admission Plugin
+    - Admission Failure Modes And Exemptions
+    playground: true
+    module_lab: true
+    sources:
+    - reading: sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+      adapted_from: 
+    - reading: sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+      adapted_from: 
+    - reading: sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+      adapted_from: 
+    labs:
+    - id: lab-01
+      path: sections/section-030/module-03/labs/lab-01
+      after_reading: sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+      objective: Change an audit-only registry binding to enforcement and attach registry
+        pull credentials to a ServiceAccount.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-030/module-03/playground/docs/overview.md
 - id: section-040
   title: Perform static analysis of user workloads and container images (e.g. Kubesec,
     KubeLinter)
   curriculum_item: Perform static analysis of user workloads and container images
     (e.g. Kubesec, KubeLinter)
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
   modules:
   - id: module-01
     title: Static Workload And Image Analysis In A Release Decision
@@ -152,9 +324,9 @@ sections:
     module_lab: true
     sources:
     - reading: sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
-      adapted_from: null
+      adapted_from: 
     - reading: sections/section-040/module-01/course-02-guided-practice.md
-      adapted_from: null
+      adapted_from: 
     labs:
     - id: lab-01
       path: sections/section-040/module-01/labs/lab-01
@@ -165,3 +337,61 @@ sections:
       runtime_verification: pending
     practice_readings:
     - sections/section-040/module-01/course-02-guided-practice.md
+  - id: module-02
+    title: Scan Images And Configuration With Trivy
+    objectives:
+    - Choose between image, file system and configuration scans.
+    - Build a gate from severity, unfixed and exit-code options.
+    - Record a time-limited scan exception.
+    - Explain database freshness and what a finding proves.
+    outline:
+    - What Trivy Scans: Images, Folders And Configuration
+    - Severity Filters, Unfixed Findings And Exit Codes
+    - Exceptions, Database Freshness And What A Finding Proves
+    playground: true
+    module_lab: true
+    sources:
+    - reading: sections/section-040/module-02/course-01-what-trivy-scans-images-folders-and-configuration.md
+      adapted_from: 
+    - reading: sections/section-040/module-02/course-02-severity-filters-unfixed-findings-and-exit-codes.md
+      adapted_from: 
+    - reading: sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
+      adapted_from: 
+    labs:
+    - id: lab-01
+      path: sections/section-040/module-02/labs/lab-01
+      after_reading: sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
+      objective: Compute a gate decision from scan results, an unfixed filter and
+        an ignore list, and record it.
+      status: draft
+      runtime_verification: pending
+    practice_readings: []
+  - id: module-03
+    title: Enforce Workload Standards With Pod Security Admission
+    objectives:
+    - Name the three Pod Security Standards and what each forbids.
+    - Set enforce, audit and warn modes and a version with namespace labels.
+    - Preview a label change with a server-side dry run.
+    - Write a pod that meets the restricted standard and explain exemptions and limits.
+    outline:
+    - The Pod Security Standards
+    - Namespace Labels, Modes And Versions
+    - Meeting The Restricted Standard, Exemptions And Limits
+    playground: true
+    module_lab: true
+    sources:
+    - reading: sections/section-040/module-03/course-01-the-pod-security-standards.md
+      adapted_from: 
+    - reading: sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+      adapted_from: 
+    - reading: sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+      adapted_from: 
+    labs:
+    - id: lab-01
+      path: sections/section-040/module-03/labs/lab-01
+      after_reading: sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+      objective: Enforce the restricted standard on a namespace, run a compliant pod
+        and show that an unrestricted pod is rejected.
+      status: draft
+      runtime_verification: pending
+    practice_readings: []

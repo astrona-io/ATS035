@@ -1,4 +1,4 @@
-# Knowledge check for section 030, module 01. Contract:
+# Knowledge check for section 030, covering modules 01 to 03. Contract:
 # schemas/question-bank.schema.json. Keep question ids stable once published.
 schema_version: 1
 kind: question_bank
@@ -8,9 +8,9 @@ exam_code: CKS
 status: draft
 provenance: Original practice material written for this course; not official exam questions.
 scope:
-  type: module
-  id: section-030/module-01
-  title: Admission Control, Permitted Registries And Signed Images
+  type: section
+  id: section-030
+  title: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
 questions:
   - id: ats035-030-01-q01
     type: single_choice
@@ -61,48 +61,48 @@ questions:
   - id: ats035-030-01-q03
     type: single_choice
     difficulty: beginner
-    learning_objective: "Describe ImagePolicyWebhook."
+    learning_objective: "Write a digest rule that cannot be bypassed."
     source_readings:
-      - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
-    prompt: "What does the `defaultAllow: false` setting of ImagePolicyWebhook do?"
+      - sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
+    prompt: "Why does the digest rule `i.matches('@sha256:[a-f0-9]{64}$')` end with `$`?"
     options:
       - id: a
-        text: "It rejects pods when the external backend cannot be reached"
-        explanation: "Correct. This is the fail-closed choice."
+        text: "To make the match case-insensitive"
+        explanation: "The `$` anchors the end of the string and has no effect on case."
       - id: b
-        text: "It allows only images with the `latest` tag"
-        explanation: "The setting does not look at tags."
+        text: "To make the API server pull the image"
+        explanation: "The API server never pulls images."
       - id: c
-        text: "It disables the plugin"
-        explanation: "The plugin is enabled with an API server flag."
+        text: "So that extra text after the 64 hexadecimal characters does not pass"
+        explanation: "Correct. The end anchor makes the digest the last part of the reference."
       - id: d
-        text: "It skips init containers"
-        explanation: "Containers are all sent in the ImageReview."
-    correct_option: a
-    explanation: "With `true`, an unreachable backend lets pods through."
+        text: "To select only pods"
+        explanation: "The resource rules select pods, not the regular expression."
+    correct_option: c
+    explanation: "Without the end anchor, text after a digest-like string would still match the rule."
 
   - id: ats035-030-01-q04
     type: single_choice
     difficulty: intermediate
-    learning_objective: "Use warning mode before enforcement."
+    learning_objective: "State what a digest rule can and cannot check."
     source_readings:
-      - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
-    prompt: "You want to see which existing manifests a new registry rule would block without breaking any deployment. Which `validationActions` do you set first?"
+      - sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
+    prompt: "Can a ValidatingAdmissionPolicy confirm that the digest in an image reference exists in the registry?"
     options:
       - id: a
-        text: "`Deny`"
-        explanation: "This blocks requests immediately."
+        text: "No. The API server only reads the text of the reference and does not pull images"
+        explanation: "Correct. CEL has no registry access."
       - id: b
-        text: "`Deny` and `Audit`"
-        explanation: "This still blocks requests."
+        text: "Yes. The API server pulls the manifest before admission"
+        explanation: "The API server does not pull images; nodes do."
       - id: c
-        text: "`Warn` and `Audit`"
-        explanation: "Correct. Requests are accepted, and violations show as warnings and audit annotations."
+        text: "Yes, when the binding uses `Deny`"
+        explanation: "The validation action does not add registry access."
       - id: d
-        text: "An empty list"
-        explanation: "An empty list is not a valid choice for a binding."
-    correct_option: c
-    explanation: "Observe first with `Warn` and `Audit`, then move to `Deny`."
+        text: "Yes, when `failurePolicy` is `Fail`"
+        explanation: "`failurePolicy` decides what happens on evaluation errors only."
+    correct_option: a
+    explanation: "The rule checks the form of the reference. A signature check or a pull is needed to learn more."
 
   - id: ats035-030-01-q05
     type: single_choice
@@ -130,48 +130,48 @@ questions:
   - id: ats035-030-01-q06
     type: single_choice
     difficulty: intermediate
-    learning_objective: "Explain the Deployment gap."
+    learning_objective: "Name the limits of admission-time verification."
     source_readings:
-      - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
-    prompt: "A registry policy denies pods with an unapproved image. A user applies a Deployment that uses such an image. `kubectl apply` succeeds, and no pods appear. Why?"
+      - sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
+    prompt: "A cluster verifies image signatures at admission. Which statement about it is correct?"
     options:
       - id: a
-        text: "The Deployment is admitted because the policy matches only pods, and the ReplicaSet fails to create the pods"
-        explanation: "Correct. The events of the ReplicaSet carry the policy message."
+        text: "It removes pods whose signature is later revoked"
+        explanation: "Admission runs when a pod is created or updated, not continuously."
       - id: b
-        text: "The API server ignores Deployments in all namespaces"
-        explanation: "Deployments are admitted normally."
+        text: "A pod admitted earlier keeps running if its signature is removed or the policy changes"
+        explanation: "Correct. Running pods are not checked again."
       - id: c
-        text: "The binding uses `Audit`, which hides errors"
-        explanation: "The pods are denied, so the action is `Deny`."
+        text: "It proves the image has no vulnerabilities"
+        explanation: "A signature says who vouches for the content, not that it is free of vulnerabilities."
       - id: d
-        text: "The scheduler rejects the image"
-        explanation: "The scheduler does not check registries."
-    correct_option: a
-    explanation: "Check events when a rollout stalls after a clean apply."
+        text: "It also covers namespaces that the policy excludes"
+        explanation: "An excluded namespace is not checked."
+    correct_option: b
+    explanation: "Admission is a point-in-time check on new requests. Audit running workloads separately."
 
   - id: ats035-030-01-q07
     type: single_choice
     difficulty: intermediate
-    learning_objective: "Choose a failure policy."
+    learning_objective: "Explain how a pod receives image pull credentials."
     source_readings:
-      - sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
-    prompt: "A security webhook uses `failurePolicy: Ignore`. What is the risk?"
+      - sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+    prompt: "A pod uses a ServiceAccount whose `imagePullSecrets` lists a registry Secret, and the pod has no `imagePullSecrets` of its own. How does the kubelet get the credentials?"
     options:
       - id: a
-        text: "Requests are slower"
-        explanation: "The setting does not change speed."
+        text: "The kubelet reads every Secret in the namespace"
+        explanation: "The kubelet uses only the Secrets listed for the pod."
       - id: b
-        text: "If the webhook is down or can be made to fail, requests pass without the rule"
-        explanation: "Correct. The rule turns off silently."
+        text: "The container fetches them from the registry at start"
+        explanation: "The kubelet pulls the image before the container starts."
       - id: c
-        text: "All requests are rejected when the webhook is down"
-        explanation: "That is `Fail`."
+        text: "The credentials are copied from the node file system only"
+        explanation: "A node-level provider is optional, not required for this case."
       - id: d
-        text: "The webhook can no longer mutate objects"
-        explanation: "The setting does not affect mutation."
-    correct_option: b
-    explanation: "Use `Fail` for security rules and run the webhook with several replicas."
+        text: "The ServiceAccount admission plugin copies the list into the pod"
+        explanation: "Correct. The pod then carries the Secret name in its own specification."
+    correct_option: d
+    explanation: "The admission plugin adds the ServiceAccount's list, and the kubelet sends the matching credentials to the registry host."
 
   - id: ats035-030-01-q08
     type: single_choice
@@ -200,45 +200,45 @@ questions:
   - id: ats035-030-01-q09
     type: single_choice
     difficulty: advanced
-    learning_objective: "Apply cosign to a digest."
+    learning_objective: "Explain the effect of defaultAllow on ImagePolicyWebhook."
     source_readings:
-      - sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
-    prompt: "A pipeline signs `registry.example/app:1.0` with cosign. Later the tag is moved to other content. What does a verifier that resolves the tag find?"
+      - sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+    prompt: "ImagePolicyWebhook is enabled with `defaultAllow: true`, and its backend service is down. What happens to new pods?"
     options:
       - id: a
-        text: "The signature still applies to the new content"
-        explanation: "A signature covers one digest."
+        text: "The plugin admits them without an image decision, so the check fails open"
+        explanation: "Correct. Users see no error and the control is off."
       - id: b
-        text: "Cosign updates the signature on its own"
-        explanation: "Cosign does not follow tags."
+        text: "The plugin rejects every pod"
+        explanation: "That is the result of `defaultAllow: false`."
       - id: c
-        text: "The registry deletes the signature"
-        explanation: "The signature stays, tied to the old digest."
+        text: "The API server stops until the backend returns"
+        explanation: "The API server keeps running and applies the default."
       - id: d
-        text: "No valid signature for the new digest, because the signature covers the old digest"
-        explanation: "Correct. Sign and verify digests to avoid this."
-    correct_option: d
-    explanation: "A signature is tied to the digest."
+        text: "Only pods from private registries are rejected"
+        explanation: "The default does not depend on the registry."
+    correct_option: a
+    explanation: "Security controls use `defaultAllow: false` so that an outage blocks pods instead of disabling the check."
 
   - id: ats035-030-01-q10
     type: single_choice
     difficulty: advanced
-    learning_objective: "Compare keyless and key-based signing."
+    learning_objective: "Tell an audit-only binding from enforcement."
     source_readings:
-      - sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
-    prompt: "What does a verifier check in keyless signing that it does not check with a key pair?"
+      - sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+    prompt: "A binding for a registry policy has `validationActions: [\"Audit\"]`. A pod with an unapproved image is created in a selected namespace. What happens?"
     options:
       - id: a
-        text: "The signer identity and OIDC issuer in a short-lived certificate"
-        explanation: "Correct. Fulcio binds the key to that identity, and Rekor records the signature."
+        text: "The pod is rejected with the policy message"
+        explanation: "Rejection needs the `Deny` action."
       - id: b
-        text: "The password of the private key"
-        explanation: "The password is never sent to the verifier."
+        text: "The client prints a warning and the pod is rejected"
+        explanation: "`Warn` adds a client warning and never rejects."
       - id: c
-        text: "The size of the image"
-        explanation: "The size is not part of verification."
+        text: "The pod is admitted and the violation is only recorded for audit"
+        explanation: "Correct. Nothing is rejected."
       - id: d
-        text: "The node architecture"
-        explanation: "Architecture does not affect signature checks."
-    correct_option: a
-    explanation: "The verifier names the identity and issuer, since there is no long-lived key."
+        text: "The policy is ignored and the binding is deleted"
+        explanation: "The binding stays and the policy runs."
+    correct_option: c
+    explanation: "Only `Deny` rejects a request. `Audit` and `Warn` leave the pod admitted."

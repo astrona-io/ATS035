@@ -1,243 +1,259 @@
-# Knowledge check for section 020, module 01. Contract:
+# Knowledge check for section 020 (modules 01 to 03). Contract:
 # schemas/question-bank.schema.json. Keep question ids stable once published.
+---
 schema_version: 1
 kind: question_bank
 id: ats035-020-01
 course_id: ATS035
 exam_code: CKS
 status: draft
-provenance: Original practice material written for this course; not official exam questions.
+provenance: Original practice material written for this course; not official exam
+  questions.
 scope:
-  type: module
-  id: section-020/module-01
-  title: Understand The Software Supply Chain
+  type: section
+  id: section-020
+  title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
 questions:
-  - id: ats035-020-01-q01
-    type: single_choice
-    difficulty: beginner
-    learning_objective: "Name what an SBOM proves."
-    source_readings:
-      - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
-    prompt: "What does a software bill of materials (SBOM) tell you about an image?"
-    options:
-      - id: a
-        text: "The components inside it, with versions"
-        explanation: "Correct. It is a list of components. Vulnerability status needs a separate scan."
-      - id: b
-        text: "Whether the image is free of vulnerabilities"
-        explanation: "An SBOM lists components and does not match them to vulnerability data."
-      - id: c
-        text: "Who signed the image"
-        explanation: "A signature is separate evidence."
-      - id: d
-        text: "Which pipeline built the image"
-        explanation: "That is provenance, a separate statement."
-    correct_option: a
-    explanation: "An SBOM answers what is in the artifact."
-
-  - id: ats035-020-01-q02
-    type: single_choice
-    difficulty: beginner
-    learning_objective: "Tell SPDX and CycloneDX apart."
-    source_readings:
-      - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
-    prompt: "Which pair correctly matches SBOM formats with their origin?"
-    options:
-      - id: a
-        text: "SPDX with OWASP and CycloneDX with the Linux Foundation"
-        explanation: "The origins are swapped."
-      - id: b
-        text: "SPDX with the Linux Foundation and CycloneDX with OWASP"
-        explanation: "Correct. SPDX started with license compliance, and CycloneDX was designed for security use."
-      - id: c
-        text: "Both are formats of the Kubernetes project"
-        explanation: "Neither format belongs to the Kubernetes project."
-      - id: d
-        text: "SPDX is only for container images and CycloneDX is only for source code"
-        explanation: "Both formats describe many kinds of software."
-    correct_option: b
-    explanation: "SPDX is from the Linux Foundation and CycloneDX is from OWASP."
-
-  - id: ats035-020-01-q03
-    type: single_choice
-    difficulty: beginner
-    learning_objective: "Choose the field that shows what a node ran."
-    source_readings:
-      - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
-    prompt: "You need an inventory of the exact image content that runs in a cluster. Which data do you collect?"
-    options:
-      - id: a
-        text: "The image tags in `spec.containers[].image`"
-        explanation: "Tags can move."
-      - id: b
-        text: "The pod names"
-        explanation: "Pod names do not identify content."
-      - id: c
-        text: "The `imageID` values from the container statuses"
-        explanation: "Correct. The runtime resolved these to content digests."
-      - id: d
-        text: "The namespace labels"
-        explanation: "Labels say nothing about image content."
-    correct_option: c
-    explanation: "Use `status.containerStatuses[].imageID`, and also the init and ephemeral container statuses."
-
-  - id: ats035-020-01-q04
-    type: single_choice
-    difficulty: intermediate
-    learning_objective: "Generate several SBOM formats with Syft."
-    source_readings:
-      - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
-    prompt: "Which Syft command writes an SPDX JSON file and a CycloneDX JSON file in one run?"
-    options:
-      - id: a
-        text: "`syft scan IMAGE -o spdx-json=a.json -o cyclonedx-json=b.json`"
-        explanation: "Correct. The `-o` option takes `format=file` and can repeat."
-      - id: b
-        text: "`syft sign IMAGE --spdx --cyclonedx`"
-        explanation: "Syft does not sign images."
-      - id: c
-        text: "`syft scan IMAGE --format both`"
-        explanation: "There is no `both` format."
-      - id: d
-        text: "`syft verify IMAGE -o spdx-json`"
-        explanation: "Syft does not verify; it creates SBOMs."
-    correct_option: a
-    explanation: "Syft writes several outputs when `-o` repeats with `format=file`."
-
-  - id: ats035-020-01-q05
-    type: single_choice
-    difficulty: intermediate
-    learning_objective: "Interpret a mismatch between an SBOM and a pod."
-    source_readings:
-      - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
-    prompt: "The package list from `apk info -v` in a running pod differs from the Alpine packages in an SBOM that you made last week from the same tag. What is the most likely cause?"
-    options:
-      - id: a
-        text: "The SBOM format is wrong"
-        explanation: "Both formats list the same packages."
-      - id: b
-        text: "`apk` prints packages in random order"
-        explanation: "Sorting removes order differences."
-      - id: c
-        text: "Kubernetes edits the packages when it starts a pod"
-        explanation: "Kubernetes does not change image content."
-      - id: d
-        text: "The tag moved, so the SBOM describes different content than the pod runs"
-        explanation: "Correct. Scan the digest from `imageID` to tie the two together."
-    correct_option: d
-    explanation: "An SBOM must refer to the digest that runs."
-
-  - id: ats035-020-01-q06
-    type: single_choice
-    difficulty: intermediate
-    learning_objective: "Filter a Trivy report for a pipeline gate."
-    source_readings:
-      - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
-    prompt: "A pipeline must fail only on high or critical findings that have a fix available. Which command does this?"
-    options:
-      - id: a
-        text: "`trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 IMAGE`"
-        explanation: "Correct. The filters select the findings and `--exit-code 1` fails the step."
-      - id: b
-        text: "`trivy image --exit-code 0 IMAGE`"
-        explanation: "Exit code 0 never fails the step."
-      - id: c
-        text: "`trivy image --severity LOW IMAGE`"
-        explanation: "This selects low findings only and does not set an exit code."
-      - id: d
-        text: "`trivy image --list-only IMAGE`"
-        explanation: "This is not a Trivy option."
-    correct_option: a
-    explanation: "Combine `--severity`, `--ignore-unfixed` and `--exit-code 1`."
-
-  - id: ats035-020-01-q07
-    type: single_choice
-    difficulty: intermediate
-    learning_objective: "Explain why a scan result ages."
-    source_readings:
-      - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
-    prompt: "An image scanned clean at build time. Three months later the same digest has a critical finding. What changed?"
-    options:
-      - id: a
-        text: "The image content changed in the registry"
-        explanation: "A digest cannot change without becoming a different digest."
-      - id: b
-        text: "The vulnerability database gained a new CVE for a package already in the image"
-        explanation: "Correct. The content stayed the same and the knowledge changed, so stored artifacts need a scheduled rescan."
-      - id: c
-        text: "Trivy deletes old findings after a scan"
-        explanation: "Trivy does not store findings between runs."
-      - id: d
-        text: "The node kernel was updated"
-        explanation: "The image packages are scanned, not the node kernel."
-    correct_option: b
-    explanation: "Rescan stored images and SBOMs on a schedule."
-
-  - id: ats035-020-01-q08
-    type: single_choice
-    difficulty: intermediate
-    learning_objective: "Pick credentials for a pipeline."
-    source_readings:
-      - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
-    prompt: "A pipeline pushes images to a registry. Which credential design limits the damage of a leak the most?"
-    options:
-      - id: a
-        text: "A personal password stored as a pipeline secret"
-        explanation: "Anyone who can edit the pipeline can read it, and it does not expire."
-      - id: b
-        text: "A shared administrator token for all repositories"
-        explanation: "The scope is as wide as possible."
-      - id: c
-        text: "A short-lived token issued per run through OIDC, with push rights to one repository"
-        explanation: "Correct. It expires and is limited to the repository."
-      - id: d
-        text: "No credential, with an anonymous registry"
-        explanation: "Anyone could then write to the registry."
-    correct_option: c
-    explanation: "Short lifetime and least privilege limit a leak."
-
-  - id: ats035-020-01-q09
-    type: single_choice
-    difficulty: advanced
-    learning_objective: "Reason about build-once promotion."
-    source_readings:
-      - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
-    prompt: "A team rebuilds the image from the same commit for staging and for production. Staging passed all scans. What is the risk?"
-    options:
-      - id: a
-        text: "None, because the commit is identical"
-        explanation: "A rebuild can produce different content: base image, dependency or timestamp changes."
-      - id: b
-        text: "The production digest can differ from the scanned staging digest, so the checks do not apply to what runs"
-        explanation: "Correct. Build once and promote the same digest."
-      - id: c
-        text: "The registry rejects the second push"
-        explanation: "Registries accept new digests."
-      - id: d
-        text: "Kubernetes cannot run an image built twice"
-        explanation: "Kubernetes only needs a valid image reference."
-    correct_option: b
-    explanation: "Promote one digest through the stages."
-
-  - id: ats035-020-01-q10
-    type: single_choice
-    difficulty: advanced
-    learning_objective: "Judge the limits of a pull Secret."
-    source_readings:
-      - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
-    prompt: "A Secret of type `kubernetes.io/dockerconfigjson` holds the registry password. A colleague says it is encrypted because it is a Secret. What is the correct response?"
-    options:
-      - id: a
-        text: "Correct, the API server encrypts it with the node key"
-        explanation: "Secrets are not encrypted by default."
-      - id: b
-        text: "The data is only Base64 encoded, so RBAC limits who can read it, and encryption at rest is a separate setting"
-        explanation: "Correct. Base64 is an encoding, not protection."
-      - id: c
-        text: "The kubelet hides it from `kubectl get`"
-        explanation: "`kubectl` shows the encoded value to anyone with permission."
-      - id: d
-        text: "It is encrypted only in the `kube-system` namespace"
-        explanation: "Namespaces do not change how Secrets are stored."
-    correct_option: b
-    explanation: "Control read access with RBAC and enable encryption at rest."
+- id: ats035-020-01-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Name what an SBOM proves.
+  source_readings:
+  - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
+  prompt: What does a software bill of materials (SBOM) tell you about an image?
+  options:
+  - id: a
+    text: The components inside it, with versions
+    explanation: Correct. It is a list of components. Vulnerability status needs a
+      separate scan.
+  - id: b
+    text: Whether the image is free of vulnerabilities
+    explanation: An SBOM lists components and does not match them to vulnerability
+      data.
+  - id: c
+    text: Who signed the image
+    explanation: A signature is separate evidence.
+  - id: d
+    text: Which pipeline built the image
+    explanation: That is provenance, a separate statement.
+  correct_option: a
+  explanation: An SBOM answers what is in the artifact.
+- id: ats035-020-01-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Interpret a mismatch between an SBOM and a pod.
+  source_readings:
+  - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
+  prompt: The package list from `apk info -v` in a running pod differs from the Alpine
+    packages in an SBOM that you made last week from the same tag. What is the most
+    likely cause?
+  options:
+  - id: a
+    text: The SBOM format is wrong
+    explanation: Both formats list the same packages.
+  - id: b
+    text: "`apk` prints packages in random order"
+    explanation: Sorting removes order differences.
+  - id: c
+    text: Kubernetes edits the packages when it starts a pod
+    explanation: Kubernetes does not change image content.
+  - id: d
+    text: The tag moved, so the SBOM describes different content than the pod runs
+    explanation: Correct. Scan the digest from `imageID` to tie the two together.
+  correct_option: d
+  explanation: An SBOM must refer to the digest that runs.
+- id: ats035-020-01-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain why a scan result ages.
+  source_readings:
+  - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
+  prompt: An image scanned clean at build time. Three months later the same digest
+    has a critical finding. What changed?
+  options:
+  - id: a
+    text: The image content changed in the registry
+    explanation: A digest cannot change without becoming a different digest.
+  - id: b
+    text: The vulnerability database gained a new CVE for a package already in the
+      image
+    explanation: Correct. The content stayed the same and the knowledge changed, so
+      stored artifacts need a scheduled rescan.
+  - id: c
+    text: Trivy deletes old findings after a scan
+    explanation: Trivy does not store findings between runs.
+  - id: d
+    text: The node kernel was updated
+    explanation: The image packages are scanned, not the node kernel.
+  correct_option: b
+  explanation: Rescan stored images and SBOMs on a schedule.
+- id: ats035-020-01-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Judge the limits of a pull Secret.
+  source_readings:
+  - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
+  prompt: A Secret of type `kubernetes.io/dockerconfigjson` holds the registry password.
+    A colleague says it is encrypted because it is a Secret. What is the correct response?
+  options:
+  - id: a
+    text: Correct, the API server encrypts it with the node key
+    explanation: Secrets are not encrypted by default.
+  - id: b
+    text: The data is only Base64 encoded, so RBAC limits who can read it, and encryption
+      at rest is a separate setting
+    explanation: Correct. Base64 is an encoding, not protection.
+  - id: c
+    text: The kubelet hides it from `kubectl get`
+    explanation: "`kubectl` shows the encoded value to anyone with permission."
+  - id: d
+    text: It is encrypted only in the `kube-system` namespace
+    explanation: Namespaces do not change how Secrets are stored.
+  correct_option: b
+  explanation: Control read access with RBAC and enable encryption at rest.
+- id: ats035-020-01-q11
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Write the package URL of an Alpine package.
+  source_readings:
+  - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+  prompt: Which package URL names the Alpine package `musl` at version `1.2.5-r10`?
+  options:
+  - id: a
+    text: "`pkg:alpine/apk/musl@1.2.5-r10`"
+    explanation: The type comes first and the namespace second, so `apk` and `alpine`
+      are swapped.
+  - id: b
+    text: "`pkg:musl/alpine/apk@1.2.5-r10`"
+    explanation: The package name belongs after the namespace, not in the type position.
+  - id: c
+    text: "`pkg:apk/alpine/musl@1.2.5-r10`"
+    explanation: Correct. The form is type, namespace, name and then the version after
+      an at sign.
+  - id: d
+    text: "`apk:alpine/musl-1.2.5-r10`"
+    explanation: A package URL starts with `pkg:` and separates the version with an
+      at sign.
+  correct_option: c
+  explanation: A package URL has the form `pkg:type/namespace/name@version`.
+- id: ats035-020-01-q12
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Split a package line from `apk info -v` into name and version.
+  source_readings:
+  - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+  prompt: A line from `apk info -v` reads `ca-certificates-bundle-20240705-r0`. What
+    is the package name?
+  options:
+  - id: a
+    text: "`ca`"
+    explanation: Splitting at the first dash cuts the name too early.
+  - id: b
+    text: "`ca-certificates-bundle-20240705`"
+    explanation: This keeps the version `20240705` in the name. The version and release
+      are the last two parts.
+  - id: c
+    text: "`ca-certificates`"
+    explanation: The word `bundle` is part of the name.
+  - id: d
+    text: "`ca-certificates-bundle`"
+    explanation: Correct. The version and release are the last two dash-separated
+      parts.
+  correct_option: d
+  explanation: The name is everything before the last two dashes.
+- id: ats035-020-01-q13
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain why an SBOM must name an image digest.
+  source_readings:
+  - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+  prompt: An SBOM was created from `python:3.13-alpine` a month ago. Why can it not
+    prove what runs in a pod today?
+  options:
+  - id: a
+    text: A tag can move, so the SBOM may describe different content than the running
+      image
+    explanation: Correct. Only a digest names exactly one image.
+  - id: b
+    text: SBOMs expire after 30 days
+    explanation: SBOM documents have no built-in expiry.
+  - id: c
+    text: A tag cannot be used to create an SBOM
+    explanation: Tools can scan a tag, but the result is tied to what the tag pointed
+      to at that time.
+  - id: d
+    text: SBOMs only describe the base layer
+    explanation: An SBOM covers every package the tool can identify in all layers.
+  correct_option: a
+  explanation: Bind the SBOM to the digest that the pod status reports.
+- id: ats035-020-01-q14
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain the meaning of a VEX status.
+  source_readings:
+  - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+  prompt: A VEX statement marks a finding `not_affected`. What must accompany the
+    statement?
+  options:
+  - id: a
+    text: A new scan with the same result
+    explanation: A VEX statement exists to explain why a scan result does not apply.
+  - id: b
+    text: A higher severity
+    explanation: The status does not change the severity score.
+  - id: c
+    text: A justification and an owner who can review it
+    explanation: Correct. The status is a claim, so it needs a reason and a review
+      date.
+  - id: d
+    text: A newer image tag
+    explanation: VEX does not require a rebuild.
+  correct_option: c
+  explanation: VEX statements are claims and need a justification.
+- id: ats035-020-01-q15
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Separate push rights from pull rights on a registry.
+  source_readings:
+  - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+  prompt: Which registry design limits the damage when the cluster pull credential
+    leaks?
+  options:
+  - id: a
+    text: One administrator account shared by the pipeline and the cluster
+    explanation: A leak then gives write and delete rights to every repository.
+  - id: b
+    text: A password that never changes, stored in every namespace
+    explanation: Wide distribution and no rotation increase the risk.
+  - id: c
+    text: Anonymous pull access for the production repositories
+    explanation: Anyone could then read the images.
+  - id: d
+    text: A read-only identity limited to the repositories the workload needs
+    explanation: Correct. A leaked pull credential cannot push or delete.
+  correct_option: d
+  explanation: Give each purpose its own narrow identity.
+- id: ats035-020-01-q16
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Attach a pull secret to a service account.
+  source_readings:
+  - sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+  prompt: You name a pull secret in the `imagePullSecrets` of a service account. Which
+    pods receive it?
+  options:
+  - id: a
+    text: Pods created later with that service account in the same namespace
+    explanation: Correct. An admission step copies the secret names into the pod at
+      creation.
+  - id: b
+    text: Every pod in the cluster
+    explanation: The field applies to pods that use this service account.
+  - id: c
+    text: Pods created in any namespace
+    explanation: A pull secret and its pods must be in the same namespace.
+  - id: d
+    text: Existing pods, immediately
+    explanation: Existing pods keep the list they received at creation.
+  correct_option: a
+  explanation: The service account setting applies at pod creation, in the same namespace.
