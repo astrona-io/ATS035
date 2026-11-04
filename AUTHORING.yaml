@@ -56,7 +56,7 @@ sections:
       after_reading: sections/section-010/module-01/course-02-from-build-to-image-pull.md
       objective: Select an image providing only the required HTTP process and verify
         its running contents.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-010/module-01/course-03-guided-practice.md
@@ -84,7 +84,7 @@ sections:
       after_reading: sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
       objective: Run a BusyBox pod as a numeric non-root user with a read-only root
         filesystem, no capabilities and the runtime default seccomp profile.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-010/module-02/playground/docs/overview.md
@@ -111,7 +111,7 @@ sections:
       after_reading: sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
       objective: Start a pod that refers to the BusyBox image by the digest that the
         node reports.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-010/module-03/playground/docs/overview.md
@@ -146,7 +146,7 @@ sections:
       after_reading: sections/section-020/module-01/course-02-connecting-verification-to-execution-policy.md
       objective: Record installed operating-system packages and the image identity
         actually running them.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-020/module-01/course-03-guided-practice.md
@@ -173,7 +173,7 @@ sections:
       after_reading: sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
       objective: Record a CycloneDX-style component list for the running probe image,
         bound to its image identity.
-      status: draft
+      status: alpha
       runtime_verification: pending
   - id: module-03
     title: Provenance, Artifact Repositories And Pull Access
@@ -200,7 +200,7 @@ sections:
       after_reading: sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
       objective: Create a registry pull secret, attach it to a service account and
         run a pod that receives it.
-      status: draft
+      status: alpha
       runtime_verification: pending
 - id: section-030
   title: Secure your supply chain (permitted registries, sign and validate artifacts,
@@ -235,7 +235,7 @@ sections:
       after_reading: sections/section-030/module-01/course-02-connecting-verification-to-execution-policy.md
       objective: Use a validating admission policy and binding to deny an unapproved
         image before scheduling.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-030/module-01/course-03-guided-practice.md
@@ -269,7 +269,7 @@ sections:
       after_reading: sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
       objective: Deny a pod whose image is not referenced by digest and admit a pod
         whose image is.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-030/module-02/playground/docs/overview.md
@@ -299,7 +299,7 @@ sections:
       after_reading: sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
       objective: Change an audit-only registry binding to enforcement and attach registry
         pull credentials to a ServiceAccount.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-030/module-03/playground/docs/overview.md
@@ -333,7 +333,7 @@ sections:
       after_reading: sections/section-040/module-01/course-01-static-workload-and-image-analysis-in-a-release-decision.md
       objective: Inspect a non-executed unsafe resource definition and run a corrected
         restricted workload.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-040/module-01/course-02-guided-practice.md
@@ -363,7 +363,7 @@ sections:
       after_reading: sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
       objective: Compute a gate decision from scan results, an unfixed filter and
         an ignore list, and record it.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings: []
   - id: module-03
@@ -392,6 +392,6 @@ sections:
       after_reading: sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
       objective: Enforce the restricted standard on a namespace, run a compliant pod
         and show that an unrestricted pod is rejected.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings: []
