@@ -50,3 +50,8 @@ This course has 12 ungraded module playgrounds and 16 draft independent labs (12
 | 040/02 | Decide A Scan Gate From Scan Results |
 | 040/03 | Enforce The Restricted Pod Security Standard |
 | 040/capstone | Release A Workload Through Analysis, A Scan Gate And Restricted Admission |
+
+## Authoring and verification
+
+See [AUTHORING.md](AUTHORING.md) for the lab lifecycle and review workflow, and
+[LAB-COVERAGE.md](LAB-COVERAGE.md) for preparation lessons and graded outcomes.
