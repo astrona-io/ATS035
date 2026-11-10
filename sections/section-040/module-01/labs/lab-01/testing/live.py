@@ -5,5 +5,5 @@ if wants('analyzed-reader'):
     spec = get('pod', 'analyzed-reader')['spec']
     mounts = [item for item in spec['containers'][0].get('volumeMounts', []) if item['name'] == 'scratch']
     volumes = [item for item in spec.get('volumes', []) if item['name'] == 'scratch']
-    assert len(mounts) == 1 and all(mounts[0].get(key) == value for key, value in {'name': 'scratch', 'mountPath': '/scratch'}.items()), 'Mount the scratch volume at /scratch as specified'
-    assert len(volumes) == 1 and all(volumes[0].get(key) == value for key, value in {'name': 'scratch', 'emptyDir': {}}.items()), 'Declare the scratch volume as specified'
+    assert len(mounts) == 1 and contains(mounts[0], {'name': 'scratch', 'mountPath': '/scratch'}), 'Mount the scratch volume at /scratch as specified'
+    assert len(volumes) == 1 and contains(volumes[0], {'name': 'scratch', 'emptyDir': {}}), 'Declare the scratch volume as specified'

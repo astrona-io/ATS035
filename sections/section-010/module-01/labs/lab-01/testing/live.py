@@ -13,5 +13,5 @@ if wants('minimal-server'):
     spec = get('pod', 'minimal-server')['spec']
     mounts = [item for item in spec['containers'][0].get('volumeMounts', []) if item['name'] == 'site']
     volumes = [item for item in spec.get('volumes', []) if item['name'] == 'site']
-    assert len(mounts) == 1 and all(mounts[0].get(key) == value for key, value in {'name': 'site', 'mountPath': '/site', 'readOnly': True}.items()), 'Mount the site volume at /site as specified'
-    assert len(volumes) == 1 and all(volumes[0].get(key) == value for key, value in {'name': 'site', 'configMap': {'name': 'minimal-content'}}.items()), 'Declare the site volume as specified'
+    assert len(mounts) == 1 and contains(mounts[0], {'name': 'site', 'mountPath': '/site', 'readOnly': True}), 'Mount the site volume at /site as specified'
+    assert len(volumes) == 1 and contains(volumes[0], {'name': 'site', 'configMap': {'name': 'minimal-content'}}), 'Declare the site volume as specified'
