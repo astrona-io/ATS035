@@ -24,11 +24,31 @@ teardown:
   keepCluster: false
 testing:
   init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
   - name: reference-result
     type: file
     source: solution/apply.sh
-validation:
-  script:
-    name: verify-fields-and-live-evidence
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
     type: file
-    source: validate.sh
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: registry-policy
+    description: ValidatingAdmissionPolicy training-registry checks every container list, bound with Deny to the labelled namespaces
+    type: file
+    source: validation/validate-registry-policy.sh
+    points: 2
+  - name: unapproved-rejected
+    description: approved-images-035-030-01-01 is labelled and rejects an unapproved.example image with the policy message
+    type: file
+    source: validation/validate-unapproved-rejected.sh
+    points: 1
+  - name: approved-reader
+    description: Pod approved-reader from docker.io/library is Ready in approved-images-035-030-01-01
+    type: file
+    source: validation/validate-approved-reader.sh
+    points: 1

@@ -1,21 +1,24 @@
 {
   "context": "kind-astro-ats-035-lab-020-01-01",
+  "cluster": "astro-ats-035-lab-020-01-01",
+  "namespace": "starfleet-035-020-01-01",
   "resources": [
     {
       "kind": "configmap",
       "name": "supply-inventory",
-      "namespace": "starfleet",
+      "namespace": "starfleet-035-020-01-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "ConfigMap",
         "metadata": {
           "name": "supply-inventory",
-          "namespace": "starfleet"
+          "namespace": "starfleet-035-020-01-01"
         },
         "data": {
           "image": "docker.io/library/python:3.13-alpine"
         }
-      }
+      },
+      "outcome": "inventory-subject"
     }
   ],
   "behavior": []

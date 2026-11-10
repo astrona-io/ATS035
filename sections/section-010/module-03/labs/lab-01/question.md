@@ -5,7 +5,11 @@ exam_objectives:
 ---
 # Pin An Image To The Digest The Node Reports
 
+Solve this question on: `terminal`
+
 Read the digest that the node reports for the BusyBox image and start a pod that refers to the image by that digest.
+
+Allow about 6 minutes for the tasks. Cluster startup adds time.
 
 ## Starting state
 
@@ -22,10 +26,19 @@ worker_name="astro-ats-035-lab-010-03-01-worker"
 
 Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
 
-## Required result
+## Tasks
 
-Read the image digest from the status of the `shuttle` pod in the `starfleet` namespace. Create a pod named `pinned-runner` in the same namespace with one container named `app`. The container image must be `docker.io/library/busybox@sha256:` followed by that digest, with no tag. Set `imagePullPolicy: IfNotPresent`, `restartPolicy: Never` and the command `sh -c "sleep 3600"`. The pod must reach the Ready state, and its status must report the same digest. Leave the `shuttle` pod unchanged.
+1. Read the image digest the node reports for the `shuttle` pod in the namespace `starfleet-035-010-03-01`, from the `imageID` in its container status.
+2. Create the pod `pinned-runner` in the same namespace with one container named `app`. Its image is `docker.io/library/busybox@sha256:` followed by that digest, with no tag. Set `imagePullPolicy: IfNotPresent`, `restartPolicy: Never` and the command `sh -c "sleep 3600"`.
+3. Wait until `pinned-runner` is Ready and check that its container status reports the same digest.
 
-## Verify The Result
+## Constraints
 
-The grader reads the digest from the `shuttle` pod and compares it with the image of `pinned-runner`. Wait for the pod to become ready before submitting. Preserve the task's namespace, workload names and unrelated components.
+- Leave the `shuttle` pod unchanged.
+- Do not change the `probe` Deployment or anything in `outpost-035-010-03-01`.
+
+## How the answer is checked
+
+The grader runs two checks. The first reads the digest from the `shuttle` pod and compares it with the image of `pinned-runner`, which must carry the digest and no tag. The second needs `pinned-runner` to be ready with that digest in its container status.
+
+Hint: `kubectl -n starfleet-035-010-03-01 get pod shuttle -o jsonpath='{.status.containerStatuses[0].imageID}'` prints the image ID.

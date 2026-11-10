@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: pinned-images
+  name: pinned-images-035-030-02-01
   labels:
     training.astrona.io/digest-policy: enabled
 ---

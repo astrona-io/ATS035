@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: unrestricted-reader
-  namespace: hangar
+  namespace: hangar-035-040-03-01
 spec:
   restartPolicy: Never
   containers:

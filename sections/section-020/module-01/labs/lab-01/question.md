@@ -5,7 +5,11 @@ exam_objectives:
 ---
 # Bind A Package Inventory To A Running Image
 
+Solve this question on: `terminal`
+
 Record installed operating-system packages and the image identity actually running them.
+
+Allow about 8 minutes for the tasks. Cluster startup adds time.
 
 ## Starting state
 
@@ -22,10 +26,17 @@ worker_name="astro-ats-035-lab-020-01-01-worker"
 
 Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
 
-## Required result
+## Tasks
 
-Create supply-inventory with image docker.io/library/python:3.13-alpine, runtimeImageID matching a ready probe container, packages containing the sorted actual apk info -v lines, and scope alpine-installed-packages. Preserve the original application. This is operating-system package inventory; it is not a complete software bill of materials (SBOM), signature proof or a vulnerability scan.
+1. Pick a ready `probe` pod in the namespace `starfleet-035-020-01-01` and read the `imageID` of its container `probe`.
+2. List the installed operating-system packages in that pod with `apk info -v`.
+3. Create the ConfigMap `supply-inventory` in the same namespace with these keys: `image` set to `docker.io/library/python:3.13-alpine`, `runtimeImageID` set to the image ID from step 1, `packages` set to the sorted `apk info -v` lines as a JSON list, and `scope` set to `alpine-installed-packages`.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+- Do not change the `probe` Deployment, its pods or the client pods.
+- This is an operating-system package inventory. It is not a complete software bill of materials (SBOM), a signature proof or a vulnerability scan.
+
+## How the answer is checked
+
+The grader runs two checks. The first reads `image`, `scope` and `runtimeImageID`, which must match the image ID of a ready `probe` container. The second runs `apk info -v` in a `probe` pod and compares the sorted lines with the JSON list in `packages`.

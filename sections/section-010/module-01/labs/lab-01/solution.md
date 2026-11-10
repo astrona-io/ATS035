@@ -23,7 +23,7 @@ The isolated environment has two healthy probe replicas, an internal Service and
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-010-01-01 get pods -o wide
 kubectl get nodes -o wide
 ```
 
@@ -36,7 +36,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: minimal-content
-  namespace: starfleet
+  namespace: starfleet-035-010-01-01
 data:
   index.html: 'minimal-version=v1
 
@@ -46,7 +46,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: minimal-server
-  namespace: starfleet
+  namespace: starfleet-035-010-01-01
 spec:
   restartPolicy: Never
   containers:
@@ -80,7 +80,7 @@ kubectl apply -f configmap-minimal-content.yaml
 Observe the actual result. A denied request returns a nonzero status when the denial works, so run it separately from a shell sequence that stops on error. Status convergence and a successful request establish different parts of the result.
 
 ```sh
-kubectl -n starfleet wait --for=condition=Ready pod/minimal-server --timeout=180s
+kubectl -n starfleet-035-010-01-01 wait --for=condition=Ready pod/minimal-server --timeout=180s
 ```
 
 Select an image providing only the required HTTP process and verify its running contents. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required denial or correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.

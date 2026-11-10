@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-if [[ "$(kubectl config current-context)" != "kind-astro-ats-035-lab-040-03-01" ]]; then
+context="${ASTRONA_KUBE_CONTEXT:-kind-astro-ats-035-lab-040-03-01}"
+if [[ "$(kubectl config current-context)" != "$context" ]]; then
   printf 'Refusing to operate on another Kubernetes context\n' >&2
   exit 1
 fi
 lab_directory="$(cd "$(dirname "$0")/.." && pwd)"
-if output="$(kubectl -n hangar apply --dry-run=server -f "$lab_directory/testing/unrestricted-reader.yaml" 2>&1)"; then
+if output="$(kubectl -n hangar-035-040-03-01 apply --dry-run=server -f "$lab_directory/testing/unrestricted-reader.yaml" 2>&1)"; then
   printf 'The unrestricted pod was accepted\n' >&2
   exit 1
 fi

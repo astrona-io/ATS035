@@ -23,7 +23,7 @@ The isolated environment has two healthy probe replicas, an internal Service and
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-020-01-01 get pods -o wide
 kubectl get nodes -o wide
 ```
 
@@ -36,7 +36,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: supply-inventory
-  namespace: starfleet
+  namespace: starfleet-035-020-01-01
 data:
   image: docker.io/library/python:3.13-alpine
 ```
@@ -44,26 +44,30 @@ data:
 Save this as `record-inventory.py`:
 
 ```python
-import json,subprocess,tempfile
+import json,os,shutil,subprocess,sys,tempfile
 from pathlib import Path
-CONTEXT="kind-astro-ats-035-lab-020-01-01"
-NODE="astro-ats-035-lab-020-01-01-control-plane"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-lab-020-01-01'
+CLUSTER = os.environ.get('ASTRONA_KIND_CLUSTER') or 'astro-ats-035-lab-020-01-01'
+ENGINE = os.environ.get('ASTRONA_CONTAINER_ENGINE') or ('podman' if shutil.which('podman') else 'docker')
+NODE = CLUSTER + '-control-plane'
 def run(*args):
     result=subprocess.run(args,check=True,text=True,capture_output=True,timeout=30)
     return result.stdout.strip()
-assert run('kubectl','config','current-context')==CONTEXT, 'Select the private environment'
-assert run('podman','inspect',NODE,'--format','{{index .Config.Labels "io.x-k8s.kind.cluster"}}')=='astro-ats-035-lab-020-01-01', 'Refusing an unrelated node container'
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
+if run(ENGINE, 'inspect', NODE, '--format', '{{index .Config.Labels "io.x-k8s.kind.cluster"}}') != CLUSTER:
+    sys.exit('Refusing an unrelated node container')
 
-pods=json.loads(run('kubectl','-n','starfleet','get','pods','-l','app=probe','-o','json'))['items']
+pods=json.loads(run('kubectl','-n','starfleet-035-020-01-01','get','pods','-l','app=probe','-o','json'))['items']
 pod=pods[0]
-packages=run('kubectl','-n','starfleet','exec',pod['metadata']['name'],'--','apk','info','-v').splitlines()
+packages=run('kubectl','-n','starfleet-035-020-01-01','exec',pod['metadata']['name'],'--','apk','info','-v').splitlines()
 assert packages
 identity=next(status['imageID'] for status in pod['status']['containerStatuses'] if status['name']=='probe')
 report_name='supply-inventory';report={'image':'docker.io/library/python:3.13-alpine','runtimeImageID':identity,'packages':json.dumps(sorted(packages)),'scope':'alpine-installed-packages'}
 
 with tempfile.TemporaryDirectory(prefix='training-report-') as temporary:
     source=Path(temporary)/'configmap-report.json'
-    source.write_text(json.dumps({'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':report_name,'namespace':'starfleet'},'data':report}))
+    source.write_text(json.dumps({'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':report_name,'namespace':'starfleet-035-020-01-01'},'data':report}))
     run('kubectl','apply','-f',str(source))
 
 ```
@@ -79,8 +83,8 @@ python3 record-inventory.py
 Observe the actual result. A denied request returns a nonzero status when the denial works, so run it separately from a shell sequence that stops on error. Status convergence and a successful request establish different parts of the result.
 
 ```sh
-kubectl -n starfleet get configmaps
-kubectl -n starfleet get deployment probe -o yaml
+kubectl -n starfleet-035-020-01-01 get configmaps
+kubectl -n starfleet-035-020-01-01 get deployment probe -o yaml
 ```
 
 Record installed operating-system packages and the image identity actually running them. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required denial or correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.

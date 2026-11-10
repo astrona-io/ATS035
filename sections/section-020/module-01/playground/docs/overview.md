@@ -46,15 +46,19 @@ data:
 Save this as `record-inventory.py`:
 
 ```python
-import json,subprocess,tempfile
+import json,os,shutil,subprocess,sys,tempfile
 from pathlib import Path
-CONTEXT="kind-astro-ats-035-playground-020-01"
-NODE="astro-ats-035-playground-020-01-control-plane"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-playground-020-01'
+CLUSTER = os.environ.get('ASTRONA_KIND_CLUSTER') or 'astro-ats-035-playground-020-01'
+ENGINE = os.environ.get('ASTRONA_CONTAINER_ENGINE') or ('podman' if shutil.which('podman') else 'docker')
+NODE = CLUSTER + '-control-plane'
 def run(*args):
     result=subprocess.run(args,check=True,text=True,capture_output=True,timeout=30)
     return result.stdout.strip()
-assert run('kubectl','config','current-context')==CONTEXT, 'Select the private environment'
-assert run('podman','inspect',NODE,'--format','{{index .Config.Labels "io.x-k8s.kind.cluster"}}')=='astro-ats-035-playground-020-01', 'Refusing an unrelated node container'
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
+if run(ENGINE, 'inspect', NODE, '--format', '{{index .Config.Labels "io.x-k8s.kind.cluster"}}') != CLUSTER:
+    sys.exit('Refusing an unrelated node container')
 
 pods=json.loads(run('kubectl','-n','starfleet','get','pods','-l','app=probe','-o','json'))['items']
 pod=pods[0]

@@ -18,16 +18,16 @@ Keep this connection selected. Host-level commands name only this environment's 
 
 ## Inspect And Explain
 
-The isolated environment has two healthy probe replicas, an internal Service and two client Pods. The namespace `gated-images` has a ServiceAccount named `deployer`, a ValidatingAdmissionPolicy named `gated-registry` and a binding of the same name. The binding has the validation action `Audit` only, so no pod is rejected yet.
+The isolated environment has two healthy probe replicas, an internal Service and two client Pods. The namespace `gated-images-035-030-03-01` has a ServiceAccount named `deployer`, a ValidatingAdmissionPolicy named `gated-registry` and a binding of the same name. The binding has the validation action `Audit` only, so no pod is rejected yet.
 
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n gated-images get serviceaccount deployer -o yaml
+kubectl -n gated-images-035-030-03-01 get serviceaccount deployer -o yaml
 kubectl get validatingadmissionpolicybinding gated-registry -o yaml
 ```
 
-Change the binding `gated-registry` so that its only validation action is `Deny`, and leave the policy and the namespace selector as they are. In `gated-images`, create a Secret named `registry-credentials` of type `kubernetes.io/dockerconfigjson` that holds credentials for the registry `registry.example.com` with the user `reader` and the password `example-pass`. Add the Secret to the `imagePullSecrets` of the ServiceAccount `deployer`. A server-side dry run of a pod in `gated-images` that uses `unapproved.example/reader:v1` must be rejected with the policy message `image registry is not approved`. A pod that uses `docker.io/library/busybox:1.37.0` and the ServiceAccount `deployer` must be accepted, and the accepted object must list `registry-credentials` as an image pull secret. The credentials are example values for this exercise.
+Change the binding `gated-registry` so that its only validation action is `Deny`, and leave the policy and the namespace selector as they are. In `gated-images-035-030-03-01`, create a Secret named `registry-credentials` of type `kubernetes.io/dockerconfigjson` that holds credentials for the registry `registry.example.com` with the user `reader` and the password `example-pass`. Add the Secret to the `imagePullSecrets` of the ServiceAccount `deployer`. A server-side dry run of a pod in `gated-images-035-030-03-01` that uses `unapproved.example/reader:v1` must be rejected with the policy message `image registry is not approved`. A pod that uses `docker.io/library/busybox:1.37.0` and the ServiceAccount `deployer` must be accepted, and the accepted object must list `registry-credentials` as an image pull secret. The credentials are example values for this exercise.
 
 Save this as `binding-and-pull-secret.yaml`:
 
@@ -49,7 +49,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: registry-credentials
-  namespace: gated-images
+  namespace: gated-images-035-030-03-01
 type: kubernetes.io/dockerconfigjson
 stringData:
   .dockerconfigjson: '{"auths":{"registry.example.com":{"username":"reader","password":"example-pass","auth":"cmVhZGVyOmV4YW1wbGUtcGFzcw=="}}}'
@@ -58,7 +58,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: deployer
-  namespace: gated-images
+  namespace: gated-images-035-030-03-01
 imagePullSecrets:
 - name: registry-credentials
 ```
@@ -75,8 +75,8 @@ Observe the actual result. A denied request returns a nonzero status when the de
 
 ```sh
 kubectl get validatingadmissionpolicybinding gated-registry -o jsonpath='{.spec.validationActions}{"\n"}'
-kubectl -n gated-images get serviceaccount deployer -o jsonpath='{.imagePullSecrets}{"\n"}'
-kubectl -n gated-images get secret registry-credentials -o jsonpath='{.type}{"\n"}'
+kubectl -n gated-images-035-030-03-01 get serviceaccount deployer -o jsonpath='{.imagePullSecrets}{"\n"}'
+kubectl -n gated-images-035-030-03-01 get secret registry-credentials -o jsonpath='{.type}{"\n"}'
 ```
 
 The binding needs a few seconds before it takes effect. Then send a pod with the image `unapproved.example/reader:v1` through `kubectl create --dry-run=server`; it must fail with the policy message. Send a pod with the image `docker.io/library/busybox:1.37.0` and `serviceAccountName: deployer` with `-o json`; the accepted object lists `registry-credentials` under `imagePullSecrets`, which the ServiceAccount admission plugin copies from the ServiceAccount. The commands deliberately target one environment. No example command output is presented as evidence of a completed run.

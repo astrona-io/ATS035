@@ -34,13 +34,14 @@ Create the ConfigMap sbom-record in starfleet with these keys. format: CycloneDX
 Save this as `build-sbom-record.py`:
 
 ```python
-import json,subprocess,tempfile
+import json,os,subprocess,sys,tempfile
 from pathlib import Path
-CONTEXT="kind-astro-ats-035-playground-020-02"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-playground-020-02'
 def run(*args):
     result=subprocess.run(args,check=True,text=True,capture_output=True,timeout=30)
     return result.stdout.strip()
-assert run('kubectl','config','current-context')==CONTEXT, 'Select the private environment'
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
 
 pods=json.loads(run('kubectl','-n','starfleet','get','pods','-l','app=probe','-o','json'))['items']
 pod=pods[0]

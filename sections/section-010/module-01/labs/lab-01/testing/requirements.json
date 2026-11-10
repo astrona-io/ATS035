@@ -1,32 +1,35 @@
 {
   "context": "kind-astro-ats-035-lab-010-01-01",
+  "cluster": "astro-ats-035-lab-010-01-01",
+  "namespace": "starfleet-035-010-01-01",
   "resources": [
     {
       "kind": "configmap",
       "name": "minimal-content",
-      "namespace": "starfleet",
+      "namespace": "starfleet-035-010-01-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "ConfigMap",
         "metadata": {
           "name": "minimal-content",
-          "namespace": "starfleet"
+          "namespace": "starfleet-035-010-01-01"
         },
         "data": {
           "index.html": "minimal-version=v1\n"
         }
-      }
+      },
+      "outcome": "minimal-content"
     },
     {
       "kind": "pod",
       "name": "minimal-server",
-      "namespace": "starfleet",
+      "namespace": "starfleet-035-010-01-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "Pod",
         "metadata": {
           "name": "minimal-server",
-          "namespace": "starfleet"
+          "namespace": "starfleet-035-010-01-01"
         },
         "spec": {
           "restartPolicy": "Never",
@@ -41,27 +44,13 @@
                 "8080",
                 "-h",
                 "/site"
-              ],
-              "volumeMounts": [
-                {
-                  "name": "site",
-                  "mountPath": "/site",
-                  "readOnly": true
-                }
               ]
-            }
-          ],
-          "volumes": [
-            {
-              "name": "site",
-              "configMap": {
-                "name": "minimal-content"
-              }
             }
           ]
         }
       },
-      "state": "pod"
+      "state": "pod",
+      "outcome": "minimal-server"
     }
   ],
   "behavior": []

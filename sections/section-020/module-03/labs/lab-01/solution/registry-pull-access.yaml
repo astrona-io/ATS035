@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: registry-credentials
-  namespace: starfleet
+  namespace: starfleet-035-020-03-01
 type: kubernetes.io/dockerconfigjson
 stringData:
   .dockerconfigjson: '{"auths":{"registry.example.test":{"username":"builder","password":"s3cret-pull-token","auth":"YnVpbGRlcjpzM2NyZXQtcHVsbC10b2tlbg=="}}}'
@@ -11,7 +11,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: probe-runner
-  namespace: starfleet
+  namespace: starfleet-035-020-03-01
 imagePullSecrets:
 - name: registry-credentials
 ---
@@ -19,7 +19,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: release-check
-  namespace: starfleet
+  namespace: starfleet-035-020-03-01
 spec:
   serviceAccountName: probe-runner
   restartPolicy: Never

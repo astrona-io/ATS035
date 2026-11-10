@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: pinned-runner
-  namespace: starfleet
+  namespace: starfleet-035-010-03-01
 spec:
   restartPolicy: Never
   containers:

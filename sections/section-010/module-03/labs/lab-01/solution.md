@@ -21,13 +21,13 @@ Keep this connection selected. Host-level commands name only this environment's 
 A tag can move, so the pod needs the digest of the content that already runs. The container runtime reports it in the `imageID` field of the pod status. Read that field for the `shuttle` pod:
 
 ```sh
-kubectl -n starfleet get pod shuttle -o jsonpath='{.status.containerStatuses[0].imageID}{"\n"}'
+kubectl -n starfleet-035-010-03-01 get pod shuttle -o jsonpath='{.status.containerStatuses[0].imageID}{"\n"}'
 ```
 
 The value has the form `docker.io/library/busybox@sha256:` followed by 64 hexadecimal characters. Copy only the 64 characters after `sha256:`. Print the digest on its own to make the copy easy:
 
 ```sh
-kubectl -n starfleet get pod shuttle -o jsonpath='{.status.containerStatuses[0].imageID}' | sed 's/.*@sha256://'
+kubectl -n starfleet-035-010-03-01 get pod shuttle -o jsonpath='{.status.containerStatuses[0].imageID}' | sed 's/.*@sha256://'
 ```
 
 Save this as `pod-pinned-runner.yaml` and replace `<DIGEST>` with the 64 characters from the previous command:
@@ -37,7 +37,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: pinned-runner
-  namespace: starfleet
+  namespace: starfleet-035-010-03-01
 spec:
   restartPolicy: Never
   containers:
@@ -61,8 +61,8 @@ kubectl apply -f pod-pinned-runner.yaml
 Wait for the pod to become ready and compare the digest that the runtime reports for both pods. The two `imageID` values must end in the same digest.
 
 ```sh
-kubectl -n starfleet wait --for=condition=Ready pod/pinned-runner --timeout=180s
-kubectl -n starfleet get pod shuttle pinned-runner -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.containerStatuses[0].imageID}{"\n"}{end}'
+kubectl -n starfleet-035-010-03-01 wait --for=condition=Ready pod/pinned-runner --timeout=180s
+kubectl -n starfleet-035-010-03-01 get pod shuttle pinned-runner -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.containerStatuses[0].imageID}{"\n"}{end}'
 ```
 
 After recording your result, remove the independent lab with `astrona destroy ats-035-lab-010-03-01`.

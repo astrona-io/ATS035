@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: minimal-content
-  namespace: starfleet
+  namespace: starfleet-035-010-01-01
 data:
   index.html: 'minimal-version=v1
 
@@ -12,7 +12,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: minimal-server
-  namespace: starfleet
+  namespace: starfleet-035-010-01-01
 spec:
   restartPolicy: Never
   containers:

@@ -23,11 +23,11 @@ The isolated environment has two healthy probe replicas, an internal Service and
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-020-03-01 get pods -o wide
 kubectl get nodes -o wide
 ```
 
-Create the Secret registry-credentials of type kubernetes.io/dockerconfigjson in starfleet for the registry registry.example.test with the user builder and the password s3cret-pull-token. Add the secret to the imagePullSecrets of the existing ServiceAccount probe-runner. Run a pod named release-check with the service account probe-runner and the image docker.io/library/busybox:1.37.0 that runs sleep 3600. The pod must receive the pull secret through its service account, not through a pod-level setting. The registry host and the credential are examples; this task shows how pull access is configured and does not pull from that host.
+Create the Secret registry-credentials of type kubernetes.io/dockerconfigjson in starfleet-035-020-03-01 for the registry registry.example.test with the user builder and the password s3cret-pull-token. Add the secret to the imagePullSecrets of the existing ServiceAccount probe-runner. Run a pod named release-check with the service account probe-runner and the image docker.io/library/busybox:1.37.0 that runs sleep 3600. The pod must receive the pull secret through its service account, not through a pod-level setting. The registry host and the credential are examples; this task shows how pull access is configured and does not pull from that host.
 
 Save this as `registry-pull-access.yaml`:
 
@@ -36,7 +36,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: registry-credentials
-  namespace: starfleet
+  namespace: starfleet-035-020-03-01
 type: kubernetes.io/dockerconfigjson
 stringData:
   .dockerconfigjson: '{"auths":{"registry.example.test":{"username":"builder","password":"s3cret-pull-token","auth":"YnVpbGRlcjpzM2NyZXQtcHVsbC10b2tlbg=="}}}'
@@ -45,7 +45,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: probe-runner
-  namespace: starfleet
+  namespace: starfleet-035-020-03-01
 imagePullSecrets:
 - name: registry-credentials
 ---
@@ -53,7 +53,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: release-check
-  namespace: starfleet
+  namespace: starfleet-035-020-03-01
 spec:
   serviceAccountName: probe-runner
   restartPolicy: Never
@@ -77,14 +77,14 @@ kubectl apply -f registry-pull-access.yaml
 Observe the actual result. Status convergence and matching fields establish different parts of the result, so check both.
 
 ```sh
-kubectl -n starfleet wait --for=condition=Ready pod/release-check --timeout=180s
+kubectl -n starfleet-035-020-03-01 wait --for=condition=Ready pod/release-check --timeout=180s
 ```
 
 Then check the result:
 
 ```sh
-kubectl -n starfleet get serviceaccount probe-runner -o jsonpath='{.imagePullSecrets[*].name}{"\n"}'
-kubectl -n starfleet get pod release-check -o jsonpath='{.spec.imagePullSecrets[*].name}{"\n"}'
+kubectl -n starfleet-035-020-03-01 get serviceaccount probe-runner -o jsonpath='{.imagePullSecrets[*].name}{"\n"}'
+kubectl -n starfleet-035-020-03-01 get pod release-check -o jsonpath='{.spec.imagePullSecrets[*].name}{"\n"}'
 ```
 
 Create a registry pull secret, attach it to a service account and run a pod that receives it. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.

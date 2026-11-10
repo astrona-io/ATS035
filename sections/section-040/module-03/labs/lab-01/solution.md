@@ -18,16 +18,16 @@ Keep this connection selected. Host-level commands name only this environment's 
 
 ## Inspect And Explain
 
-The isolated environment has two healthy probe replicas, an internal Service and two client Pods. The namespace `hangar` exists without Pod Security Admission labels, so every pod is accepted there.
+The isolated environment has two healthy probe replicas, an internal Service and two client Pods. The namespace `hangar-035-040-03-01` exists without Pod Security Admission labels, so every pod is accepted there.
 
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-040-03-01 get pods -o wide
 kubectl get nodes -o wide
 ```
 
-Label namespace `hangar` with `pod-security.kubernetes.io/enforce=restricted`, `pod-security.kubernetes.io/enforce-version=v1.35`, `pod-security.kubernetes.io/warn=restricted` and `pod-security.kubernetes.io/audit=restricted`. Create pod `restricted-reader` in `hangar` with the image `docker.io/library/busybox:1.37.0`, the command `sh -c "sleep 3600"`, `runAsNonRoot: true`, `runAsUser: 1000`, `runAsGroup: 1000`, the `RuntimeDefault` seccomp profile, `allowPrivilegeEscalation: false` and all capabilities dropped. It must be Ready. A pod that sets `privileged: true` must be rejected in `hangar`, and you must not create it.
+Label namespace `hangar-035-040-03-01` with `pod-security.kubernetes.io/enforce=restricted`, `pod-security.kubernetes.io/enforce-version=v1.35`, `pod-security.kubernetes.io/warn=restricted` and `pod-security.kubernetes.io/audit=restricted`. Create pod `restricted-reader` in `hangar-035-040-03-01` with the image `docker.io/library/busybox:1.37.0`, the command `sh -c "sleep 3600"`, `runAsNonRoot: true`, `runAsUser: 1000`, `runAsGroup: 1000`, the `RuntimeDefault` seccomp profile, `allowPrivilegeEscalation: false` and all capabilities dropped. It must be Ready. A pod that sets `privileged: true` must be rejected in `hangar-035-040-03-01`, and you must not create it.
 
 Save this as `namespace-hangar.yaml`. The namespace carries the Pod Security Admission labels, and the pod meets the `restricted` standard:
 
@@ -35,7 +35,7 @@ Save this as `namespace-hangar.yaml`. The namespace carries the Pod Security Adm
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: hangar
+  name: hangar-035-040-03-01
   labels:
     pod-security.kubernetes.io/enforce: restricted
     pod-security.kubernetes.io/enforce-version: v1.35
@@ -46,7 +46,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: restricted-reader
-  namespace: hangar
+  namespace: hangar-035-040-03-01
 spec:
   restartPolicy: Never
   securityContext:
@@ -82,7 +82,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: unrestricted-reader
-  namespace: hangar
+  namespace: hangar-035-040-03-01
 spec:
   restartPolicy: Never
   containers:
@@ -107,8 +107,8 @@ kubectl apply -f pod-unrestricted-reader.yaml
 Wait for the compliant pod, then read the namespace labels. The error from the previous command names the `restricted` level and the rejected fields.
 
 ```sh
-kubectl -n hangar wait --for=condition=Ready pod/restricted-reader --timeout=180s
-kubectl get namespace hangar --show-labels
+kubectl -n hangar-035-040-03-01 wait --for=condition=Ready pod/restricted-reader --timeout=180s
+kubectl get namespace hangar-035-040-03-01 --show-labels
 ```
 
 Label a namespace to enforce the restricted Pod Security Standard and run one compliant pod while an unrestricted pod is rejected. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required result. A matching field alone does not establish that a controller reconciled it.

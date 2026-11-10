@@ -5,7 +5,11 @@ exam_objectives:
 ---
 # Require Image Digests In A Namespace
 
+Solve this question on: `terminal`
+
 Deny a pod whose image is not referenced by digest and admit a pod whose image is.
+
+Allow about 8 minutes for the tasks. Cluster startup adds time.
 
 ## Starting state
 
@@ -22,10 +26,18 @@ worker_name="astro-ats-035-lab-030-02-01-worker"
 
 Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
 
-## Required result
+## Tasks
 
-Create the namespace `pinned-images` with the label `training.astrona.io/digest-policy: enabled`. Install a ValidatingAdmissionPolicy named `require-digest` with `failurePolicy: Fail` that matches Pod creation and update, and a ValidatingAdmissionPolicyBinding named `require-digest` with the single validation action `Deny`, scoped to namespaces that carry the label. The policy must require that every image in `containers`, `initContainers` and `ephemeralContainers` ends in `@sha256:` followed by 64 lowercase hexadecimal characters, and its message must contain `must be referenced by digest`. A server-side dry run of a pod in `pinned-images` that uses `docker.io/library/busybox:1.37.0` must be rejected, and so must a pod that has a tag-only init container. A server-side dry run of a pod that uses `docker.io/library/busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa` must be accepted. The same tag-only pod in `starfleet` must still be accepted. The dry runs only test admission, so the digest in the accepted pod does not need to exist in a registry.
+1. Create the namespace `pinned-images-035-030-02-01` with the label `training.astrona.io/digest-policy: enabled`.
+2. Create the ValidatingAdmissionPolicy `require-digest` with `failurePolicy: Fail` for Pod creation and update. It requires every image in `containers`, `initContainers` and `ephemeralContainers` to end in `@sha256:` followed by 64 lowercase hexadecimal characters, and its message contains `must be referenced by digest`.
+3. Bind it with the ValidatingAdmissionPolicyBinding `require-digest`, the single validation action `Deny` and a namespace selector on that label.
+4. Prove it with server-side dry runs in `pinned-images-035-030-02-01`: a pod with `docker.io/library/busybox:1.37.0` is rejected, a pod with a tag-only init container is rejected, and a pod with `docker.io/library/busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa` is accepted.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+- The same tag-only pod in `starfleet-035-030-02-01` must still be accepted.
+- The dry runs only test admission, so the digest in the accepted pod does not need to exist in a registry.
+
+## How the answer is checked
+
+The grader runs three checks. The first reads the policy and the binding. The second checks the namespace label and needs server-side dry runs of a tag-only container and a tag-only init container to be rejected with the policy message. The third needs a dry run of a pod pinned by digest to be accepted. In every check, a tag-only pod in `starfleet-035-030-02-01` must still be accepted.

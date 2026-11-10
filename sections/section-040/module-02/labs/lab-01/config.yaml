@@ -24,11 +24,31 @@ teardown:
   keepCluster: false
 testing:
   init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
   - name: reference-result
     type: file
     source: solution/apply.sh
-validation:
-  script:
-    name: verify-fields-and-live-evidence
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
     type: file
-    source: validate.sh
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: gate-decision
+    description: scan-gate has the decision and the blocking findings
+    type: file
+    source: validation/validate-gate-decision.sh
+    points: 1
+  - name: gate-exceptions
+    description: scan-gate lists the waived and the unfixed findings
+    type: file
+    source: validation/validate-gate-exceptions.sh
+    points: 1
+  - name: gate-settings
+    description: scan-gate records severity HIGH,CRITICAL and ignoreUnfixed true, and no other keys
+    type: file
+    source: validation/validate-gate-settings.sh
+    points: 1

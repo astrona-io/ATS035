@@ -1,48 +1,52 @@
 {
   "context": "kind-astro-ats-035-lab-020-03-01",
+  "cluster": "astro-ats-035-lab-020-03-01",
+  "namespace": "starfleet-035-020-03-01",
   "resources": [
     {
       "kind": "secret",
       "name": "registry-credentials",
-      "namespace": "starfleet",
+      "namespace": "starfleet-035-020-03-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "Secret",
         "type": "kubernetes.io/dockerconfigjson",
         "metadata": {
           "name": "registry-credentials",
-          "namespace": "starfleet"
+          "namespace": "starfleet-035-020-03-01"
         }
-      }
+      },
+      "outcome": "pull-secret"
     },
     {
       "kind": "serviceaccount",
       "name": "probe-runner",
-      "namespace": "starfleet",
+      "namespace": "starfleet-035-020-03-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "ServiceAccount",
         "metadata": {
           "name": "probe-runner",
-          "namespace": "starfleet"
+          "namespace": "starfleet-035-020-03-01"
         },
         "imagePullSecrets": [
           {
             "name": "registry-credentials"
           }
         ]
-      }
+      },
+      "outcome": "service-account"
     },
     {
       "kind": "pod",
       "name": "release-check",
-      "namespace": "starfleet",
+      "namespace": "starfleet-035-020-03-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "Pod",
         "metadata": {
           "name": "release-check",
-          "namespace": "starfleet"
+          "namespace": "starfleet-035-020-03-01"
         },
         "spec": {
           "serviceAccountName": "probe-runner",
@@ -55,7 +59,8 @@
           ]
         }
       },
-      "state": "pod"
+      "state": "pod",
+      "outcome": "release-check"
     }
   ],
   "behavior": []

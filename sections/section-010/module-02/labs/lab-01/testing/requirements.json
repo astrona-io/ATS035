@@ -1,16 +1,18 @@
 {
   "context": "kind-astro-ats-035-lab-010-02-01",
+  "cluster": "astro-ats-035-lab-010-02-01",
+  "namespace": "starfleet-035-010-02-01",
   "resources": [
     {
       "kind": "pod",
       "name": "restricted-runner",
-      "namespace": "starfleet",
+      "namespace": "starfleet-035-010-02-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "Pod",
         "metadata": {
           "name": "restricted-runner",
-          "namespace": "starfleet"
+          "namespace": "starfleet-035-010-02-01"
         },
         "spec": {
           "securityContext": {
@@ -19,7 +21,24 @@
             "seccompProfile": {
               "type": "RuntimeDefault"
             }
-          },
+          }
+        }
+      },
+      "state": "pod",
+      "outcome": "pod-security-context"
+    },
+    {
+      "kind": "pod",
+      "name": "restricted-runner",
+      "namespace": "starfleet-035-010-02-01",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "restricted-runner",
+          "namespace": "starfleet-035-010-02-01"
+        },
+        "spec": {
           "containers": [
             {
               "name": "app",
@@ -37,7 +56,8 @@
           ]
         }
       },
-      "state": "pod"
+      "state": "pod",
+      "outcome": "container-security-context"
     }
   ],
   "behavior": []

@@ -1,9 +1,11 @@
 import json
+import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
-CONTEXT = "kind-astro-ats-035-capstone-040"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-capstone-040'
 
 
 def run(*args):
@@ -11,7 +13,8 @@ def run(*args):
     return result.stdout.strip()
 
 
-assert run('kubectl', 'config', 'current-context') == CONTEXT, 'Select the private environment'
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
 CONFIG = {name: json.loads(run('kubectl', '-n', 'bay', 'get', 'configmap', name, '-o', 'json'))['data'] for name in ('analysis-source', 'scan-results', 'scan-exceptions')}
 workload = json.loads(CONFIG['analysis-source']['workload.json'])
 container = workload['spec']['containers'][0]

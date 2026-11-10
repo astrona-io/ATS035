@@ -1,14 +1,15 @@
-import json,subprocess,tempfile
+import json,os,subprocess,sys,tempfile
 from pathlib import Path
-CONTEXT="kind-astro-ats-035-lab-020-02-01"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-lab-020-02-01'
 def run(*args):
     result=subprocess.run(args,check=True,text=True,capture_output=True,timeout=30)
     return result.stdout.strip()
-assert run('kubectl','config','current-context')==CONTEXT, 'Select the private environment'
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
 
-pods=json.loads(run('kubectl','-n','starfleet','get','pods','-l','app=probe','-o','json'))['items']
+pods=json.loads(run('kubectl','-n','starfleet-035-020-02-01','get','pods','-l','app=probe','-o','json'))['items']
 pod=pods[0]
-lines=run('kubectl','-n','starfleet','exec',pod['metadata']['name'],'--','apk','info','-v').splitlines()
+lines=run('kubectl','-n','starfleet-035-020-02-01','exec',pod['metadata']['name'],'--','apk','info','-v').splitlines()
 assert lines
 identity=next(status['imageID'] for status in pod['status']['containerStatuses'] if status['name']=='probe')
 components=[]
@@ -21,5 +22,5 @@ data={'format':'CycloneDX','specVersion':'1.5','subject':identity,'scope':'alpin
 
 with tempfile.TemporaryDirectory(prefix='training-report-') as temporary:
     source=Path(temporary)/'configmap-report.json'
-    source.write_text(json.dumps({'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':'sbom-record','namespace':'starfleet'},'data':data}))
+    source.write_text(json.dumps({'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':'sbom-record','namespace':'starfleet-035-020-02-01'},'data':data}))
     run('kubectl','apply','-f',str(source))

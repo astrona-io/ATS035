@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: scan-gate
-  namespace: starfleet
+  namespace: starfleet-035-040-02-01
 data:
   decision: 'fail'
   blocking: 'FIXTURE-0001,FIXTURE-0002'

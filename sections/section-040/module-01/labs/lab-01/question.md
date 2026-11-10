@@ -5,7 +5,11 @@ exam_objectives:
 ---
 # Analyze And Correct A Workload Security Document
 
+Solve this question on: `terminal`
+
 Inspect a non-executed unsafe resource definition and run a corrected restricted workload.
+
+Allow about 8 minutes for the tasks. Cluster startup adds time.
 
 ## Starting state
 
@@ -22,10 +26,17 @@ worker_name="astro-ats-035-lab-040-01-01-worker"
 
 Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
 
-## Required result
+## Tasks
 
-Analyze workload.json from ConfigMap analysis-source without deploying it. Record the privileged true and missing runAsNonRoot and allowPrivilegeEscalation findings in analysis-findings. Create analyzed-reader with the supplied non-root, no-privilege-escalation, dropped-capability, RuntimeDefault and read-only-root settings. It must be Ready. This focused field analysis is not a full image vulnerability scan or a replacement for a named scanner.
+1. Read `workload.json` from the ConfigMap `analysis-source` in the namespace `starfleet-035-040-01-01`. Do not deploy it.
+2. Create the ConfigMap `analysis-findings` in the same namespace with the keys `privileged` set to `true`, and `runAsNonRoot` and `allowPrivilegeEscalation` each set to `missing`.
+3. Create the pod `analyzed-reader` with `restartPolicy: Never` and one container `reader` that uses `docker.io/library/busybox:1.37.0` and runs `sh -c "sleep 3600"`. At pod level, set `runAsNonRoot: true`, `runAsUser: 1000`, `runAsGroup: 1000`, `fsGroup: 1000` and the `RuntimeDefault` seccomp profile. In the container, set `allowPrivilegeEscalation: false`, `readOnlyRootFilesystem: true` and drop `ALL` capabilities. Mount an `emptyDir` volume named `scratch` at `/scratch`. The pod must be Ready.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+- Do not change the ConfigMap `analysis-source`.
+- This focused field analysis is not a full image vulnerability scan or a replacement for a named scanner.
+
+## How the answer is checked
+
+The grader runs two checks. The first reads the findings in `analysis-findings`. The second reads `analyzed-reader`: its container, both security contexts and the `scratch` volume, and needs it ready. Both checks need `analysis-source` to still describe the privileged workload.

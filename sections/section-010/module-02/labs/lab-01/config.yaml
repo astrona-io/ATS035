@@ -24,11 +24,31 @@ teardown:
   keepCluster: false
 testing:
   init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
   - name: reference-result
     type: file
     source: solution/apply.sh
-validation:
-  script:
-    name: verify-fields-and-live-evidence
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
     type: file
-    source: validate.sh
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: pod-security-context
+    description: restricted-runner runs as non-root user 10001 with the RuntimeDefault seccomp profile
+    type: file
+    source: validation/validate-pod-security-context.sh
+    points: 1
+  - name: container-security-context
+    description: Container app blocks privilege escalation, has a read-only root filesystem and drops ALL capabilities
+    type: file
+    source: validation/validate-container-security-context.sh
+    points: 1
+  - name: runtime-enforced
+    description: Inside restricted-runner the user ID is 10001 and a write to / fails
+    type: file
+    source: validation/validate-runtime-enforced.sh
+    points: 1

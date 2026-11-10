@@ -5,7 +5,11 @@ exam_objectives:
 ---
 # Serve Content With A Minimal Runtime
 
+Solve this question on: `terminal`
+
 Select an image providing only the required HTTP process and verify its running contents.
+
+Allow about 6 minutes for the tasks. Cluster startup adds time.
 
 ## Starting state
 
@@ -22,10 +26,19 @@ worker_name="astro-ats-035-lab-010-01-01-worker"
 
 Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
 
-## Required result
+## Tasks
 
-Create minimal-content with index.html containing minimal-version=v1. Run minimal-server using BusyBox 1.37.0 and its httpd process on port 8080 with a read-only content mount. The client must receive the page and the container must not contain a Python interpreter. Image size alone is not a vulnerability assessment.
+1. In the namespace `starfleet-035-010-01-01`, create the ConfigMap `minimal-content` with the key `index.html` and the content `minimal-version=v1` followed by a newline.
+2. Create the pod `minimal-server` in the same namespace with `restartPolicy: Never` and one container named `web`. It uses `docker.io/library/busybox:1.37.0` and runs `httpd -f -p 8080 -h /site`. Mount the ConfigMap as the volume `site` at `/site`, read-only.
+3. Prove the result: from the `shuttle` pod, fetch `http://<minimal-server pod IP>:8080/` and see `minimal-version=v1`, and confirm that `minimal-server` has no Python interpreter.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+- Do not change the `probe` Deployment, the `shuttle` pod or anything in `outpost-035-010-01-01`.
+- Image size alone is not a vulnerability assessment; this task only removes a runtime the server does not need.
+
+## How the answer is checked
+
+The grader runs three checks. The first reads the ConfigMap `minimal-content`. The second checks the pod `minimal-server`: its container, command, read-only mount and the ConfigMap volume, that it is ready, and that it has no Python interpreter. The third fetches the page from the `shuttle` pod and needs `minimal-version=v1`.
+
+Hint: `kubectl -n starfleet-035-010-01-01 exec shuttle -- wget -q -O- http://<pod IP>:8080/` fetches the page.
