@@ -5,7 +5,11 @@ exam_objectives:
 ---
 # Give A Service Account Registry Pull Access
 
+Solve this question on: `terminal`
+
 Create a registry pull secret, attach it to a service account and run a pod that receives it.
+
+Allow about 6 minutes for the tasks. Cluster startup adds time.
 
 ## Starting state
 
@@ -22,10 +26,17 @@ worker_name="astro-ats-035-lab-020-03-01-worker"
 
 Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
 
-## Required result
+## Tasks
 
-Create the Secret registry-credentials of type kubernetes.io/dockerconfigjson in starfleet for the registry registry.example.test with the user builder and the password s3cret-pull-token. Add the secret to the imagePullSecrets of the existing ServiceAccount probe-runner. Run a pod named release-check with the service account probe-runner and the image docker.io/library/busybox:1.37.0 that runs sleep 3600. The pod must receive the pull secret through its service account, not through a pod-level setting. The registry host and the credential are examples; this task shows how pull access is configured and does not pull from that host.
+1. In the namespace `starfleet-035-020-03-01`, create the Secret `registry-credentials` of type `kubernetes.io/dockerconfigjson` for the registry `registry.example.test` with the user `builder` and the password `s3cret-pull-token`.
+2. Add the Secret to the `imagePullSecrets` of the existing ServiceAccount `probe-runner`.
+3. Run the pod `release-check` with the ServiceAccount `probe-runner`, `restartPolicy: Never` and one container named `client` that uses `docker.io/library/busybox:1.37.0` and runs `sleep 3600`. The pod must receive the pull secret through its ServiceAccount, not through a pod-level setting.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+- Do not change the `probe` Deployment or the client pods.
+- The registry host and the credential are examples. The task shows how pull access is configured and does not pull from that host.
+
+## How the answer is checked
+
+The grader runs three checks. The first decodes the Secret and needs the user, the password and a matching `auth` field for `registry.example.test`. The second reads the `imagePullSecrets` of the ServiceAccount `probe-runner`. The third reads the pod `release-check`: its ServiceAccount, its container and the pull secret Kubernetes added from the ServiceAccount.

@@ -24,11 +24,31 @@ teardown:
   keepCluster: false
 testing:
   init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
   - name: reference-result
     type: file
     source: solution/apply.sh
-validation:
-  script:
-    name: verify-fields-and-live-evidence
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
     type: file
-    source: validate.sh
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: psa-labels
+    description: Namespace hangar-035-040-03-01 enforces, warns and audits the restricted Pod Security Standard at v1.35
+    type: file
+    source: validation/validate-psa-labels.sh
+    points: 1
+  - name: restricted-reader
+    description: Pod restricted-reader meets the restricted standard and is Ready
+    type: file
+    source: validation/validate-restricted-reader.sh
+    points: 1
+  - name: privileged-rejected
+    description: A privileged pod is rejected in hangar-035-040-03-01 and was not created
+    type: file
+    source: validation/validate-privileged-rejected.sh
+    points: 1

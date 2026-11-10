@@ -1,20 +1,23 @@
 {
   "context": "kind-astro-ats-035-lab-030-02-01",
+  "cluster": "astro-ats-035-lab-030-02-01",
+  "namespace": "starfleet-035-030-02-01",
   "resources": [
     {
       "kind": "namespace",
-      "name": "pinned-images",
+      "name": "pinned-images-035-030-02-01",
       "namespace": "",
       "expected": {
         "apiVersion": "v1",
         "kind": "Namespace",
         "metadata": {
-          "name": "pinned-images",
+          "name": "pinned-images-035-030-02-01",
           "labels": {
             "training.astrona.io/digest-policy": "enabled"
           }
         }
-      }
+      },
+      "outcome": "tag-rejected"
     },
     {
       "kind": "validatingadmissionpolicy",
@@ -29,7 +32,8 @@
         "spec": {
           "failurePolicy": "Fail"
         }
-      }
+      },
+      "outcome": "digest-policy"
     },
     {
       "kind": "validatingadmissionpolicybinding",
@@ -54,41 +58,9 @@
             }
           }
         }
-      }
+      },
+      "outcome": "digest-policy"
     }
   ],
-  "behavior": [
-    {
-      "args": [
-        "python3",
-        "-c",
-        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'tag-only', 'namespace': 'pinned-images'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox:1.37.0', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and 'must be referenced by digest' in result.stderr; print('denied')"
-      ],
-      "equals": "denied"
-    },
-    {
-      "args": [
-        "python3",
-        "-c",
-        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'tag-init', 'namespace': 'pinned-images'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'command': ['sh', '-c', 'sleep 3600']}], 'initContainers': [{'name': 'prepare', 'image': 'docker.io/library/busybox:1.37.0', 'command': ['sh', '-c', 'true']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and 'must be referenced by digest' in result.stderr; print('denied')"
-      ],
-      "equals": "denied"
-    },
-    {
-      "args": [
-        "python3",
-        "-c",
-        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'pinned', 'namespace': 'pinned-images'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode==0, result.stderr; print('allowed')"
-      ],
-      "equals": "allowed"
-    },
-    {
-      "args": [
-        "python3",
-        "-c",
-        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'tag-outside', 'namespace': 'starfleet'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'app', 'image': 'docker.io/library/busybox:1.37.0', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode==0, result.stderr; print('allowed')"
-      ],
-      "equals": "allowed"
-    }
-  ]
+  "behavior": []
 }

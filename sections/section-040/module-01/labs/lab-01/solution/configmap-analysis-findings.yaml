@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: analysis-findings
-  namespace: starfleet
+  namespace: starfleet-035-040-01-01
 data:
   privileged: 'true'
   runAsNonRoot: missing
@@ -12,7 +12,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: analyzed-reader
-  namespace: starfleet
+  namespace: starfleet-035-040-01-01
 spec:
   restartPolicy: Never
   containers:

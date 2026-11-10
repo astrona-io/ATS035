@@ -23,11 +23,11 @@ The isolated environment has two healthy probe replicas, an internal Service and
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-030-01-01 get pods -o wide
 kubectl get nodes -o wide
 ```
 
-Create approved-images namespace with the policy selector label. Install training-registry ValidatingAdmissionPolicy and its Deny binding. Restrict ordinary, init and ephemeral Pod container images to docker.io/library/ in that namespace. Keep approved-reader Ready and reject a server-side dry-run unapproved.example image with the policy message. This registry rule does not verify signatures or publisher provenance; those need separate evidence.
+Create approved-images-035-030-01-01 namespace with the policy selector label. Install training-registry ValidatingAdmissionPolicy and its Deny binding. Restrict ordinary, init and ephemeral Pod container images to docker.io/library/ in that namespace. Keep approved-reader Ready and reject a server-side dry-run unapproved.example image with the policy message. This registry rule does not verify signatures or publisher provenance; those need separate evidence.
 
 Save this as `namespace-approved-images.yaml`:
 
@@ -35,7 +35,7 @@ Save this as `namespace-approved-images.yaml`:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: approved-images
+  name: approved-images-035-030-01-01
   labels:
     training.astrona.io/registry-policy: enabled
 ---
@@ -84,7 +84,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: approved-reader
-  namespace: approved-images
+  namespace: approved-images-035-030-01-01
 spec:
   restartPolicy: Never
   containers:
@@ -107,8 +107,8 @@ kubectl apply -f namespace-approved-images.yaml
 Observe the actual result. A denied request returns a nonzero status when the denial works, so run it separately from a shell sequence that stops on error. Status convergence and a successful request establish different parts of the result.
 
 ```sh
-kubectl -n approved-images wait --for=condition=Ready pod/approved-reader --timeout=180s
-python3 -c 'import json,subprocess; obj={'"'"'apiVersion'"'"': '"'"'v1'"'"', '"'"'kind'"'"': '"'"'Pod'"'"', '"'"'metadata'"'"': {'"'"'name'"'"': '"'"'blocked-reader'"'"', '"'"'namespace'"'"': '"'"'approved-images'"'"'}, '"'"'spec'"'"': {'"'"'restartPolicy'"'"': '"'"'Never'"'"', '"'"'containers'"'"': [{'"'"'name'"'"': '"'"'reader'"'"', '"'"'image'"'"': '"'"'unapproved.example/reader:v1'"'"', '"'"'command'"'"': ['"'"'sh'"'"', '"'"'-c'"'"', '"'"'sleep 3600'"'"']}]}}; result=subprocess.run(['"'"'kubectl'"'"','"'"'create'"'"','"'"'--dry-run=server'"'"','"'"'-f'"'"','"'"'-'"'"'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and '"'"'only the training approved registry prefix'"'"' in result.stderr; print('"'"'unapproved-image-denied'"'"')'
+kubectl -n approved-images-035-030-01-01 wait --for=condition=Ready pod/approved-reader --timeout=180s
+python3 -c 'import json,subprocess; obj={'"'"'apiVersion'"'"': '"'"'v1'"'"', '"'"'kind'"'"': '"'"'Pod'"'"', '"'"'metadata'"'"': {'"'"'name'"'"': '"'"'blocked-reader'"'"', '"'"'namespace'"'"': '"'"'approved-images-035-030-01-01'"'"'}, '"'"'spec'"'"': {'"'"'restartPolicy'"'"': '"'"'Never'"'"', '"'"'containers'"'"': [{'"'"'name'"'"': '"'"'reader'"'"', '"'"'image'"'"': '"'"'unapproved.example/reader:v1'"'"', '"'"'command'"'"': ['"'"'sh'"'"', '"'"'-c'"'"', '"'"'sleep 3600'"'"']}]}}; result=subprocess.run(['"'"'kubectl'"'"','"'"'create'"'"','"'"'--dry-run=server'"'"','"'"'-f'"'"','"'"'-'"'"'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and '"'"'only the training approved registry prefix'"'"' in result.stderr; print('"'"'unapproved-image-denied'"'"')'
 ```
 
 Use a validating admission policy and binding to deny an unapproved image before scheduling. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required denial or correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.

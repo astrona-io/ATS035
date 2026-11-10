@@ -24,11 +24,31 @@ teardown:
   keepCluster: false
 testing:
   init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
   - name: reference-result
     type: file
     source: solution/apply.sh
-validation:
-  script:
-    name: verify-fields-and-live-evidence
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
     type: file
-    source: validate.sh
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: minimal-content
+    description: ConfigMap minimal-content holds index.html with minimal-version=v1
+    type: file
+    source: validation/validate-minimal-content.sh
+    points: 1
+  - name: minimal-server
+    description: Pod minimal-server runs BusyBox httpd on 8080 with a read-only content mount and no Python
+    type: file
+    source: validation/validate-minimal-server.sh
+    points: 1
+  - name: serves-page
+    description: The shuttle pod receives the page from minimal-server
+    type: file
+    source: validation/validate-serves-page.sh
+    points: 1

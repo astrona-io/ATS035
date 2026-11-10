@@ -1,6 +1,15 @@
-report=get('configmap','supply-inventory')['data']
-pods=json.loads(kubectl('-n','starfleet','get','pods','-l','app=probe','-o','json'))['items']
-assert report['runtimeImageID'] in {status['imageID'] for pod in pods for status in pod['status']['containerStatuses'] if status['name']=='probe'}, 'Bind inventory to running contents'
-actual=kubectl('-n','starfleet','exec',pods[0]['metadata']['name'],'--','apk','info','-v').splitlines()
-assert json.loads(report['packages'])==sorted(actual) and actual, 'Record actual installed package evidence'
-assert report['scope']=='alpine-installed-packages', 'Do not overstate inventory scope'
+pods = json.loads(kubectl('-n', NAMESPACE, 'get', 'pods', '-l', 'app=probe', '-o', 'json'))['items']
+assert pods, 'The probe pods must keep running'
+if wants('inventory-subject'):
+    report = get('configmap', 'supply-inventory').get('data', {})
+    identities = {status['imageID'] for pod in pods for status in pod['status'].get('containerStatuses', []) if status['name'] == 'probe'}
+    assert report.get('runtimeImageID') in identities, 'Set runtimeImageID to the imageID of a ready probe container'
+    assert report.get('scope') == 'alpine-installed-packages', 'Set scope to alpine-installed-packages'
+if wants('inventory-packages'):
+    report = get('configmap', 'supply-inventory').get('data', {})
+    actual = kubectl('-n', NAMESPACE, 'exec', pods[0]['metadata']['name'], '--', 'apk', 'info', '-v').splitlines()
+    try:
+        listed = json.loads(report.get('packages', ''))
+    except ValueError:
+        listed = None
+    assert actual and listed == sorted(actual), 'Record the sorted apk info -v lines as a JSON list in packages'

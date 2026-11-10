@@ -21,7 +21,7 @@ Keep this connection selected. Host-level commands name only this environment's 
 The `busybox:1.37.0` image already runs a shell, so the pod does not need a different image. The work is to remove what the process does not need: root, writes to the image filesystem, Linux capabilities and unfiltered system calls. Inspect the namespace before you change it:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-010-02-01 get pods -o wide
 ```
 
 Save this as `pod-restricted-runner.yaml`:
@@ -31,7 +31,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: restricted-runner
-  namespace: starfleet
+  namespace: starfleet-035-010-02-01
 spec:
   restartPolicy: Never
   securityContext:
@@ -65,9 +65,9 @@ kubectl apply -f pod-restricted-runner.yaml
 Wait for the pod to become ready. Then read the user ID that the process runs as, and try to write a file in the root filesystem. The write must fail with a read-only filesystem error, so run it as its own command and expect a nonzero exit status.
 
 ```sh
-kubectl -n starfleet wait --for=condition=Ready pod/restricted-runner --timeout=180s
-kubectl -n starfleet exec restricted-runner -- id -u
-kubectl -n starfleet exec restricted-runner -- sh -c 'touch /should-fail'
+kubectl -n starfleet-035-010-02-01 wait --for=condition=Ready pod/restricted-runner --timeout=180s
+kubectl -n starfleet-035-010-02-01 exec restricted-runner -- id -u
+kubectl -n starfleet-035-010-02-01 exec restricted-runner -- sh -c 'touch /should-fail'
 ```
 
 The first command prints the user ID 10001. The second command prints an error from `touch` and returns a nonzero status. The `runAsUser` field is numeric on purpose: with `runAsNonRoot: true`, the kubelet refuses to start a container whose image names a user by text, because it cannot prove that the name is not root.

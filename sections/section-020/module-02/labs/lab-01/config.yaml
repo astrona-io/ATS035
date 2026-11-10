@@ -24,11 +24,26 @@ teardown:
   keepCluster: false
 testing:
   init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
   - name: reference-result
     type: file
     source: solution/apply.sh
-validation:
-  script:
-    name: verify-fields-and-live-evidence
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
     type: file
-    source: validate.sh
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: sbom-metadata
+    description: sbom-record declares CycloneDX 1.5, the probe imageID as subject and the scope
+    type: file
+    source: validation/validate-sbom-metadata.sh
+    points: 1
+  - name: sbom-components
+    description: The bom document lists every installed package with name, version and purl, and componentCount matches
+    type: file
+    source: validation/validate-sbom-components.sh
+    points: 2

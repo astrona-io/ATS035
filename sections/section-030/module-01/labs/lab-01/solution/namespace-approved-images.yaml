@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: approved-images
+  name: approved-images-035-030-01-01
   labels:
     training.astrona.io/registry-policy: enabled
 ---
@@ -50,7 +50,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: approved-reader
-  namespace: approved-images
+  namespace: approved-images-035-030-01-01
 spec:
   restartPolicy: Never
   containers:

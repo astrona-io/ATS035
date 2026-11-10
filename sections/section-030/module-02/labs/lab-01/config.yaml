@@ -24,11 +24,31 @@ teardown:
   keepCluster: false
 testing:
   init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
   - name: reference-result
     type: file
     source: solution/apply.sh
-validation:
-  script:
-    name: verify-fields-and-live-evidence
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
     type: file
-    source: validate.sh
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: digest-policy
+    description: ValidatingAdmissionPolicy require-digest with failurePolicy Fail, bound with Deny to the labelled namespaces
+    type: file
+    source: validation/validate-digest-policy.sh
+    points: 2
+  - name: tag-rejected
+    description: pinned-images-035-030-02-01 is labelled and rejects a tag-only container and a tag-only init container
+    type: file
+    source: validation/validate-tag-rejected.sh
+    points: 1
+  - name: digest-accepted
+    description: pinned-images-035-030-02-01 accepts a pod whose image is pinned by digest
+    type: file
+    source: validation/validate-digest-accepted.sh
+    points: 1

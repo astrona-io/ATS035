@@ -1,20 +1,23 @@
 {
   "context": "kind-astro-ats-035-lab-030-01-01",
+  "cluster": "astro-ats-035-lab-030-01-01",
+  "namespace": "starfleet-035-030-01-01",
   "resources": [
     {
       "kind": "namespace",
-      "name": "approved-images",
+      "name": "approved-images-035-030-01-01",
       "namespace": "",
       "expected": {
         "apiVersion": "v1",
         "kind": "Namespace",
         "metadata": {
-          "name": "approved-images",
+          "name": "approved-images-035-030-01-01",
           "labels": {
             "training.astrona.io/registry-policy": "enabled"
           }
         }
-      }
+      },
+      "outcome": "unapproved-rejected"
     },
     {
       "kind": "validatingadmissionpolicy",
@@ -63,7 +66,8 @@
             }
           ]
         }
-      }
+      },
+      "outcome": "registry-policy"
     },
     {
       "kind": "validatingadmissionpolicybinding",
@@ -88,18 +92,19 @@
             }
           }
         }
-      }
+      },
+      "outcome": "registry-policy"
     },
     {
       "kind": "pod",
       "name": "approved-reader",
-      "namespace": "approved-images",
+      "namespace": "approved-images-035-030-01-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "Pod",
         "metadata": {
           "name": "approved-reader",
-          "namespace": "approved-images"
+          "namespace": "approved-images-035-030-01-01"
         },
         "spec": {
           "restartPolicy": "Never",
@@ -116,17 +121,9 @@
           ]
         }
       },
-      "state": "pod"
+      "state": "pod",
+      "outcome": "approved-reader"
     }
   ],
-  "behavior": [
-    {
-      "args": [
-        "python3",
-        "-c",
-        "import json,subprocess; obj={'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': 'blocked-reader', 'namespace': 'approved-images'}, 'spec': {'restartPolicy': 'Never', 'containers': [{'name': 'reader', 'image': 'unapproved.example/reader:v1', 'command': ['sh', '-c', 'sleep 3600']}]}}; result=subprocess.run(['kubectl','create','--dry-run=server','-f','-'],input=json.dumps(obj),capture_output=True,text=True,timeout=15); assert result.returncode!=0 and 'only the training approved registry prefix' in result.stderr; print('unapproved-image-denied')"
-      ],
-      "equals": "unapproved-image-denied"
-    }
-  ]
+  "behavior": []
 }

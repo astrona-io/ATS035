@@ -5,7 +5,11 @@ exam_objectives:
 ---
 # Record A Structured Package Inventory
 
+Solve this question on: `terminal`
+
 Record a CycloneDX-style component list for the running probe image, bound to its image identity.
+
+Allow about 10 minutes for the tasks. Cluster startup adds time.
 
 ## Starting state
 
@@ -22,10 +26,17 @@ worker_name="astro-ats-035-lab-020-02-01-worker"
 
 Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
 
-## Required result
+## Tasks
 
-Create the ConfigMap sbom-record in starfleet with these keys. format: CycloneDX. specVersion: 1.5. subject: the imageID of a ready probe container. scope: alpine-installed-packages. componentCount: the number of installed packages as a string. bom: a JSON document with bomFormat CycloneDX, specVersion 1.5 and a components list with one entry per line of apk info -v from a probe pod. Each entry has type library, name, version and purl. Split a line such as musl-1.2.5-r10 at its last two dashes: the name is the part before them and the version is the last two parts joined by a dash. The purl is pkg:apk/alpine/ followed by the name, an at sign and the version. Preserve the original application. This is an operating-system package list in one SBOM format; it does not include language packages, a signature or a vulnerability scan.
+1. Run `apk info -v` in a ready `probe` pod in the namespace `starfleet-035-020-02-01` and read the `imageID` of its container `probe`.
+2. Build a CycloneDX document: `bomFormat` `CycloneDX`, `specVersion` `1.5` and a `components` list with one entry per package line. Each entry has `type` `library`, `name`, `version` and `purl`. Split a line such as `musl-1.2.5-r10` at its last two dashes: the name is the part before them and the version is the last two parts joined by a dash. The purl is `pkg:apk/alpine/` followed by the name, `@` and the version.
+3. Create the ConfigMap `sbom-record` in the same namespace with the keys `format` (`CycloneDX`), `specVersion` (`1.5`), `subject` (the image ID), `scope` (`alpine-installed-packages`), `componentCount` (the number of packages, as a string) and `bom` (the JSON document).
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+- Do not change the `probe` Deployment, its pods or the client pods.
+- This is an operating-system package list in one SBOM format. It does not include language packages, a signature or a vulnerability scan.
+
+## How the answer is checked
+
+The grader runs two checks. The first reads `format`, `specVersion`, `scope` and `subject`, which must match the image ID of a ready `probe` container. The second parses `bom`, compares its components with the packages installed in a `probe` pod, and checks `componentCount`.

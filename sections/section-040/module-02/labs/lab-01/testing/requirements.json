@@ -1,26 +1,61 @@
 {
   "context": "kind-astro-ats-035-lab-040-02-01",
+  "cluster": "astro-ats-035-lab-040-02-01",
+  "namespace": "starfleet-035-040-02-01",
   "resources": [
     {
       "kind": "configmap",
       "name": "scan-gate",
-      "namespace": "starfleet",
+      "namespace": "starfleet-035-040-02-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "ConfigMap",
         "metadata": {
           "name": "scan-gate",
-          "namespace": "starfleet"
+          "namespace": "starfleet-035-040-02-01"
         },
         "data": {
           "decision": "fail",
-          "blocking": "FIXTURE-0001,FIXTURE-0002",
+          "blocking": "FIXTURE-0001,FIXTURE-0002"
+        }
+      },
+      "outcome": "gate-decision"
+    },
+    {
+      "kind": "configmap",
+      "name": "scan-gate",
+      "namespace": "starfleet-035-040-02-01",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "scan-gate",
+          "namespace": "starfleet-035-040-02-01"
+        },
+        "data": {
           "waived": "FIXTURE-0005",
-          "unfixed": "FIXTURE-0003",
+          "unfixed": "FIXTURE-0003"
+        }
+      },
+      "outcome": "gate-exceptions"
+    },
+    {
+      "kind": "configmap",
+      "name": "scan-gate",
+      "namespace": "starfleet-035-040-02-01",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "scan-gate",
+          "namespace": "starfleet-035-040-02-01"
+        },
+        "data": {
           "severity": "HIGH,CRITICAL",
           "ignoreUnfixed": "true"
         }
-      }
+      },
+      "outcome": "gate-settings"
     }
   ],
   "behavior": []

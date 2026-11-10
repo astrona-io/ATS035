@@ -1,15 +1,17 @@
 {
   "context": "kind-astro-ats-035-lab-040-03-01",
+  "cluster": "astro-ats-035-lab-040-03-01",
+  "namespace": "starfleet-035-040-03-01",
   "resources": [
     {
       "kind": "namespace",
-      "name": "hangar",
+      "name": "hangar-035-040-03-01",
       "namespace": "",
       "expected": {
         "apiVersion": "v1",
         "kind": "Namespace",
         "metadata": {
-          "name": "hangar",
+          "name": "hangar-035-040-03-01",
           "labels": {
             "pod-security.kubernetes.io/enforce": "restricted",
             "pod-security.kubernetes.io/enforce-version": "v1.35",
@@ -17,18 +19,19 @@
             "pod-security.kubernetes.io/audit": "restricted"
           }
         }
-      }
+      },
+      "outcome": "psa-labels"
     },
     {
       "kind": "pod",
       "name": "restricted-reader",
-      "namespace": "hangar",
+      "namespace": "hangar-035-040-03-01",
       "expected": {
         "apiVersion": "v1",
         "kind": "Pod",
         "metadata": {
           "name": "restricted-reader",
-          "namespace": "hangar"
+          "namespace": "hangar-035-040-03-01"
         },
         "spec": {
           "restartPolicy": "Never",
@@ -61,7 +64,8 @@
           ]
         }
       },
-      "state": "pod"
+      "state": "pod",
+      "outcome": "restricted-reader"
     }
   ],
   "behavior": []

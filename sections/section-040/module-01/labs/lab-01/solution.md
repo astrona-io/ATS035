@@ -23,7 +23,7 @@ The isolated environment has two healthy probe replicas, an internal Service and
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-040-01-01 get pods -o wide
 kubectl get nodes -o wide
 ```
 
@@ -36,7 +36,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: analysis-findings
-  namespace: starfleet
+  namespace: starfleet-035-040-01-01
 data:
   privileged: 'true'
   runAsNonRoot: missing
@@ -46,7 +46,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: analyzed-reader
-  namespace: starfleet
+  namespace: starfleet-035-040-01-01
 spec:
   restartPolicy: Never
   containers:
@@ -80,23 +80,27 @@ spec:
 Save this as `analyze-workload.py`:
 
 ```python
-import json,subprocess,tempfile
+import json,os,shutil,subprocess,sys,tempfile
 from pathlib import Path
-CONTEXT="kind-astro-ats-035-lab-040-01-01"
-NODE="astro-ats-035-lab-040-01-01-control-plane"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-lab-040-01-01'
+CLUSTER = os.environ.get('ASTRONA_KIND_CLUSTER') or 'astro-ats-035-lab-040-01-01'
+ENGINE = os.environ.get('ASTRONA_CONTAINER_ENGINE') or ('podman' if shutil.which('podman') else 'docker')
+NODE = CLUSTER + '-control-plane'
 def run(*args):
     result=subprocess.run(args,check=True,text=True,capture_output=True,timeout=30)
     return result.stdout.strip()
-assert run('kubectl','config','current-context')==CONTEXT, 'Select the private environment'
-assert run('podman','inspect',NODE,'--format','{{index .Config.Labels "io.x-k8s.kind.cluster"}}')=='astro-ats-035-lab-040-01-01', 'Refusing an unrelated node container'
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
+if run(ENGINE, 'inspect', NODE, '--format', '{{index .Config.Labels "io.x-k8s.kind.cluster"}}') != CLUSTER:
+    sys.exit('Refusing an unrelated node container')
 
-workload=json.loads(json.loads(run('kubectl','-n','starfleet','get','configmap','analysis-source','-o','json'))['data']['workload.json'])
+workload=json.loads(json.loads(run('kubectl','-n','starfleet-035-040-01-01','get','configmap','analysis-source','-o','json'))['data']['workload.json'])
 container=workload['spec']['containers'][0];security=container.get('securityContext',{})
 report_name='analysis-findings';report={'privileged':str(security.get('privileged',False)).lower(),'runAsNonRoot':'missing' if 'runAsNonRoot' not in workload['spec'].get('securityContext',{}) else 'present','allowPrivilegeEscalation':'missing' if 'allowPrivilegeEscalation' not in security else 'present'}
 
 with tempfile.TemporaryDirectory(prefix='training-report-') as temporary:
     source=Path(temporary)/'configmap-report.json'
-    source.write_text(json.dumps({'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':report_name,'namespace':'starfleet'},'data':report}))
+    source.write_text(json.dumps({'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':report_name,'namespace':'starfleet-035-040-01-01'},'data':report}))
     run('kubectl','apply','-f',str(source))
 
 ```
@@ -113,7 +117,7 @@ kubectl apply -f configmap-analysis-findings.yaml
 Observe the actual result. A denied request returns a nonzero status when the denial works, so run it separately from a shell sequence that stops on error. Status convergence and a successful request establish different parts of the result.
 
 ```sh
-kubectl -n starfleet wait --for=condition=Ready pod/analyzed-reader --timeout=180s
+kubectl -n starfleet-035-040-01-01 wait --for=condition=Ready pod/analyzed-reader --timeout=180s
 ```
 
 Inspect a non-executed unsafe resource definition and run a corrected restricted workload. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required denial or correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.

@@ -23,26 +23,27 @@ The isolated environment has two healthy probe replicas, an internal Service and
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-020-02-01 get pods -o wide
 kubectl get nodes -o wide
 ```
 
-Create the ConfigMap sbom-record in starfleet with these keys. format: CycloneDX. specVersion: 1.5. subject: the imageID of a ready probe container. scope: alpine-installed-packages. componentCount: the number of installed packages as a string. bom: a JSON document with bomFormat CycloneDX, specVersion 1.5 and a components list with one entry per line of apk info -v from a probe pod. Each entry has type library, name, version and purl. Split a line such as musl-1.2.5-r10 at its last two dashes: the name is the part before them and the version is the last two parts joined by a dash. The purl is pkg:apk/alpine/ followed by the name, an at sign and the version. Preserve the original application. This is an operating-system package list in one SBOM format; it does not include language packages, a signature or a vulnerability scan.
+Create the ConfigMap sbom-record in starfleet-035-020-02-01 with these keys. format: CycloneDX. specVersion: 1.5. subject: the imageID of a ready probe container. scope: alpine-installed-packages. componentCount: the number of installed packages as a string. bom: a JSON document with bomFormat CycloneDX, specVersion 1.5 and a components list with one entry per line of apk info -v from a probe pod. Each entry has type library, name, version and purl. Split a line such as musl-1.2.5-r10 at its last two dashes: the name is the part before them and the version is the last two parts joined by a dash. The purl is pkg:apk/alpine/ followed by the name, an at sign and the version. Preserve the original application. This is an operating-system package list in one SBOM format; it does not include language packages, a signature or a vulnerability scan.
 
 Save this as `build-sbom-record.py`:
 
 ```python
-import json,subprocess,tempfile
+import json,os,subprocess,sys,tempfile
 from pathlib import Path
-CONTEXT="kind-astro-ats-035-lab-020-02-01"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-lab-020-02-01'
 def run(*args):
     result=subprocess.run(args,check=True,text=True,capture_output=True,timeout=30)
     return result.stdout.strip()
-assert run('kubectl','config','current-context')==CONTEXT, 'Select the private environment'
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
 
-pods=json.loads(run('kubectl','-n','starfleet','get','pods','-l','app=probe','-o','json'))['items']
+pods=json.loads(run('kubectl','-n','starfleet-035-020-02-01','get','pods','-l','app=probe','-o','json'))['items']
 pod=pods[0]
-lines=run('kubectl','-n','starfleet','exec',pod['metadata']['name'],'--','apk','info','-v').splitlines()
+lines=run('kubectl','-n','starfleet-035-020-02-01','exec',pod['metadata']['name'],'--','apk','info','-v').splitlines()
 assert lines
 identity=next(status['imageID'] for status in pod['status']['containerStatuses'] if status['name']=='probe')
 components=[]
@@ -55,7 +56,7 @@ data={'format':'CycloneDX','specVersion':'1.5','subject':identity,'scope':'alpin
 
 with tempfile.TemporaryDirectory(prefix='training-report-') as temporary:
     source=Path(temporary)/'configmap-report.json'
-    source.write_text(json.dumps({'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':'sbom-record','namespace':'starfleet'},'data':data}))
+    source.write_text(json.dumps({'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':'sbom-record','namespace':'starfleet-035-020-02-01'},'data':data}))
     run('kubectl','apply','-f',str(source))
 ```
 
@@ -72,7 +73,7 @@ Observe the actual result. Status convergence and matching fields establish diff
 Then check the result:
 
 ```sh
-kubectl -n starfleet get configmap sbom-record -o jsonpath='{.data.componentCount}{"\n"}'
+kubectl -n starfleet-035-020-02-01 get configmap sbom-record -o jsonpath='{.data.componentCount}{"\n"}'
 ```
 
 Record a CycloneDX-style component list for the running probe image, bound to its image identity. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.

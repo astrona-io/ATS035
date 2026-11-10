@@ -18,24 +18,26 @@ Keep this connection selected. Host-level commands name only this environment's 
 
 ## Inspect And Explain
 
-The isolated environment has two healthy probe replicas, an internal Service and two client Pods. The ConfigMap `scan-results` in `starfleet` holds a scan report in Trivy JSON shape, and the ConfigMap `scan-exceptions` holds an ignore list. No gate decision has been recorded.
+The isolated environment has two healthy probe replicas, an internal Service and two client Pods. The ConfigMap `scan-results` in `starfleet-035-040-02-01` holds a scan report in Trivy JSON shape, and the ConfigMap `scan-exceptions` holds an ignore list. No gate decision has been recorded.
 
 Inspect the current objects before changing them:
 
 ```sh
-kubectl -n starfleet get pods -o wide
+kubectl -n starfleet-035-040-02-01 get pods -o wide
 kubectl get nodes -o wide
 ```
 
-Read `results.json` from ConfigMap `scan-results` and the ignore list `trivyignore.txt` from ConfigMap `scan-exceptions` in `starfleet`. The gate looks only at findings with severity HIGH or CRITICAL and ignores findings that have no fixed version. A finding on the ignore list is waived. Create ConfigMap `scan-gate` in `starfleet` with these keys: `decision` (`fail` when any blocking finding remains, otherwise `pass`), `blocking`, `waived` and `unfixed` (each a sorted, comma-separated list of finding identifiers without spaces), `severity` set to `HIGH,CRITICAL` and `ignoreUnfixed` set to `true`. Do not change the report or the ignore list. The report is test data, and a gate decision is not proof that an image is safe.
+Read `results.json` from ConfigMap `scan-results` and the ignore list `trivyignore.txt` from ConfigMap `scan-exceptions` in `starfleet-035-040-02-01`. The gate looks only at findings with severity HIGH or CRITICAL and ignores findings that have no fixed version. A finding on the ignore list is waived. Create ConfigMap `scan-gate` in `starfleet-035-040-02-01` with these keys: `decision` (`fail` when any blocking finding remains, otherwise `pass`), `blocking`, `waived` and `unfixed` (each a sorted, comma-separated list of finding identifiers without spaces), `severity` set to `HIGH,CRITICAL` and `ignoreUnfixed` set to `true`. Do not change the report or the ignore list. The report is test data, and a gate decision is not proof that an image is safe.
 
 Save this as `compute-scan-gate.py`. It reads the two ConfigMaps, applies the gate rules and prints the result. It does not change the cluster:
 
 ```python
 import json
+import os
 import subprocess
+import sys
 
-CONTEXT = "kind-astro-ats-035-lab-040-02-01"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-lab-040-02-01'
 
 
 def run(*args):
@@ -43,8 +45,9 @@ def run(*args):
     return result.stdout.strip()
 
 
-assert run('kubectl', 'config', 'current-context') == CONTEXT, 'Select the private environment'
-CONFIG = {name: json.loads(run('kubectl', '-n', 'starfleet', 'get', 'configmap', name, '-o', 'json'))['data'] for name in ('scan-results', 'scan-exceptions')}
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
+CONFIG = {name: json.loads(run('kubectl', '-n', 'starfleet-035-040-02-01', 'get', 'configmap', name, '-o', 'json'))['data'] for name in ('scan-results', 'scan-exceptions')}
 results = json.loads(CONFIG['scan-results']['results.json'])
 ignored = {line.strip() for line in CONFIG['scan-exceptions']['trivyignore.txt'].splitlines() if line.strip() and not line.startswith('#')}
 blocking, waived, unfixed = [], [], []
@@ -77,7 +80,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: scan-gate
-  namespace: starfleet
+  namespace: starfleet-035-040-02-01
 data:
   decision: 'fail'
   blocking: 'FIXTURE-0001,FIXTURE-0002'
@@ -98,7 +101,7 @@ kubectl apply -f configmap-scan-gate.yaml
 Read the recorded decision back and compare it with the script output:
 
 ```sh
-kubectl -n starfleet get configmap scan-gate -o jsonpath='{.data}'
+kubectl -n starfleet-035-040-02-01 get configmap scan-gate -o jsonpath='{.data}'
 ```
 
 Compute a release gate decision from supplied Trivy-style scan results and record it. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required result. A matching field alone does not establish that a controller reconciled it.

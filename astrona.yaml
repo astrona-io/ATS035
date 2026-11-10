@@ -62,6 +62,7 @@ modules:
   - type: lab
     title: Serve Content With A Minimal Runtime
     path: sections/section-010/module-01/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: minimal-image
@@ -93,6 +94,7 @@ modules:
   - type: lab
     title: Run A Pod With A Restricted Security Context
     path: sections/section-010/module-02/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: restricted-security-context
@@ -121,6 +123,7 @@ modules:
   - type: lab
     title: Pin An Image To The Digest The Node Reports
     path: sections/section-010/module-03/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: digest-pinning
@@ -186,6 +189,7 @@ modules:
   - type: lab
     title: Bind A Package Inventory To A Running Image
     path: sections/section-020/module-01/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: package-inventory
@@ -220,6 +224,7 @@ modules:
   - type: lab
     title: Record A Structured Package Inventory
     path: sections/section-020/module-02/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: sbom-inventory
@@ -254,6 +259,7 @@ modules:
   - type: lab
     title: Give A Service Account Registry Pull Access
     path: sections/section-020/module-03/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: registry-pull-access
@@ -321,6 +327,7 @@ modules:
   - type: lab
     title: Enforce An Approved Image Registry
     path: sections/section-030/module-01/labs/lab-01
+    examScope: cluster
     difficulty: intermediate
     estimated_duration: 25m
     topic: registry-admission
@@ -355,6 +362,7 @@ modules:
   - type: lab
     title: Require Image Digests In A Namespace
     path: sections/section-030/module-02/labs/lab-01
+    examScope: cluster
     difficulty: intermediate
     estimated_duration: 25m
     topic: digest-policy
@@ -395,6 +403,7 @@ modules:
   - type: lab
     title: Enforce A Registry Policy And Attach Pull Credentials
     path: sections/section-030/module-03/labs/lab-01
+    examScope: cluster
     difficulty: intermediate
     estimated_duration: 25m
     topic: admission-failure-modes
@@ -465,6 +474,7 @@ modules:
   - type: lab
     title: Analyze And Correct A Workload Security Document
     path: sections/section-040/module-01/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: static-workload-analysis
@@ -499,6 +509,7 @@ modules:
   - type: lab
     title: Decide A Scan Gate From Scan Results
     path: sections/section-040/module-02/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: trivy-scan-gate
@@ -533,6 +544,7 @@ modules:
   - type: lab
     title: Enforce The Restricted Pod Security Standard
     path: sections/section-040/module-03/labs/lab-01
+    examScope: namespace
     difficulty: intermediate
     estimated_duration: 25m
     topic: pod-security-admission
