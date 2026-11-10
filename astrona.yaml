@@ -398,7 +398,7 @@ modules:
     difficulty: intermediate
     estimated_duration: 25m
     topic: admission-failure-modes
-    task_kind: repair
+    task_kind: build
     learning_goals:
     - Change an audit-only registry binding to enforcement and attach registry pull
       credentials to a ServiceAccount.
