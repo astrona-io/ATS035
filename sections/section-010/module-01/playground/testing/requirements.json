@@ -41,22 +41,7 @@
                 "8080",
                 "-h",
                 "/site"
-              ],
-              "volumeMounts": [
-                {
-                  "name": "site",
-                  "mountPath": "/site",
-                  "readOnly": true
-                }
               ]
-            }
-          ],
-          "volumes": [
-            {
-              "name": "site",
-              "configMap": {
-                "name": "minimal-content"
-              }
             }
           ]
         }

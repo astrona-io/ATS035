@@ -1,7 +1,9 @@
 import json
+import os
 import subprocess
+import sys
 
-CONTEXT = "kind-astro-ats-035-playground-040-02"
+CONTEXT = os.environ.get('ASTRONA_KUBE_CONTEXT') or 'kind-astro-ats-035-playground-040-02'
 
 
 def run(*args):
@@ -9,7 +11,8 @@ def run(*args):
     return result.stdout.strip()
 
 
-assert run('kubectl', 'config', 'current-context') == CONTEXT, 'Select the private environment'
+if run('kubectl', 'config', 'current-context') != CONTEXT:
+    sys.exit('Refusing to operate on another Kubernetes context')
 CONFIG = {name: json.loads(run('kubectl', '-n', 'starfleet', 'get', 'configmap', name, '-o', 'json'))['data'] for name in ('scan-results', 'scan-exceptions')}
 results = json.loads(CONFIG['scan-results']['results.json'])
 ignored = {line.strip() for line in CONFIG['scan-exceptions']['trivyignore.txt'].splitlines() if line.strip() and not line.startswith('#')}

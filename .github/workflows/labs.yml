@@ -44,6 +44,9 @@ env:
   ASTRONA_SHA256: "9e0e5d9b67d6a8b6ff62cf47276163933d072585f498671a5a4e0477ebab82ee"
   KIND_VERSION: "0.33.0"
   ASTRONA_NO_UPDATE_CHECK: "1"
+  # kind runs on Docker here, while the runner image also has podman. The lab
+  # helpers read this to inspect the right node containers.
+  ASTRONA_CONTAINER_ENGINE: docker
 
 jobs:
   list:
@@ -135,7 +138,14 @@ jobs:
 
       - name: Test the lab with its reference solution
         if: matrix.env.kind == 'lab'
+        # astrona 0.4.14 does not export ASTRONA_KUBE_CONTEXT yet, so the
+        # lab guards would fall back to the `astrona run` context
+        # (kind-astro-<lab>). `astrona test` names its cluster
+        # astro-test-<lab>; tell the guards that exact context and cluster.
         run: |
+          name=$(yq '.metadata.name' "${{ matrix.env.path }}/config.yaml")
+          export ASTRONA_KUBE_CONTEXT="kind-astro-test-$name"
+          export ASTRONA_KIND_CLUSTER="astro-test-$name"
           astrona test --accept-terms --headless --install-version \
             -c "${{ matrix.env.path }}" \
             --junit-xml "$RUNNER_TEMP/junit.xml" \
