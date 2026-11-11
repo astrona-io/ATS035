@@ -30,8 +30,7 @@ labs:
     - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
   sections/section-020/module-03/labs/lab-01:
     preparation:
-    - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
-    - sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+    - sections/section-020/module-03/course-02a-prove-an-authenticated-pull.md
   sections/section-020/capstone/labs/lab-01:
     preparation:
     - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
@@ -93,6 +92,15 @@ labs:
     - sections/section-040/module-03/course-01-the-pod-security-standards.md
     - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
     - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+  sections/section-010/module-01/labs/lab-02:
+    preparation:
+    - sections/section-010/module-01/course-02a-build-and-inspect-the-final-image.md
+  sections/section-040/module-02/labs/lab-02:
+    preparation:
+    - sections/section-040/module-02/course-03a-run-and-check-a-fresh-scan.md
+  sections/section-030/module-01/labs/lab-02:
+    preparation:
+    - sections/section-030/module-01/course-04a-verify-image-signature-boundaries.md
 additional_readings:
 - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
 - sections/section-010/module-01/course-03-hardening-a-dockerfile.md
@@ -100,6 +108,8 @@ additional_readings:
 - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
 - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
 - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+- sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+- sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
 - sections/section-020/module-03/course-03-build-provenance-and-slsa-levels.md
 - sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
 - sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md

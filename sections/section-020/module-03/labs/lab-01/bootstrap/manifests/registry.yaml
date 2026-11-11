@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: private-registry
+  template:
+    metadata:
+      labels:
+        app: private-registry
+    spec:
+      containers:
+      - name: registry
+        image: docker.io/library/registry:2.8.3
+        ports:
+        - containerPort: 5000
+        env:
+        - name: REGISTRY_AUTH
+          value: htpasswd
+        - name: REGISTRY_AUTH_HTPASSWD_REALM
+          value: Training
+        - name: REGISTRY_AUTH_HTPASSWD_PATH
+          value: /auth/htpasswd
+        volumeMounts:
+        - name: auth
+          mountPath: /auth
+          readOnly: true
+        - name: data
+          mountPath: /var/lib/registry
+      volumes:
+      - name: auth
+        secret:
+          secretName: registry-auth
+      - name: data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry
+spec:
+  type: NodePort
+  selector:
+    app: private-registry
+  ports:
+  - port: 5000
+    targetPort: 5000
+    nodePort: 32000

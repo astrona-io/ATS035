@@ -40,3 +40,7 @@ The report in `scan-results` is test data with made-up identifiers that start wi
 Launch your playground now, and keep it running next to you while you read:
 
 <!-- astrona:playground -->
+
+## Independent live assessment
+
+Prepare with [Use A Fresh Scan As Release Evidence](course-03a-run-and-check-a-fresh-scan.md). [Scan An Image And Bind The Release Decision](labs/lab-02/question.md) uses its own qemu environment. The report matches a fresh scan of the supplied image with the lab database; The decision records the current image, database timestamp and complete high/critical count.
