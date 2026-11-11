@@ -4,14 +4,16 @@ The course has teaching material for its registered lab tasks, but its readings 
 
 `TEACHING-COVERAGE.yaml` names the preparation set for every lab. `LAB-COVERAGE.md` renders both directions: lab to preparation and reading to assessment. A preparation link means the reading teaches something used by that task, not that every operation in the reading is graded. The additional-reading list makes material without a module assessment visible. Capstones combine selected skills and do not silently count as coverage of every reading.
 
+## Live assessment additions
+
+New QEMU labs build and inspect a minimal image, run Trivy against a fresh verified database snapshot, and sign and verify an immutable registry digest. The pull-access lab now uses a real authenticated registry and tests both correct and incorrect credentials.
+
 ## Remaining practical gaps and boundaries
 
-- The minimal-image lab runs an existing small image; multi-stage image construction is separate practice and is not graded.
-- The inventory and CycloneDX labs use the live Alpine package database. They do not run Syft or produce a complete inventory of language dependencies.
-- The scan-gate lab evaluates a saved report. It does not run a fresh Trivy scan or verify database freshness. The static-analysis lab grades field analysis and a repaired Pod, not execution of Kubesec or KubeLinter.
-- Pull-secret labs check configuration and inheritance against placeholder registries. They do not prove authenticated pulls. Digest admission does not verify signatures; keyless signing and provenance remain reference topics.
-
-These are explicit limits, not completed assessments. When closing one, add or extend a runnable environment, teach the actual commands and evidence, add a live grader with negative cases, and update the mapping. Do not mark a reference procedure as practiced just because it contains a command block.
+- The inventory labs read the live Alpine package database; they do not run Syft or inventory every language dependency.
+- The static-analysis lab checks field analysis and a repaired Pod, not execution of Kubesec or KubeLinter.
+- Cosign uses disposable local keys and a loopback HTTP registry without a transparency log. Keyless identity, provenance verification and signature enforcement at admission remain ungraded.
+- Other pull-secret exercises still teach configuration. Authenticated-pull evidence comes specifically from section-020/module-03/labs/lab-01.
 
 ## Runtime choice
 

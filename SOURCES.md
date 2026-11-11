@@ -28,3 +28,12 @@ Applied the local astrona-course-expand-material skill with CLAUDE.md plain-Engl
 - https://kubernetes.io/docs/tutorials/security/seccomp/
 - https://kubernetes.io/docs/tutorials/security/apparmor/
 - https://falco.org/docs/concepts/
+
+## Live assessment review — 2026-11-11
+
+Trivy 0.76.2; Cosign 3.1.4; registry 2.8.3; crane 0.20.3; GCC 15.2.0. QEMU fixtures pin the Ubuntu image and verify architecture-specific downloads where supplied. Package repositories and vulnerability data remain time-dependent.
+
+- [Docker multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
+- [Registry authentication](https://distribution.github.io/distribution/about/deploying/)
+- [Trivy database](https://trivy.dev/docs/latest/configuration/db/)
+- [Cosign verification](https://docs.sigstore.dev/cosign/verifying/verify/)
