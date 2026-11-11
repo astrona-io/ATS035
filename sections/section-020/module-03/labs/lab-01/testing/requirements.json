@@ -36,31 +36,6 @@
         ]
       },
       "outcome": "service-account"
-    },
-    {
-      "kind": "pod",
-      "name": "release-check",
-      "namespace": "starfleet-035-020-03-01",
-      "expected": {
-        "apiVersion": "v1",
-        "kind": "Pod",
-        "metadata": {
-          "name": "release-check",
-          "namespace": "starfleet-035-020-03-01"
-        },
-        "spec": {
-          "serviceAccountName": "probe-runner",
-          "restartPolicy": "Never",
-          "containers": [
-            {
-              "name": "client",
-              "image": "docker.io/library/busybox:1.37.0"
-            }
-          ]
-        }
-      },
-      "state": "pod",
-      "outcome": "release-check"
     }
   ],
   "behavior": []

@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed-registry
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: copy
+        image: gcr.io/go-containerregistry/crane:v0.20.3
+        command:
+        - /ko-app/crane
+        args:
+        - copy
+        - --insecure
+        - docker.io/library/busybox:1.37.0
+        - registry:5000/scout:v1
+        env:
+        - name: DOCKER_CONFIG
+          value: /auth
+        volumeMounts:
+        - name: auth
+          mountPath: /auth
+          readOnly: true
+      volumes:
+      - name: auth
+        secret:
+          secretName: registry-seed-auth
+          items:
+          - key: .dockerconfigjson
+            path: config.json

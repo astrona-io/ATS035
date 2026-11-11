@@ -26,7 +26,7 @@ Developed reading explains mechanisms, responsible components, examples and limi
 
 ## Author Review
 
-See [curriculum coverage](CURRICULUM.md), [primary sources](SOURCES.md), [question-bank documentation](ASSESSMENTS.md) and [contribution instructions](CONTRIBUTING.md). No runtime execution is claimed.
+See [curriculum coverage](CURRICULUM.md), [primary sources](SOURCES.md), [question-bank documentation](ASSESSMENTS.md) and [contribution instructions](CONTRIBUTING.md). Runtime results are recorded in the PR and GitHub Actions.
 
 ## Hands-On Coverage
 
@@ -50,3 +50,10 @@ This course has 12 ungraded module playgrounds and 16 draft independent labs (12
 | 040/02 | Decide A Scan Gate From Scan Results |
 | 040/03 | Enforce The Restricted Pod Security Standard |
 | 040/capstone | Release A Workload Through Analysis, A Scan Gate And Restricted Admission |
+
+## Authoring and verification
+
+See [AUTHORING.md](AUTHORING.md) for the lab lifecycle and review workflow, and
+[LAB-COVERAGE.md](LAB-COVERAGE.md) for preparation lessons and graded outcomes.
+
+See [lesson and lab links](LAB-COVERAGE.md) and [remaining practical gaps](COVERAGE-REVIEW.md) for the current assessment scope.

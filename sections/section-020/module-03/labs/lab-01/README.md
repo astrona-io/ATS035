@@ -1,10 +1,8 @@
 ---
 draft: true
-exam_objectives:
-- Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
 ---
-# Give A Service Account Registry Pull Access
+# Prove An Authenticated Registry Pull
 
-Create a registry pull secret, attach it to a service account and run a pod that receives it.
+Configure a ServiceAccount pull secret for the private registry installed in this lab. Fresh Pods must authenticate and run the private image; incorrect credentials must fail. The registry uses disposable credentials and HTTP inside the isolated kind environment.
 
-The task and solution use a separate pinned kind cluster. Run `astrona test` on this folder: `testing/verify-start.sh` checks that every outcome fails on the starting state, then the reference solution is applied and every outcome must pass.
+`astrona test -c .` verifies the broken starting state, applies the solution, tests incorrect credentials, restores access and runs the final graders.

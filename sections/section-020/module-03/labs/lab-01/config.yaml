@@ -13,6 +13,9 @@ runtime:
     preloadImages:
     - docker.io/library/python:3.13-alpine
     - docker.io/library/busybox:1.37.0
+    - docker.io/library/registry:2.8.3
+    - docker.io/library/httpd:2.4.65-alpine
+    - gcr.io/go-containerregistry/crane:v0.20.3
     nodes:
       workers: 1
 bootstrap:
@@ -35,10 +38,13 @@ testing:
     description: Wait until the reference solution settles and every outcome passes
     type: file
     source: testing/wait-solved.sh
+  - name: reject-invalid-credentials
+    type: file
+    source: testing/regression.sh
 validation:
   scripts:
   - name: pull-secret
-    description: Secret registry-credentials holds the builder credential for registry.example.test
+    description: The pull Secret authenticates to the live private registry
     type: file
     source: validation/validate-pull-secret.sh
     points: 1
@@ -48,7 +54,7 @@ validation:
     source: validation/validate-service-account.sh
     points: 1
   - name: release-check
-    description: Pod release-check runs as probe-runner and receives the pull secret from its service account
+    description: A fresh Pod pulls and runs the private image using the ServiceAccount credential
     type: file
     source: validation/validate-release-check.sh
     points: 1

@@ -1,0 +1,119 @@
+version: 1
+labs:
+  sections/section-010/module-01/labs/lab-01:
+    preparation:
+    - sections/section-010/module-01/course-01-layers-tags-and-digests.md
+    - sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
+  sections/section-010/module-02/labs/lab-01:
+    preparation:
+    - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+  sections/section-010/module-03/labs/lab-01:
+    preparation:
+    - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+  sections/section-010/capstone/labs/lab-01:
+    preparation:
+    - sections/section-010/module-01/course-01-layers-tags-and-digests.md
+    - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
+    - sections/section-010/module-01/course-03-hardening-a-dockerfile.md
+    - sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
+    - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+    - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+    - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+  sections/section-020/module-01/labs/lab-01:
+    preparation:
+    - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
+    - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
+  sections/section-020/module-02/labs/lab-01:
+    preparation:
+    - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+  sections/section-020/module-03/labs/lab-01:
+    preparation:
+    - sections/section-020/module-03/course-02a-prove-an-authenticated-pull.md
+  sections/section-020/capstone/labs/lab-01:
+    preparation:
+    - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
+    - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
+    - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
+    - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
+    - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+    - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+    - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+    - sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+    - sections/section-020/module-03/course-03-build-provenance-and-slsa-levels.md
+  sections/section-030/module-01/labs/lab-01:
+    preparation:
+    - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
+    - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
+  sections/section-030/module-02/labs/lab-01:
+    preparation:
+    - sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
+  sections/section-030/module-03/labs/lab-01:
+    preparation:
+    - sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+    - sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+  sections/section-030/capstone/labs/lab-01:
+    preparation:
+    - sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
+    - sections/section-030/module-01/course-02-enforcing-permitted-registries.md
+    - sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
+    - sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
+    - sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
+    - sections/section-030/module-02/course-02-signatures-attestations-and-keyless-signing.md
+    - sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
+    - sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+    - sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+    - sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+  sections/section-040/module-01/labs/lab-01:
+    preparation:
+    - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
+    - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
+    - sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
+  sections/section-040/module-02/labs/lab-01:
+    preparation:
+    - sections/section-040/module-02/course-01-what-trivy-scans-images-folders-and-configuration.md
+    - sections/section-040/module-02/course-02-severity-filters-unfixed-findings-and-exit-codes.md
+    - sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
+  sections/section-040/module-03/labs/lab-01:
+    preparation:
+    - sections/section-040/module-03/course-01-the-pod-security-standards.md
+    - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+    - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+  sections/section-040/capstone/labs/lab-01:
+    preparation:
+    - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
+    - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
+    - sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
+    - sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
+    - sections/section-040/module-02/course-01-what-trivy-scans-images-folders-and-configuration.md
+    - sections/section-040/module-02/course-02-severity-filters-unfixed-findings-and-exit-codes.md
+    - sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
+    - sections/section-040/module-03/course-01-the-pod-security-standards.md
+    - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+    - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+  sections/section-010/module-01/labs/lab-02:
+    preparation:
+    - sections/section-010/module-01/course-02a-build-and-inspect-the-final-image.md
+  sections/section-040/module-02/labs/lab-02:
+    preparation:
+    - sections/section-040/module-02/course-03a-run-and-check-a-fresh-scan.md
+  sections/section-030/module-01/labs/lab-02:
+    preparation:
+    - sections/section-030/module-01/course-04a-verify-image-signature-boundaries.md
+additional_readings:
+- sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
+- sections/section-010/module-01/course-03-hardening-a-dockerfile.md
+- sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+- sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
+- sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
+- sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+- sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+- sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+- sections/section-020/module-03/course-03-build-provenance-and-slsa-levels.md
+- sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
+- sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
+- sections/section-030/module-02/course-02-signatures-attestations-and-keyless-signing.md
+- sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
+- sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+- sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md

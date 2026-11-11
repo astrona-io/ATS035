@@ -1,8 +1,8 @@
 training:
   id: ATS035
   title: 'CKS: Supply Chain Security'
-  description: 'Detailed reading material and reusable YAML knowledge checks for CKS:
-    Supply Chain Security. Technical content remains draft. Each module has a playground, a graded lab and a knowledge check.'
+  description: 'Detailed reading material and reusable YAML knowledge checks for CKS: Supply Chain Security.
+    Technical content remains draft. Each module has a playground, a graded lab and a knowledge check.'
   certification:
     name: Certified Kubernetes Security Specialist
     code: CKS
@@ -12,10 +12,8 @@ training:
     competencies:
     - Minimize base image footprint
     - Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
-    - Secure your supply chain (permitted registries, sign and validate artifacts,
-      etc.)
-    - Perform static analysis of user workloads and container images (e.g. Kubesec,
-      KubeLinter)
+    - Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
+    - Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
 modules:
 - id: module-intro
   title: Introduction
@@ -39,25 +37,25 @@ modules:
   status: alpha
   content:
   - type: reading
-    title: 'Minimize base image footprint'
+    title: Minimize base image footprint
     path: sections/section-010/README.md
   - type: reading
-    title: 'Minimize The Base Image Footprint'
+    title: Minimize The Base Image Footprint
     path: sections/section-010/module-01/course.md
   - type: reading
-    title: 'Layers, Tags And Digests'
+    title: Layers, Tags And Digests
     path: sections/section-010/module-01/course-01-layers-tags-and-digests.md
   - type: reading
-    title: 'Multi-Stage Builds And Minimal Base Images'
+    title: Multi-Stage Builds And Minimal Base Images
     path: sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
   - type: reading
-    title: 'Hardening A Dockerfile'
+    title: Hardening A Dockerfile
     path: sections/section-010/module-01/course-03-hardening-a-dockerfile.md
   - type: reading
-    title: 'Running Minimal Images In A Cluster'
+    title: Running Minimal Images In A Cluster
     path: sections/section-010/module-01/course-04-running-minimal-images-in-a-cluster.md
   - type: reading
-    title: 'Serve Content With A Minimal Runtime — Task'
+    title: "Serve Content With A Minimal Runtime \u2014 Task"
     path: sections/section-010/module-01/labs/lab-01/question.md
   - type: lab
     title: Serve Content With A Minimal Runtime
@@ -68,14 +66,30 @@ modules:
     topic: minimal-image
     task_kind: build
     learning_goals:
-    - Select an image providing only the required HTTP process and verify its running
-      contents.
+    - Select an image providing only the required HTTP process and verify its running contents.
     tags:
     - cks
     - minimal-image
   - type: reading
-    title: 'Serve Content With A Minimal Runtime — Solution'
+    title: "Serve Content With A Minimal Runtime \u2014 Solution"
     path: sections/section-010/module-01/labs/lab-01/solution.md
+  - type: reading
+    title: Build And Inspect The Final Image
+    path: sections/section-010/module-01/course-02a-build-and-inspect-the-final-image.md
+  - type: reading
+    title: "Build A Minimal Runtime Image \u2014 Task"
+    path: sections/section-010/module-01/labs/lab-02/question.md
+  - type: lab
+    title: Build A Minimal Runtime Image
+    path: sections/section-010/module-01/labs/lab-02
+    difficulty: intermediate
+    estimated_duration: 15m
+    learning_goals:
+    - A fresh multi-stage build produces a small final filesystem without build tools
+    - The built image serves HTTP as a non-root user with a read-only root filesystem
+  - type: reading
+    title: "Build A Minimal Runtime Image \u2014 Solution"
+    path: sections/section-010/module-01/labs/lab-02/solution.md
   - type: reading
     title: Summary
     path: sections/section-010/module-01/course-05-summary.md
@@ -89,7 +103,7 @@ modules:
     title: Measure What A Running Container Can Reach
     path: sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
   - type: reading
-    title: Run A Pod With A Restricted Security Context — Task
+    title: "Run A Pod With A Restricted Security Context \u2014 Task"
     path: sections/section-010/module-02/labs/lab-01/question.md
   - type: lab
     title: Run A Pod With A Restricted Security Context
@@ -100,13 +114,13 @@ modules:
     topic: restricted-security-context
     task_kind: build
     learning_goals:
-    - Run a BusyBox pod as a numeric non-root user with a read-only root filesystem,
-      no capabilities and the runtime default seccomp profile.
+    - Run a BusyBox pod as a numeric non-root user with a read-only root filesystem, no capabilities and
+      the runtime default seccomp profile.
     tags:
     - cks
     - restricted-security-context
   - type: reading
-    title: Run A Pod With A Restricted Security Context — Solution
+    title: "Run A Pod With A Restricted Security Context \u2014 Solution"
     path: sections/section-010/module-02/labs/lab-01/solution.md
   - type: reading
     title: Summary
@@ -118,7 +132,7 @@ modules:
     title: Pin Images By Digest And Keep The Pin Current
     path: sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
   - type: reading
-    title: Pin An Image To The Digest The Node Reports — Task
+    title: "Pin An Image To The Digest The Node Reports \u2014 Task"
     path: sections/section-010/module-03/labs/lab-01/question.md
   - type: lab
     title: Pin An Image To The Digest The Node Reports
@@ -134,7 +148,7 @@ modules:
     - cks
     - digest-pinning
   - type: reading
-    title: Pin An Image To The Digest The Node Reports — Solution
+    title: "Pin An Image To The Digest The Node Reports \u2014 Solution"
     path: sections/section-010/module-03/labs/lab-01/solution.md
   - type: reading
     title: Pull Policy, Rebuild Cadence And Size Budgets
@@ -148,7 +162,7 @@ modules:
     question_count: 10
     pass_score: 70
   - type: reading
-    title: Run A Hardened Minimal Web Server — Task
+    title: "Run A Hardened Minimal Web Server \u2014 Task"
     path: sections/section-010/capstone/labs/lab-01/question.md
   - type: lab
     title: Run A Hardened Minimal Web Server
@@ -158,13 +172,12 @@ modules:
     topic: minimal-image-capstone
     task_kind: build
     learning_goals:
-    - Combine a digest-pinned minimal image, a restricted security context, resource
-      limits and a Service.
+    - Combine a digest-pinned minimal image, a restricted security context, resource limits and a Service.
     tags:
     - cks
     - minimal-image-capstone
   - type: reading
-    title: Run A Hardened Minimal Web Server — Solution
+    title: "Run A Hardened Minimal Web Server \u2014 Solution"
     path: sections/section-010/capstone/labs/lab-01/solution.md
 - id: module-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
@@ -172,19 +185,19 @@ modules:
   status: alpha
   content:
   - type: reading
-    title: 'Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)'
+    title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
     path: sections/section-020/README.md
   - type: reading
-    title: 'Understand The Software Supply Chain'
+    title: Understand The Software Supply Chain
     path: sections/section-020/module-01/course.md
   - type: reading
-    title: 'Stages, Trust Boundaries And Evidence'
+    title: Stages, Trust Boundaries And Evidence
     path: sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
   - type: reading
-    title: 'Software Bills Of Materials With Syft'
+    title: Software Bills Of Materials With Syft
     path: sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
   - type: reading
-    title: 'Bind A Package Inventory To A Running Image — Task'
+    title: "Bind A Package Inventory To A Running Image \u2014 Task"
     path: sections/section-020/module-01/labs/lab-01/question.md
   - type: lab
     title: Bind A Package Inventory To A Running Image
@@ -195,19 +208,18 @@ modules:
     topic: package-inventory
     task_kind: build
     learning_goals:
-    - Record installed operating-system packages and the image identity actually running
-      them.
+    - Record installed operating-system packages and the image identity actually running them.
     tags:
     - cks
     - package-inventory
   - type: reading
-    title: 'Bind A Package Inventory To A Running Image — Solution'
+    title: "Bind A Package Inventory To A Running Image \u2014 Solution"
     path: sections/section-020/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Vulnerability Scanning With Trivy'
+    title: Vulnerability Scanning With Trivy
     path: sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
   - type: reading
-    title: 'CI/CD Pipelines And Artifact Repositories'
+    title: CI/CD Pipelines And Artifact Repositories
     path: sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
   - type: reading
     title: Summary
@@ -219,7 +231,7 @@ modules:
     title: Reading SPDX And CycloneDX Documents
     path: sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
   - type: reading
-    title: Record A Structured Package Inventory — Task
+    title: "Record A Structured Package Inventory \u2014 Task"
     path: sections/section-020/module-02/labs/lab-01/question.md
   - type: lab
     title: Record A Structured Package Inventory
@@ -230,13 +242,12 @@ modules:
     topic: sbom-inventory
     task_kind: build
     learning_goals:
-    - Record a CycloneDX-style component list for the running probe image, bound to
-      its image identity.
+    - Record a CycloneDX-style component list for the running probe image, bound to its image identity.
     tags:
     - cks
     - sbom-inventory
   - type: reading
-    title: Record A Structured Package Inventory — Solution
+    title: "Record A Structured Package Inventory \u2014 Solution"
     path: sections/section-020/module-02/labs/lab-01/solution.md
   - type: reading
     title: Matching An SBOM To Vulnerabilities And An Image Digest
@@ -254,24 +265,28 @@ modules:
     title: Pull Secrets And Service Accounts
     path: sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
   - type: reading
-    title: Give A Service Account Registry Pull Access — Task
+    title: Prove An Image Pull Uses Registry Credentials
+    path: sections/section-020/module-03/course-02a-prove-an-authenticated-pull.md
+  - type: reading
+    title: "Repair Authenticated Image Pulls \u2014 Task"
     path: sections/section-020/module-03/labs/lab-01/question.md
   - type: lab
-    title: Give A Service Account Registry Pull Access
+    title: Repair Authenticated Image Pulls
     path: sections/section-020/module-03/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 15m
     topic: registry-pull-access
     task_kind: build
     learning_goals:
-    - Create a registry pull secret, attach it to a service account and run a pod that
-      receives it.
+    - The pull Secret authenticates to the live private registry
+    - ServiceAccount probe-runner lists registry-credentials in imagePullSecrets
+    - A fresh Pod pulls and runs the private image using the ServiceAccount credential
     tags:
     - cks
     - registry-pull-access
   - type: reading
-    title: Give A Service Account Registry Pull Access — Solution
+    title: "Repair Authenticated Image Pulls \u2014 Solution"
     path: sections/section-020/module-03/labs/lab-01/solution.md
   - type: reading
     title: Build Provenance And SLSA Levels
@@ -285,7 +300,7 @@ modules:
     question_count: 10
     pass_score: 70
   - type: reading
-    title: Record A Release With Inventory, Digest And Pull Access — Task
+    title: "Record A Release With Inventory, Digest And Pull Access \u2014 Task"
     path: sections/section-020/capstone/labs/lab-01/question.md
   - type: lab
     title: Record A Release With Inventory, Digest And Pull Access
@@ -295,34 +310,33 @@ modules:
     topic: release-record-capstone
     task_kind: build
     learning_goals:
-    - Combine a package inventory, an image digest, an SBOM format and registry pull
-      access into one release record.
+    - Combine a package inventory, an image digest, an SBOM format and registry pull access into one release
+      record.
     tags:
     - cks
     - release-record-capstone
   - type: reading
-    title: Record A Release With Inventory, Digest And Pull Access — Solution
+    title: "Record A Release With Inventory, Digest And Pull Access \u2014 Solution"
     path: sections/section-020/capstone/labs/lab-01/solution.md
 - id: module-030
-  title: Secure your supply chain (permitted registries, sign and validate artifacts,
-    etc.)
+  title: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
   description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
-    title: 'Secure your supply chain (permitted registries, sign and validate artifacts, etc.)'
+    title: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
     path: sections/section-030/README.md
   - type: reading
-    title: 'Admission Control, Permitted Registries And Signed Images'
+    title: Admission Control, Permitted Registries And Signed Images
     path: sections/section-030/module-01/course.md
   - type: reading
-    title: 'The Admission Pipeline And ValidatingAdmissionPolicy'
+    title: The Admission Pipeline And ValidatingAdmissionPolicy
     path: sections/section-030/module-01/course-01-the-admission-pipeline-and-validatingadmissionpolicy.md
   - type: reading
-    title: 'Enforcing Permitted Registries'
+    title: Enforcing Permitted Registries
     path: sections/section-030/module-01/course-02-enforcing-permitted-registries.md
   - type: reading
-    title: 'Enforce An Approved Image Registry — Task'
+    title: "Enforce An Approved Image Registry \u2014 Task"
     path: sections/section-030/module-01/labs/lab-01/question.md
   - type: lab
     title: Enforce An Approved Image Registry
@@ -333,20 +347,36 @@ modules:
     topic: registry-admission
     task_kind: build
     learning_goals:
-    - Use a validating admission policy and binding to deny an unapproved image before
-      scheduling.
+    - Use a validating admission policy and binding to deny an unapproved image before scheduling.
     tags:
     - cks
     - registry-admission
   - type: reading
-    title: 'Enforce An Approved Image Registry — Solution'
+    title: "Enforce An Approved Image Registry \u2014 Solution"
     path: sections/section-030/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Policy Engines And Admission Webhooks'
+    title: Policy Engines And Admission Webhooks
     path: sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
   - type: reading
-    title: 'Signing And Verifying Images With cosign'
+    title: Signing And Verifying Images With cosign
     path: sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
+  - type: reading
+    title: Verify Who Signed An Image Digest
+    path: sections/section-030/module-01/course-04a-verify-image-signature-boundaries.md
+  - type: reading
+    title: "Sign And Verify An Immutable Image \u2014 Task"
+    path: sections/section-030/module-01/labs/lab-02/question.md
+  - type: lab
+    title: Sign And Verify An Immutable Image
+    path: sections/section-030/module-01/labs/lab-02
+    difficulty: intermediate
+    estimated_duration: 15m
+    learning_goals:
+    - The supplied immutable image digest has a valid signature under the training public key
+    - A different key and a different unsigned image cannot pass the same verification
+  - type: reading
+    title: "Sign And Verify An Immutable Image \u2014 Solution"
+    path: sections/section-030/module-01/labs/lab-02/solution.md
   - type: reading
     title: Summary
     path: sections/section-030/module-01/course-05-summary.md
@@ -357,7 +387,7 @@ modules:
     title: A Digest Rule With ValidatingAdmissionPolicy
     path: sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
   - type: reading
-    title: Require Image Digests In A Namespace — Task
+    title: "Require Image Digests In A Namespace \u2014 Task"
     path: sections/section-030/module-02/labs/lab-01/question.md
   - type: lab
     title: Require Image Digests In A Namespace
@@ -368,13 +398,12 @@ modules:
     topic: digest-policy
     task_kind: build
     learning_goals:
-    - Deny a pod whose image is not referenced by digest and admit a pod whose image
-      is.
+    - Deny a pod whose image is not referenced by digest and admit a pod whose image is.
     tags:
     - cks
     - digest-policy
   - type: reading
-    title: Require Image Digests In A Namespace — Solution
+    title: "Require Image Digests In A Namespace \u2014 Solution"
     path: sections/section-030/module-02/labs/lab-01/solution.md
   - type: reading
     title: Signatures, Attestations And Keyless Signing
@@ -398,7 +427,7 @@ modules:
     title: Admission Failure Modes And Exemptions
     path: sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
   - type: reading
-    title: Enforce A Registry Policy And Attach Pull Credentials — Task
+    title: "Enforce A Registry Policy And Attach Pull Credentials \u2014 Task"
     path: sections/section-030/module-03/labs/lab-01/question.md
   - type: lab
     title: Enforce A Registry Policy And Attach Pull Credentials
@@ -409,13 +438,12 @@ modules:
     topic: admission-failure-modes
     task_kind: build
     learning_goals:
-    - Change an audit-only registry binding to enforcement and attach registry pull
-      credentials to a ServiceAccount.
+    - Change an audit-only registry binding to enforcement and attach registry pull credentials to a ServiceAccount.
     tags:
     - cks
     - admission-failure-modes
   - type: reading
-    title: Enforce A Registry Policy And Attach Pull Credentials — Solution
+    title: "Enforce A Registry Policy And Attach Pull Credentials \u2014 Solution"
     path: sections/section-030/module-03/labs/lab-01/solution.md
   - type: reading
     title: Summary
@@ -426,7 +454,7 @@ modules:
     question_count: 10
     pass_score: 70
   - type: reading
-    title: Enforce Approved Registries And Digests In One Policy Set — Task
+    title: "Enforce Approved Registries And Digests In One Policy Set \u2014 Task"
     path: sections/section-030/capstone/labs/lab-01/question.md
   - type: lab
     title: Enforce Approved Registries And Digests In One Policy Set
@@ -436,40 +464,39 @@ modules:
     topic: supply-chain-capstone
     task_kind: build
     learning_goals:
-    - Enforce an approved registry and a digest requirement together in one namespace
-      while one system namespace stays exempt.
+    - Enforce an approved registry and a digest requirement together in one namespace while one system
+      namespace stays exempt.
     tags:
     - cks
     - supply-chain-capstone
   - type: reading
-    title: Enforce Approved Registries And Digests In One Policy Set — Solution
+    title: "Enforce Approved Registries And Digests In One Policy Set \u2014 Solution"
     path: sections/section-030/capstone/labs/lab-01/solution.md
 - id: module-040
-  title: Perform static analysis of user workloads and container images (e.g. Kubesec,
-    KubeLinter)
+  title: Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
   description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
-    title: 'Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)'
+    title: Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
     path: sections/section-040/README.md
   - type: reading
-    title: 'Static Analysis Of Workloads And Images'
+    title: Static Analysis Of Workloads And Images
     path: sections/section-040/module-01/course.md
   - type: reading
-    title: 'What Static Analysis Can And Cannot Show'
+    title: What Static Analysis Can And Cannot Show
     path: sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
   - type: reading
-    title: 'Scanning Manifests With Kubesec'
+    title: Scanning Manifests With Kubesec
     path: sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
   - type: reading
-    title: 'Linting Manifests With KubeLinter'
+    title: Linting Manifests With KubeLinter
     path: sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
   - type: reading
-    title: 'A Release Decision With Image Scans And Pod Security Admission'
+    title: A Release Decision With Image Scans And Pod Security Admission
     path: sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
   - type: reading
-    title: 'Analyze And Correct A Workload Security Document — Task'
+    title: "Analyze And Correct A Workload Security Document \u2014 Task"
     path: sections/section-040/module-01/labs/lab-01/question.md
   - type: lab
     title: Analyze And Correct A Workload Security Document
@@ -480,13 +507,12 @@ modules:
     topic: static-workload-analysis
     task_kind: build
     learning_goals:
-    - Inspect a non-executed unsafe resource definition and run a corrected restricted
-      workload.
+    - Inspect a non-executed unsafe resource definition and run a corrected restricted workload.
     tags:
     - cks
     - static-workload-analysis
   - type: reading
-    title: 'Analyze And Correct A Workload Security Document — Solution'
+    title: "Analyze And Correct A Workload Security Document \u2014 Solution"
     path: sections/section-040/module-01/labs/lab-01/solution.md
   - type: reading
     title: Summary
@@ -504,7 +530,7 @@ modules:
     title: Exceptions, Database Freshness And What A Finding Proves
     path: sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
   - type: reading
-    title: Decide A Scan Gate From Scan Results — Task
+    title: "Decide A Scan Gate From Scan Results \u2014 Task"
     path: sections/section-040/module-02/labs/lab-01/question.md
   - type: lab
     title: Decide A Scan Gate From Scan Results
@@ -515,14 +541,30 @@ modules:
     topic: trivy-scan-gate
     task_kind: build
     learning_goals:
-    - Compute a gate decision from scan results, an unfixed filter and an ignore list,
-      and record it.
+    - Compute a gate decision from scan results, an unfixed filter and an ignore list, and record it.
     tags:
     - cks
     - trivy-scan-gate
   - type: reading
-    title: Decide A Scan Gate From Scan Results — Solution
+    title: "Decide A Scan Gate From Scan Results \u2014 Solution"
     path: sections/section-040/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Use A Fresh Scan As Release Evidence
+    path: sections/section-040/module-02/course-03a-run-and-check-a-fresh-scan.md
+  - type: reading
+    title: "Scan An Image And Bind The Release Decision \u2014 Task"
+    path: sections/section-040/module-02/labs/lab-02/question.md
+  - type: lab
+    title: Scan An Image And Bind The Release Decision
+    path: sections/section-040/module-02/labs/lab-02
+    difficulty: intermediate
+    estimated_duration: 15m
+    learning_goals:
+    - The report matches a fresh scan of the supplied image with the lab database
+    - The decision records the current image, database timestamp and complete high/critical count
+  - type: reading
+    title: "Scan An Image And Bind The Release Decision \u2014 Solution"
+    path: sections/section-040/module-02/labs/lab-02/solution.md
   - type: reading
     title: Summary
     path: sections/section-040/module-02/course-04-summary.md
@@ -539,7 +581,7 @@ modules:
     title: Meeting The Restricted Standard, Exemptions And Limits
     path: sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
   - type: reading
-    title: Enforce The Restricted Pod Security Standard — Task
+    title: "Enforce The Restricted Pod Security Standard \u2014 Task"
     path: sections/section-040/module-03/labs/lab-01/question.md
   - type: lab
     title: Enforce The Restricted Pod Security Standard
@@ -550,13 +592,13 @@ modules:
     topic: pod-security-admission
     task_kind: build
     learning_goals:
-    - Enforce the restricted standard on a namespace, run a compliant pod and show that
-      an unrestricted pod is rejected.
+    - Enforce the restricted standard on a namespace, run a compliant pod and show that an unrestricted
+      pod is rejected.
     tags:
     - cks
     - pod-security-admission
   - type: reading
-    title: Enforce The Restricted Pod Security Standard — Solution
+    title: "Enforce The Restricted Pod Security Standard \u2014 Solution"
     path: sections/section-040/module-03/labs/lab-01/solution.md
   - type: reading
     title: Summary
@@ -567,8 +609,7 @@ modules:
     question_count: 10
     pass_score: 70
   - type: reading
-    title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
-      — Task
+    title: "Release A Workload Through Analysis, A Scan Gate And Restricted Admission \u2014 Task"
     path: sections/section-040/capstone/labs/lab-01/question.md
   - type: lab
     title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
@@ -578,14 +619,13 @@ modules:
     topic: release-capstone
     task_kind: build
     learning_goals:
-    - Combine static analysis findings, a scan gate decision and restricted admission
-      to release a corrected workload.
+    - Combine static analysis findings, a scan gate decision and restricted admission to release a corrected
+      workload.
     tags:
     - cks
     - release-capstone
   - type: reading
-    title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
-      — Solution
+    title: "Release A Workload Through Analysis, A Scan Gate And Restricted Admission \u2014 Solution"
     path: sections/section-040/capstone/labs/lab-01/solution.md
   - type: quiz
     title: Final Domain Quiz
