@@ -12,7 +12,7 @@ DIRECTORY = Path(__file__).resolve().parent
 def command(args, *, success=True):
     result = subprocess.run(args, capture_output=True, text=True, timeout=20)
     if success:
-        assert result.returncode == 0, 'Required command failed: ' + args[0]
+        assert result.returncode == 0, 'Required command failed: ' + args[0] + '\n' + result.stderr[-2000:]
     return result
 
 
