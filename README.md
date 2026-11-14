@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://astrona.io/courses/certified-kubernetes-security-specialist">
+    <img src="https://astrona.io/courses/certified-kubernetes-security-specialist/domains/ATS035.svg" alt="ATS035: Supply Chain Security, part of the Certified Kubernetes Security Specialist course on Astrona" width="100%">
+  </a>
+</p>
+
 # Supply Chain Security (ATS035)
 
 Certified Kubernetes Security Specialist (CKS): Supply Chain Security, worth 20% of the official curriculum. This course belongs to ATP007.
