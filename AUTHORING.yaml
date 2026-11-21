@@ -17,7 +17,7 @@ course:
 defaults:
   playground: true
   module_lab: false
-  capstone: true
+  capstone: false
   section_quiz: true
   final_quiz: true
 assessment_format: YAML question banks v1, registered in assessments/index.yaml
@@ -25,7 +25,7 @@ sections:
 - id: section-010
   title: Minimize base image footprint
   curriculum_item: Minimize base image footprint
-  capstone: true
+  capstone: false
   section_quiz: true
   modules:
   - id: module-01
@@ -124,7 +124,7 @@ sections:
 - id: section-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
   curriculum_item: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
-  capstone: true
+  capstone: false
   section_quiz: true
   modules:
   - id: module-01
@@ -216,7 +216,7 @@ sections:
 - id: section-030
   title: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
   curriculum_item: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
-  capstone: true
+  capstone: false
   section_quiz: true
   modules:
   - id: module-01
@@ -322,7 +322,7 @@ sections:
 - id: section-040
   title: Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
   curriculum_item: Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
-  capstone: true
+  capstone: false
   section_quiz: true
   modules:
   - id: module-01

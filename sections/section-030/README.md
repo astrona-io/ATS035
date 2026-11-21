@@ -12,7 +12,6 @@ A cluster that runs any image from any registry trusts every registry on the int
 1. Admission Control, Permitted Registries And Signed Images: the admission pipeline, ValidatingAdmissionPolicy, permitted registries, webhooks and policy engines, and signing with cosign.
 2. Require Image Digests And Verify Signatures: a digest rule, signatures and attestations, key-based and keyless signing, and the limits of verification at admission.
 3. ImagePullSecrets, ImagePolicyWebhook And Admission Failure Modes: pull credentials, the ImagePolicyWebhook plugin, and audit-only, fail-open and exempted checks.
-4. Capstone: enforce an approved registry and a digest requirement in one policy set while a system namespace stays exempt.
 
 Each module has a playground, a summary and a graded lab. The section has one knowledge check with ten questions that covers all three modules.
 

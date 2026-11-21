@@ -12,7 +12,6 @@ A new library vulnerability is announced and someone asks which running images c
 1. Understand The Software Supply Chain: stages, trust boundaries, SBOMs with Syft, scanning with Trivy, CI/CD pipelines and artifact repositories.
 2. Generate And Read Software Bills Of Materials: SPDX and CycloneDX fields, package URLs, vulnerability matching, VEX statements and attestations bound to an image digest.
 3. Provenance, Artifact Repositories And Pull Access: registry roles, immutable tags and retention, pull secrets and service accounts, build provenance and SLSA levels.
-4. Capstone: record a release with a package inventory, an image digest, an SBOM format and registry pull access.
 
 Each module ends with a summary. The section ends with one ten-question knowledge check. The parts carry the hands-on steps, and each lab follows the part that practises its skill. Each module has a private `kind` playground with Kubernetes v1.35; launch it from the landing page and keep it running while you read.
 

@@ -36,8 +36,7 @@ for section in outline.get("modules", []):
         registered.append(path)
         require(index > 0 and content[index - 1].get("path") == path + "/question.md",
                 f"{path}: lab must follow its question reading")
-        if "/module-" not in path:
-            continue
+        require("/module-" in path, f"{path}: every lab belongs to a module")
         require(index > 1 and content[index - 2].get("type") == "reading",
                 f"{path}: lab needs a preparation reading")
         if index < 2:

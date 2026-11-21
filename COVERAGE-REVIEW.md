@@ -2,7 +2,7 @@
 
 The course has teaching material for its registered lab tasks, but its readings cover a broader set of skills than its graders. Passing all environment tests proves the implemented lifecycles; it does not establish complete practical coverage of every learning objective.
 
-`TEACHING-COVERAGE.yaml` names the preparation set for every lab. `LAB-COVERAGE.md` renders both directions: lab to preparation and reading to assessment. A preparation link means the reading teaches something used by that task, not that every operation in the reading is graded. The additional-reading list makes material without a module assessment visible. Capstones combine selected skills and do not silently count as coverage of every reading.
+`TEACHING-COVERAGE.yaml` names the preparation set for every lab. `LAB-COVERAGE.md` renders both directions: lab to preparation and reading to assessment. A preparation link means the reading teaches something used by that task, not that every operation in the reading is graded. The additional-reading list makes material without a module assessment visible.
 
 ## Live assessment additions
 
@@ -14,6 +14,24 @@ New QEMU labs build and inspect a minimal image, run Trivy against a fresh verif
 - The static-analysis lab checks field analysis and a repaired Pod, not execution of Kubesec or KubeLinter.
 - Cosign uses disposable local keys and a loopback HTTP registry without a transparency log. Keyless identity, provenance verification and signature enforcement at admission remain ungraded.
 - Other pull-secret exercises still teach configuration. Authenticated-pull evidence comes specifically from section-020/module-03/labs/lab-01.
+
+## Skills from the removed section capstones
+
+The four section capstones were removed so that every graded lab follows the reading it practises, as in ATS034. Each capstone combined skills from its section. The module labs still grade these skills:
+
+- Section 010: a ConfigMap served by BusyBox `httpd` (section-010/module-01/labs/lab-01), a restricted security context (section-010/module-02/labs/lab-01) and a digest pin read from the node (section-010/module-03/labs/lab-01).
+- Section 020: an Alpine package inventory bound to the running image ID (section-020/module-01/labs/lab-01), a CycloneDX record (section-020/module-02/labs/lab-01) and a pull Secret attached to a ServiceAccount with a fresh authenticated pull (section-020/module-03/labs/lab-01).
+- Section 030: an approved-registry ValidatingAdmissionPolicy (section-030/module-01/labs/lab-01), a digest ValidatingAdmissionPolicy that leaves an unlabelled namespace admitted (section-030/module-02/labs/lab-01) and a Deny binding with pull credentials (section-030/module-03/labs/lab-01).
+- Section 040: workload findings recorded without deploying (section-040/module-01/labs/lab-01), a scan gate (section-040/module-02/labs/lab-01) and restricted Pod Security Admission with a rejected privileged Pod (section-040/module-03/labs/lab-01).
+
+No module lab now grades these capstone skills:
+
+- Section 010: CPU and memory requests and a memory limit on the container, a Deployment instead of a single Pod, and a Service on port 80 that targets the named port `http`, reached by Service name from the `shuttle` Pod.
+- Section 020: a separate `imageDigest` key cut from the image ID after the last `@`. The digest itself is read and graded in section-010/module-03/labs/lab-01.
+- Section 030: one ValidatingAdmissionPolicy with two validations and a separate message for each, and a namespace label `exempt` that stays unchanged while the policy applies only to `enforced`.
+- Section 040: the `imageTag` finding key, and one namespace that combines the findings, the scan gate and the restricted Pod.
+
+No new lab was written for these gaps.
 
 ## Runtime choice
 

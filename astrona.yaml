@@ -161,24 +161,6 @@ modules:
     path: sections/section-010/module-01/quiz.yaml
     question_count: 10
     pass_score: 70
-  - type: reading
-    title: "Run A Hardened Minimal Web Server \u2014 Task"
-    path: sections/section-010/capstone/labs/lab-01/question.md
-  - type: lab
-    title: Run A Hardened Minimal Web Server
-    path: sections/section-010/capstone/labs/lab-01
-    difficulty: advanced
-    estimated_duration: 45m
-    topic: minimal-image-capstone
-    task_kind: build
-    learning_goals:
-    - Combine a digest-pinned minimal image, a restricted security context, resource limits and a Service.
-    tags:
-    - cks
-    - minimal-image-capstone
-  - type: reading
-    title: "Run A Hardened Minimal Web Server \u2014 Solution"
-    path: sections/section-010/capstone/labs/lab-01/solution.md
 - id: module-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
   description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
@@ -299,25 +281,6 @@ modules:
     path: sections/section-020/module-01/quiz.yaml
     question_count: 10
     pass_score: 70
-  - type: reading
-    title: "Record A Release With Inventory, Digest And Pull Access \u2014 Task"
-    path: sections/section-020/capstone/labs/lab-01/question.md
-  - type: lab
-    title: Record A Release With Inventory, Digest And Pull Access
-    path: sections/section-020/capstone/labs/lab-01
-    difficulty: advanced
-    estimated_duration: 45m
-    topic: release-record-capstone
-    task_kind: build
-    learning_goals:
-    - Combine a package inventory, an image digest, an SBOM format and registry pull access into one release
-      record.
-    tags:
-    - cks
-    - release-record-capstone
-  - type: reading
-    title: "Record A Release With Inventory, Digest And Pull Access \u2014 Solution"
-    path: sections/section-020/capstone/labs/lab-01/solution.md
 - id: module-030
   title: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
   description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
@@ -453,25 +416,6 @@ modules:
     path: sections/section-030/module-01/quiz.yaml
     question_count: 10
     pass_score: 70
-  - type: reading
-    title: "Enforce Approved Registries And Digests In One Policy Set \u2014 Task"
-    path: sections/section-030/capstone/labs/lab-01/question.md
-  - type: lab
-    title: Enforce Approved Registries And Digests In One Policy Set
-    path: sections/section-030/capstone/labs/lab-01
-    difficulty: advanced
-    estimated_duration: 45m
-    topic: supply-chain-capstone
-    task_kind: build
-    learning_goals:
-    - Enforce an approved registry and a digest requirement together in one namespace while one system
-      namespace stays exempt.
-    tags:
-    - cks
-    - supply-chain-capstone
-  - type: reading
-    title: "Enforce Approved Registries And Digests In One Policy Set \u2014 Solution"
-    path: sections/section-030/capstone/labs/lab-01/solution.md
 - id: module-040
   title: Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
   description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
@@ -608,25 +552,6 @@ modules:
     path: sections/section-040/module-01/quiz.yaml
     question_count: 10
     pass_score: 70
-  - type: reading
-    title: "Release A Workload Through Analysis, A Scan Gate And Restricted Admission \u2014 Task"
-    path: sections/section-040/capstone/labs/lab-01/question.md
-  - type: lab
-    title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
-    path: sections/section-040/capstone/labs/lab-01
-    difficulty: advanced
-    estimated_duration: 45m
-    topic: release-capstone
-    task_kind: build
-    learning_goals:
-    - Combine static analysis findings, a scan gate decision and restricted admission to release a corrected
-      workload.
-    tags:
-    - cks
-    - release-capstone
-  - type: reading
-    title: "Release A Workload Through Analysis, A Scan Gate And Restricted Admission \u2014 Solution"
-    path: sections/section-040/capstone/labs/lab-01/solution.md
   - type: quiz
     title: Final Domain Quiz
     path: sections/final-domain-quiz.yaml
