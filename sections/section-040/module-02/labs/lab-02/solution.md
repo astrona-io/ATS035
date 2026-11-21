@@ -1,6 +1,3 @@
----
-draft: true
----
 # Solution
 
 Run the complete scan:

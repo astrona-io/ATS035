@@ -1,6 +1,3 @@
----
-draft: true
----
 # Repair Authenticated Image Pulls
 
 Solve this question on: `terminal`

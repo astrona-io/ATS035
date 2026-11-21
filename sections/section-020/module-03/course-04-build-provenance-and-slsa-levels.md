@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Understand your supply chain (for example SBOM, CI/CD, artifact repositories)
 ---

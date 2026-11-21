@@ -8,7 +8,7 @@ quiz API. No YAML question file is registered as a Markdown reading.
 Banks follow their declared module summaries. Larger domains use an intermediate
 checkpoint after the third section and a final domain review; smaller domains
 use a final domain review. The index records covered sections and teaching order. Banks contain 5–15 original single-choice
-questions, scoped to concepts taught in the course. They remain draft for review.
+questions, scoped to concepts taught in the course.
 
 ## Fields And Rendering
 
@@ -32,11 +32,19 @@ a secure examination bank. Do not treat scores as an official CKS result.
 
 ## Hands-On Coverage
 
-This course has 4 ungraded module playgrounds and 4 draft independent labs. Tasks and solutions are registered around each lab immediately after its teaching reading. Static configuration, shell/Python/YAML, parser, lifecycle and offline grader checks pass. Live execution remains pending because the session cannot access Podman; installed CLI configuration validation is separately blocked by its maintenance lock.
+This course has 12 ungraded module playgrounds, all on kind, and 15 graded labs (12 on kind, 3 on a qemu VM). Each lab sits right after the reading it practises, with its task before and its solution after. Every lab passed `astrona validate` and `astrona test` on its own runtime, and every playground started with `scripts/ci/test-playground.sh`.
 
 | Module | Labs in teaching order |
 | --- | --- |
-| 010/01 | Serve Content With A Minimal Runtime |
+| 010/01 | Serve Content With A Minimal Runtime; Build A Minimal Runtime Image |
+| 010/02 | Run A Pod With A Restricted Security Context |
+| 010/03 | Pin An Image To The Digest The Node Reports |
 | 020/01 | Bind A Package Inventory To A Running Image |
-| 030/01 | Enforce An Approved Image Registry |
+| 020/02 | Record A Structured Package Inventory |
+| 020/03 | Repair Authenticated Image Pulls |
+| 030/01 | Enforce An Approved Image Registry; Sign And Verify An Immutable Image |
+| 030/02 | Require Image Digests In A Namespace |
+| 030/03 | Enforce A Registry Policy And Attach Pull Credentials |
 | 040/01 | Analyze And Correct A Workload Security Document |
+| 040/02 | Decide A Scan Gate From Scan Results; Scan An Image And Bind The Release Decision |
+| 040/03 | Enforce The Restricted Pod Security Standard |

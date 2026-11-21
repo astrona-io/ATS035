@@ -1,6 +1,3 @@
----
-draft: true
----
 # Use A Fresh Scan As Release Evidence
 
 A saved vulnerability report can be accurate for the wrong image or an old database. This independent VM downloads a Trivy database when it starts, then keeps that snapshot fixed while you and the grader scan the same cached image. A fixed snapshot makes the comparison reproducible within the lab; it is not permission to keep using an outdated database in a release pipeline.

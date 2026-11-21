@@ -26,8 +26,8 @@ grader together; do not grade an untaught operation.
 ## Runtime and grading contract
 
 Retain runtime IDs, course registration, question-bank IDs and domain weights.
-Leave `task_kind`, `tags` and `topic` to their existing tooling. Keep technical
-pages in draft until review. Use a unique namespace for each module lab and keep
+Leave `task_kind`, `tags` and `topic` to their existing tooling. Technical pages
+carry no `draft: true` front matter. Use a unique namespace for each module lab and keep
 all context and node ownership guards.
 
 Scripts read `ASTRONA_KUBE_CONTEXT`, `ASTRONA_KIND_CLUSTER` and

@@ -1,6 +1,3 @@
----
-draft: true
----
 # Scan An Image And Bind The Release Decision
 
 Solve this question on: `terminal`

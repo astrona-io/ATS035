@@ -1,6 +1,3 @@
----
-draft: true
----
 # Build A Minimal Runtime Image
 
 Solve this question on: `terminal`

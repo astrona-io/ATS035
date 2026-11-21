@@ -1,6 +1,3 @@
----
-draft: true
----
 # Verify Who Signed An Image Digest
 
 An image digest identifies content but does not identify who approved it. Cosign signs a digest and stores a signature artifact with the image in a registry. Verification needs a trusted key and the intended digest. Accepting whichever key accompanies an artifact would let an untrusted publisher choose its own authority.

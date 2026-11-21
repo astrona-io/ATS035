@@ -1,6 +1,3 @@
----
-draft: true
----
 # Solution
 
 Use this `/srv/build/Dockerfile`:

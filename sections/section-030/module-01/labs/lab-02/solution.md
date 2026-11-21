@@ -1,6 +1,3 @@
----
-draft: true
----
 # Solution
 
 Sign and verify the supplied digest:

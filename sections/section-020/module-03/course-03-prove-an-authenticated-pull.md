@@ -1,6 +1,3 @@
----
-draft: true
----
 # Prove An Image Pull Uses Registry Credentials
 
 A correctly shaped pull Secret does not prove that a kubelet used it. Test a fresh Pod against a registry that refuses anonymous access. The independent lab provides a local registry and a failed Pod so the credential change has an observable effect.

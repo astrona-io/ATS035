@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
 ---

@@ -1,6 +1,3 @@
----
-draft: true
----
 # Solution
 
 The following commands repair the credential and recreate the Pod so admission copies the ServiceAccount setting.

@@ -1,8 +1,7 @@
 training:
   id: ATS035
   title: 'CKS: Supply Chain Security'
-  description: 'Detailed reading material and reusable YAML knowledge checks for CKS: Supply Chain Security.
-    Technical content remains draft. Each module has a playground, a graded lab and a knowledge check.'
+  description: 'Detailed reading material and reusable YAML knowledge checks for CKS: Supply Chain Security. Each module has a playground, a graded lab and a knowledge check.'
   certification:
     name: Certified Kubernetes Security Specialist
     code: CKS
@@ -62,7 +61,7 @@ modules:
     path: sections/section-010/module-01/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 6m
     topic: minimal-image
     task_kind: build
     learning_goals:
@@ -110,7 +109,7 @@ modules:
     path: sections/section-010/module-02/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 6m
     topic: restricted-security-context
     task_kind: build
     learning_goals:
@@ -139,7 +138,7 @@ modules:
     path: sections/section-010/module-03/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 6m
     topic: digest-pinning
     task_kind: build
     learning_goals:
@@ -186,7 +185,7 @@ modules:
     path: sections/section-020/module-01/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 8m
     topic: package-inventory
     task_kind: build
     learning_goals:
@@ -220,7 +219,7 @@ modules:
     path: sections/section-020/module-02/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 10m
     topic: sbom-inventory
     task_kind: build
     learning_goals:
@@ -306,7 +305,7 @@ modules:
     path: sections/section-030/module-01/labs/lab-01
     examScope: cluster
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 8m
     topic: registry-admission
     task_kind: build
     learning_goals:
@@ -357,7 +356,7 @@ modules:
     path: sections/section-030/module-02/labs/lab-01
     examScope: cluster
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 8m
     topic: digest-policy
     task_kind: build
     learning_goals:
@@ -397,7 +396,7 @@ modules:
     path: sections/section-030/module-03/labs/lab-01
     examScope: cluster
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 6m
     topic: admission-failure-modes
     task_kind: build
     learning_goals:
@@ -447,7 +446,7 @@ modules:
     path: sections/section-040/module-01/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 8m
     topic: static-workload-analysis
     task_kind: build
     learning_goals:
@@ -481,7 +480,7 @@ modules:
     path: sections/section-040/module-02/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 8m
     topic: trivy-scan-gate
     task_kind: build
     learning_goals:
@@ -532,7 +531,7 @@ modules:
     path: sections/section-040/module-03/labs/lab-01
     examScope: namespace
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 6m
     topic: pod-security-admission
     task_kind: build
     learning_goals:

@@ -1,6 +1,3 @@
----
-draft: true
----
 # Sign And Verify An Immutable Image
 
 Solve this question on: `terminal`
