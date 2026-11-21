@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
 ---
@@ -35,7 +34,8 @@ The report in `scan-results` is test data with made-up identifiers that start wi
 1. What Trivy scans: images, folders and configuration
 2. Severity filters, unfixed findings and exit codes
 3. Exceptions, database freshness and what a finding proves
-4. Summary
+4. Use a fresh scan as release evidence
+5. Summary
 
 Launch your playground now, and keep it running next to you while you read:
 

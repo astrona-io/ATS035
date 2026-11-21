@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
 ---
@@ -12,9 +11,8 @@ A manifest can look harmless and still ask for a privileged container, and an im
 1. Static Analysis Of Workloads And Images: what static analysis shows, Kubesec, KubeLinter, and a release decision.
 2. Scan Images And Configuration With Trivy: image, folder and configuration scans, severity and exit-code gates, exceptions and database freshness.
 3. Enforce Workload Standards With Pod Security Admission: the Pod Security Standards, namespace labels, modes and versions, the restricted standard and exemptions.
-4. Capstone: analyse an unsafe workload, decide a scan gate, enforce the restricted standard and run the corrected workload.
 
-Each module has a playground, a graded lab, a summary and, together with the other modules of the section, a ten-question knowledge check. The capstone is one advanced lab in its own environment.
+Each module has a playground, a graded lab, a summary and, together with the other modules of the section, a ten-question knowledge check.
 
 ## Learning Outcomes
 

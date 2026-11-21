@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
 ---

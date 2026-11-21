@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Minimize base image footprint
 ---
@@ -9,7 +8,7 @@ A container image is the filesystem and start-up configuration that a container 
 
 Keep one sentence in mind for this module: **build with everything you need, ship only what you run, and refer to the result by its digest.** You will inspect the images that already run in the playground cluster, build a single-stage and a multi-stage image for a small Go program and compare them, harden a Dockerfile and lint it, and finally run a minimal image in the cluster with a restricted security context.
 
-The module has four parts. **Layers, Tags And Digests** shows what an image is made of and how a tag differs from a digest, using the pods in the cluster. **Multi-Stage Builds And Minimal Base Images** builds the same program twice and compares a full toolchain image with a distroless image. **Hardening A Dockerfile** covers the non-root user, secrets that stay in layers, `.dockerignore`, pinned base images and Dockerfile linting. **Running Minimal Images In A Cluster** applies a read-only, non-root pod, debugs an image that has no shell and reads image pull failures.
+The module has five parts. **Layers, Tags And Digests** shows what an image is made of and how a tag differs from a digest, using the pods in the cluster. **Multi-Stage Builds And Minimal Base Images** builds the same program twice and compares a full toolchain image with a distroless image. **Hardening A Dockerfile** covers the non-root user, secrets that stay in layers, `.dockerignore`, pinned base images and Dockerfile linting. **Running Minimal Images In A Cluster** applies a read-only, non-root pod, debugs an image that has no shell and reads image pull failures. **Build And Inspect The Final Image** builds a static server into a `scratch` image in its own virtual machine and proves that the image serves HTTP as a non-root user with a read-only root filesystem.
 
 ## Learning objectives
 

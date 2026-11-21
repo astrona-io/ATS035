@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Minimize base image footprint
 ---
@@ -12,7 +11,6 @@ A container image carries every shell, package manager and library that its base
 1. Minimize The Base Image Footprint: layers, tags and digests, multi-stage builds, Dockerfile hardening and minimal images in a cluster.
 2. Compare Base Images And Their Attack Surface: Debian, Alpine, distroless and `scratch` images, and how to restrict what a running container can reach.
 3. Keep Images Small And Fresh Over Time: digest pins and the tools that update them, image pull policy, rebuild rules, size budgets and registry retention.
-4. Capstone: run a hardened minimal web server that combines a small image, a digest pin, a restricted security context and a Service.
 
 Each module has a playground, a graded lab, a summary and a part of the ten-question knowledge check at the end of the section. The playground is a private `kind` cluster with Kubernetes v1.35; launch it from the landing page and keep it running while you read.
 

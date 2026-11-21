@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
 ---
@@ -9,7 +8,7 @@ Knowing what is in an image does not stop a bad image from running. The Kubernet
 
 Keep one sentence in mind for this module: **identity is checked at admission, and the policy must name an exact registry or an exact signer.** You will read the admission settings of the playground cluster, write a ValidatingAdmissionPolicy that permits only chosen registries, test what happens when a webhook is unreachable, and sign and verify an image with cosign.
 
-The module has four parts. **The Admission Pipeline And ValidatingAdmissionPolicy** explains the request path and the policy objects. **Enforcing Permitted Registries** writes, tests and enforces a registry policy, and shows its limits. **Policy Engines And Admission Webhooks** covers Kyverno, OPA Gatekeeper, ImagePolicyWebhook and what a failure policy does. **Signing And Verifying Images With cosign** creates a key pair, signs a digest and verifies it.
+The module has five parts. **The Admission Pipeline And ValidatingAdmissionPolicy** explains the request path and the policy objects. **Enforcing Permitted Registries** writes, tests and enforces a registry policy, and shows its limits. **Policy Engines And Admission Webhooks** covers Kyverno, OPA Gatekeeper, ImagePolicyWebhook and what a failure policy does. **Signing And Verifying Images With cosign** creates a key pair, signs a digest and verifies it. **Verify Who Signed An Image Digest** signs a digest in its own virtual machine and shows that verification fails with a different key and for an unsigned image.
 
 ## Learning objectives
 

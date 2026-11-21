@@ -1,5 +1,4 @@
 ---
-draft: true
 exam_objectives:
 - Understand your supply chain (for example SBOM, CI/CD, artifact repositories)
 ---
@@ -9,7 +8,7 @@ An image is only as trustworthy as the place it is stored and the record of how 
 
 Keep one sentence in mind for this module: **few identities may push, each workload may pull only what it needs, and every artifact carries a record of how it was built.** You will read the roles around a registry, create a registry pull secret and bind it to a service account, and study build provenance and the SLSA levels.
 
-The module has three parts. **Registries, Repositories And Who May Push Or Pull** explains the objects in a registry, immutable tags, retention and separate roles for push and pull. **Pull Secrets And Service Accounts** shows how the kubelet gets credentials and how to attach a pull secret to a service account. **Build Provenance And SLSA Levels** explains provenance, what each SLSA build level promises and how a consumer checks it.
+The module has four parts. **Registries, Repositories And Who May Push Or Pull** explains the objects in a registry, immutable tags, retention and separate roles for push and pull. **Pull Secrets And Service Accounts** shows how the kubelet gets credentials and how to attach a pull secret to a service account. **Prove An Image Pull Uses Registry Credentials** points a fresh Pod at a registry that refuses anonymous pulls and proves that the kubelet used the pull secret. **Build Provenance And SLSA Levels** explains provenance, what each SLSA build level promises and how a consumer checks it.
 
 ## Learning objectives
 
