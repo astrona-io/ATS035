@@ -9,7 +9,7 @@ An image is only as trustworthy as the place it is stored and the record of how 
 
 Keep one sentence in mind for this module: **few identities may push, each workload may pull only what it needs, and every artifact carries a record of how it was built.** You will read the roles around a registry, create a registry pull secret and bind it to a service account, and study build provenance and the SLSA levels.
 
-The module has three parts. **Registries, Repositories And Who May Push Or Pull** explains the objects in a registry, immutable tags, retention and separate roles for push and pull. **Pull Secrets And Service Accounts** shows how the kubelet gets credentials and how to attach a pull secret to a service account. **Build Provenance And SLSA Levels** explains provenance, what each SLSA build level promises and how a consumer checks it.
+The module has four parts. **Registries, Repositories And Who May Push Or Pull** explains the objects in a registry, immutable tags, retention and separate roles for push and pull. **Pull Secrets And Service Accounts** shows how the kubelet gets credentials and how to attach a pull secret to a service account. **Prove An Image Pull Uses Registry Credentials** points a fresh Pod at a registry that refuses anonymous pulls and proves that the kubelet used the pull secret. **Build Provenance And SLSA Levels** explains provenance, what each SLSA build level promises and how a consumer checks it.
 
 ## Learning objectives
 
@@ -34,7 +34,3 @@ The playground is a `kind` cluster running Kubernetes 1.35. It also has a servic
 Launch your playground now, and keep it running next to you while you read the parts:
 
 <!-- astrona:playground -->
-
-## Independent live assessment
-
-Prepare with [Prove An Image Pull Uses Registry Credentials](course-02a-prove-an-authenticated-pull.md). [Repair Authenticated Image Pulls](labs/lab-01/question.md) uses its own kind environment. The pull Secret authenticates to the live private registry; ServiceAccount probe-runner lists registry-credentials in imagePullSecrets; A fresh Pod pulls and runs the private image using the ServiceAccount credential.

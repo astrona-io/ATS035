@@ -17,15 +17,11 @@ Dockerfile mistakes are visible in the text: a floating `latest` tag, unneeded p
 
 In the cluster, `readOnlyRootFilesystem`, `runAsNonRoot` with a numeric user, dropped capabilities and the `RuntimeDefault` seccomp profile limit what the process can do. An ephemeral container (`kubectl debug`) brings debug tools to a pod whose image has none. `ErrImagePull` and `ImagePullBackOff` mean the node could not get the image, and the event message names the reason.
 
+A fresh build proves the result. A final stage `FROM scratch` with a statically linked binary and a numeric `USER` gives an image whose exported filesystem holds only the server. Running that image with a read-only root filesystem, all capabilities dropped and `no-new-privileges`, and sending it a real HTTP request, shows that the small image still works.
+
 - Ship only what runs; build in a separate stage.
 - Refer to an image by digest when exact content matters.
 - Never put a credential in a layer; use a secret mount.
 - Run as a numeric non-root user with a read-only root filesystem.
-
-
-
-## Independent live assessment
-
-Prepare with [Build And Inspect The Final Image](course-02a-build-and-inspect-the-final-image.md). [Build A Minimal Runtime Image](labs/lab-02/question.md) uses its own qemu environment. A fresh multi-stage build produces a small final filesystem without build tools; The built image serves HTTP as a non-root user with a read-only root filesystem.
 
 <!-- astrona:playground:destroy -->

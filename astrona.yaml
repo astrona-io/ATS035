@@ -75,7 +75,7 @@ modules:
     path: sections/section-010/module-01/labs/lab-01/solution.md
   - type: reading
     title: Build And Inspect The Final Image
-    path: sections/section-010/module-01/course-02a-build-and-inspect-the-final-image.md
+    path: sections/section-010/module-01/course-05-build-and-inspect-the-final-image.md
   - type: reading
     title: "Build A Minimal Runtime Image \u2014 Task"
     path: sections/section-010/module-01/labs/lab-02/question.md
@@ -92,7 +92,7 @@ modules:
     path: sections/section-010/module-01/labs/lab-02/solution.md
   - type: reading
     title: Summary
-    path: sections/section-010/module-01/course-05-summary.md
+    path: sections/section-010/module-01/course-06-summary.md
   - type: reading
     title: Compare Base Images And Their Attack Surface
     path: sections/section-010/module-02/course.md
@@ -248,7 +248,7 @@ modules:
     path: sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
   - type: reading
     title: Prove An Image Pull Uses Registry Credentials
-    path: sections/section-020/module-03/course-02a-prove-an-authenticated-pull.md
+    path: sections/section-020/module-03/course-03-prove-an-authenticated-pull.md
   - type: reading
     title: "Repair Authenticated Image Pulls \u2014 Task"
     path: sections/section-020/module-03/labs/lab-01/question.md
@@ -272,10 +272,10 @@ modules:
     path: sections/section-020/module-03/labs/lab-01/solution.md
   - type: reading
     title: Build Provenance And SLSA Levels
-    path: sections/section-020/module-03/course-03-build-provenance-and-slsa-levels.md
+    path: sections/section-020/module-03/course-04-build-provenance-and-slsa-levels.md
   - type: reading
     title: Summary
-    path: sections/section-020/module-03/course-04-summary.md
+    path: sections/section-020/module-03/course-05-summary.md
   - type: quiz
     title: 'Knowledge Check: Understand The Software Supply Chain'
     path: sections/section-020/module-01/quiz.yaml
@@ -325,7 +325,7 @@ modules:
     path: sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
   - type: reading
     title: Verify Who Signed An Image Digest
-    path: sections/section-030/module-01/course-04a-verify-image-signature-boundaries.md
+    path: sections/section-030/module-01/course-05-verify-image-signature-boundaries.md
   - type: reading
     title: "Sign And Verify An Immutable Image \u2014 Task"
     path: sections/section-030/module-01/labs/lab-02/question.md
@@ -342,7 +342,7 @@ modules:
     path: sections/section-030/module-01/labs/lab-02/solution.md
   - type: reading
     title: Summary
-    path: sections/section-030/module-01/course-05-summary.md
+    path: sections/section-030/module-01/course-06-summary.md
   - type: reading
     title: Require Image Digests And Verify Signatures
     path: sections/section-030/module-02/course.md
@@ -494,7 +494,7 @@ modules:
     path: sections/section-040/module-02/labs/lab-01/solution.md
   - type: reading
     title: Use A Fresh Scan As Release Evidence
-    path: sections/section-040/module-02/course-03a-run-and-check-a-fresh-scan.md
+    path: sections/section-040/module-02/course-04-run-and-check-a-fresh-scan.md
   - type: reading
     title: "Scan An Image And Bind The Release Decision \u2014 Task"
     path: sections/section-040/module-02/labs/lab-02/question.md
@@ -511,7 +511,7 @@ modules:
     path: sections/section-040/module-02/labs/lab-02/solution.md
   - type: reading
     title: Summary
-    path: sections/section-040/module-02/course-04-summary.md
+    path: sections/section-040/module-02/course-05-summary.md
   - type: reading
     title: Enforce Workload Standards With Pod Security Admission
     path: sections/section-040/module-03/course.md

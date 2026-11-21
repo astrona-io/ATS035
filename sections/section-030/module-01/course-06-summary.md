@@ -17,15 +17,11 @@ Admission webhooks receive an `AdmissionReview` over HTTPS. `failurePolicy: Fail
 
 Cosign signs an image digest and stores the signature in the registry next to the image. Key-based signing uses a key pair that the owner must protect. Keyless signing uses an OIDC identity, a short-lived Fulcio certificate and the Rekor transparency log, and the verifier checks the identity and the issuer. A signature proves who published the content and says nothing about vulnerabilities. Verification works only when an admission rule requires it.
 
+Verification needs a trusted key and the intended digest. `cosign verify` with the trusted public key accepts the signed digest, and the `critical.image.docker-manifest-digest` field in its output names that digest. The same check must fail with a different key and for an unsigned image, and a connection error is not a signature failure.
+
 - A policy without a binding does nothing.
 - Use `Fail` on security webhooks and exclude their own namespace.
 - Sign and verify digests, never tags.
 - Name the trusted key or identity in the verification policy.
-
-
-
-## Independent live assessment
-
-Prepare with [Verify Who Signed An Image Digest](course-04a-verify-image-signature-boundaries.md). [Sign And Verify An Immutable Image](labs/lab-02/question.md) uses its own qemu environment. The supplied immutable image digest has a valid signature under the training public key; A different key and a different unsigned image cannot pass the same verification.
 
 <!-- astrona:playground:destroy -->

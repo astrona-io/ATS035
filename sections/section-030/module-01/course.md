@@ -9,7 +9,7 @@ Knowing what is in an image does not stop a bad image from running. The Kubernet
 
 Keep one sentence in mind for this module: **identity is checked at admission, and the policy must name an exact registry or an exact signer.** You will read the admission settings of the playground cluster, write a ValidatingAdmissionPolicy that permits only chosen registries, test what happens when a webhook is unreachable, and sign and verify an image with cosign.
 
-The module has four parts. **The Admission Pipeline And ValidatingAdmissionPolicy** explains the request path and the policy objects. **Enforcing Permitted Registries** writes, tests and enforces a registry policy, and shows its limits. **Policy Engines And Admission Webhooks** covers Kyverno, OPA Gatekeeper, ImagePolicyWebhook and what a failure policy does. **Signing And Verifying Images With cosign** creates a key pair, signs a digest and verifies it.
+The module has five parts. **The Admission Pipeline And ValidatingAdmissionPolicy** explains the request path and the policy objects. **Enforcing Permitted Registries** writes, tests and enforces a registry policy, and shows its limits. **Policy Engines And Admission Webhooks** covers Kyverno, OPA Gatekeeper, ImagePolicyWebhook and what a failure policy does. **Signing And Verifying Images With cosign** creates a key pair, signs a digest and verifies it. **Verify Who Signed An Image Digest** signs a digest in its own virtual machine and shows that verification fails with a different key and for an unsigned image.
 
 ## Learning objectives
 
@@ -35,7 +35,3 @@ The playground is a `kind` cluster running Kubernetes 1.35:
 Launch your playground now, and keep it running next to you while you read the parts:
 
 <!-- astrona:playground -->
-
-## Independent live assessment
-
-Prepare with [Verify Who Signed An Image Digest](course-04a-verify-image-signature-boundaries.md). [Sign And Verify An Immutable Image](labs/lab-02/question.md) uses its own qemu environment. The supplied immutable image digest has a valid signature under the training public key; A different key and a different unsigned image cannot pass the same verification.

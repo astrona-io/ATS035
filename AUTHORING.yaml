@@ -50,7 +50,7 @@ sections:
       adapted_from: ATS027/sections/section-010/module-01/course-02-from-build-to-image-pull.md
     - reading: sections/section-010/module-01/course-03-guided-practice.md
       adapted_from: null
-    - reading: sections/section-010/module-01/course-02a-build-and-inspect-the-final-image.md
+    - reading: sections/section-010/module-01/course-05-build-and-inspect-the-final-image.md
       adapted_from: null
     labs:
     - id: lab-01
@@ -61,7 +61,7 @@ sections:
       runtime_verification: pending
     - id: lab-02
       path: sections/section-010/module-01/labs/lab-02
-      after_reading: sections/section-010/module-01/course-02a-build-and-inspect-the-final-image.md
+      after_reading: sections/section-010/module-01/course-05-build-and-inspect-the-final-image.md
       objective: A fresh multi-stage build produces a small final filesystem without build tools; The
         built image serves HTTP as a non-root user with a read-only root filesystem
       status: alpha
@@ -200,14 +200,14 @@ sections:
       adapted_from: null
     - reading: sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
       adapted_from: null
-    - reading: sections/section-020/module-03/course-03-build-provenance-and-slsa-levels.md
+    - reading: sections/section-020/module-03/course-04-build-provenance-and-slsa-levels.md
       adapted_from: null
-    - reading: sections/section-020/module-03/course-02a-prove-an-authenticated-pull.md
+    - reading: sections/section-020/module-03/course-03-prove-an-authenticated-pull.md
       adapted_from: null
     labs:
     - id: lab-01
       path: sections/section-020/module-03/labs/lab-01
-      after_reading: sections/section-020/module-03/course-02a-prove-an-authenticated-pull.md
+      after_reading: sections/section-020/module-03/course-03-prove-an-authenticated-pull.md
       objective: The pull Secret authenticates to the live private registry; ServiceAccount probe-runner
         lists registry-credentials in imagePullSecrets; A fresh Pod pulls and runs the private image using
         the ServiceAccount credential
@@ -241,7 +241,7 @@ sections:
       adapted_from: ATS045/sections/section-010/module-01/course-02-connecting-verification-to-execution-policy.md
     - reading: sections/section-030/module-01/course-03-guided-practice.md
       adapted_from: null
-    - reading: sections/section-030/module-01/course-04a-verify-image-signature-boundaries.md
+    - reading: sections/section-030/module-01/course-05-verify-image-signature-boundaries.md
       adapted_from: null
     labs:
     - id: lab-01
@@ -252,7 +252,7 @@ sections:
       runtime_verification: pending
     - id: lab-02
       path: sections/section-030/module-01/labs/lab-02
-      after_reading: sections/section-030/module-01/course-04a-verify-image-signature-boundaries.md
+      after_reading: sections/section-030/module-01/course-05-verify-image-signature-boundaries.md
       objective: The supplied immutable image digest has a valid signature under the training public key;
         A different key and a different unsigned image cannot pass the same verification
       status: alpha
@@ -373,7 +373,7 @@ sections:
       adapted_from: null
     - reading: sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
       adapted_from: null
-    - reading: sections/section-040/module-02/course-03a-run-and-check-a-fresh-scan.md
+    - reading: sections/section-040/module-02/course-04-run-and-check-a-fresh-scan.md
       adapted_from: null
     labs:
     - id: lab-01
@@ -385,7 +385,7 @@ sections:
       runtime_verification: pending
     - id: lab-02
       path: sections/section-040/module-02/labs/lab-02
-      after_reading: sections/section-040/module-02/course-03a-run-and-check-a-fresh-scan.md
+      after_reading: sections/section-040/module-02/course-04-run-and-check-a-fresh-scan.md
       objective: The report matches a fresh scan of the supplied image with the lab database; The decision
         records the current image, database timestamp and complete high/critical count
       status: alpha

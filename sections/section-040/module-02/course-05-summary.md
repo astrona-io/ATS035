@@ -13,15 +13,11 @@ An exception belongs in an ignore file with a reason, an owner and an end date. 
 
 A scan compares package versions with the vulnerability database on the machine at scan time. The same image can give different results on different days, so the Trivy version, the database date and the image digest belong next to every result. A finding proves that a package version is listed as affected. It does not prove that the flaw can be reached, and a missing finding does not prove that the image is free of vulnerabilities.
 
+A saved report can describe the wrong image or an old database. A fresh `trivy image` scan against a fixed database snapshot, recorded with the image ID from the report and the `UpdatedAt` time from the database metadata, ties the release decision to the exact content and the knowledge that produced it.
+
 - Scan the digest that will run, with the image, the folder and the configuration.
 - Set `--severity`, `--ignore-unfixed` and `--exit-code` on purpose.
 - Give every exception an owner and an end date.
 - Record the scanner version and the database date with the result.
-
-
-
-## Independent live assessment
-
-Prepare with [Use A Fresh Scan As Release Evidence](course-03a-run-and-check-a-fresh-scan.md). [Scan An Image And Bind The Release Decision](labs/lab-02/question.md) uses its own qemu environment. The report matches a fresh scan of the supplied image with the lab database; The decision records the current image, database timestamp and complete high/critical count.
 
 <!-- astrona:playground:destroy -->

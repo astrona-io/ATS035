@@ -15,15 +15,11 @@ The kubelet pulls with a credential from a secret of type `kubernetes.io/dockerc
 
 Provenance records how an artifact was built: the subject digest, the builder, the source revision and the run details. A signed provenance attestation lets a consumer check those fields against policy. SLSA Build L1 asks for provenance, L2 for provenance signed by a hosted build platform, and L3 for a hardened, isolated platform that a build cannot use to forge its own record. Provenance proves origin and process, not that the inputs were safe.
 
+A correctly shaped pull secret does not prove that the kubelet used it. A fresh Pod with `imagePullPolicy: Always`, created with the service account, against a registry that refuses anonymous pulls, shows the credential at work. The Pod events tell an authorization failure, a missing image, a certificate failure and a connection timeout apart.
+
 - Few identities push; each workload pulls with the narrowest credential.
 - Name the pull secret on the service account, in the same namespace.
 - Use digests and keep the signed provenance tied to them.
 - Read provenance together with the SBOM and a scan.
-
-
-
-## Independent live assessment
-
-Prepare with [Prove An Image Pull Uses Registry Credentials](course-02a-prove-an-authenticated-pull.md). [Repair Authenticated Image Pulls](labs/lab-01/question.md) uses its own kind environment. The pull Secret authenticates to the live private registry; ServiceAccount probe-runner lists registry-credentials in imagePullSecrets; A fresh Pod pulls and runs the private image using the ServiceAccount credential.
 
 <!-- astrona:playground:destroy -->
