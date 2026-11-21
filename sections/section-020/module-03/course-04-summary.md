@@ -20,4 +20,10 @@ Provenance records how an artifact was built: the subject digest, the builder, t
 - Use digests and keep the signed provenance tied to them.
 - Read provenance together with the SBOM and a scan.
 
+
+
+## Independent live assessment
+
+Prepare with [Prove An Image Pull Uses Registry Credentials](course-02a-prove-an-authenticated-pull.md). [Repair Authenticated Image Pulls](labs/lab-01/question.md) uses its own kind environment. The pull Secret authenticates to the live private registry; ServiceAccount probe-runner lists registry-credentials in imagePullSecrets; A fresh Pod pulls and runs the private image using the ServiceAccount credential.
+
 <!-- astrona:playground:destroy -->

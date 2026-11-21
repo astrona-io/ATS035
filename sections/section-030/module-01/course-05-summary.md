@@ -22,4 +22,10 @@ Cosign signs an image digest and stores the signature in the registry next to th
 - Sign and verify digests, never tags.
 - Name the trusted key or identity in the verification policy.
 
+
+
+## Independent live assessment
+
+Prepare with [Verify Who Signed An Image Digest](course-04a-verify-image-signature-boundaries.md). [Sign And Verify An Immutable Image](labs/lab-02/question.md) uses its own qemu environment. The supplied immutable image digest has a valid signature under the training public key; A different key and a different unsigned image cannot pass the same verification.
+
 <!-- astrona:playground:destroy -->

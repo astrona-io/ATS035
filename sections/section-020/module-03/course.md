@@ -34,3 +34,7 @@ The playground is a `kind` cluster running Kubernetes 1.35. It also has a servic
 Launch your playground now, and keep it running next to you while you read the parts:
 
 <!-- astrona:playground -->
+
+## Independent live assessment
+
+Prepare with [Prove An Image Pull Uses Registry Credentials](course-02a-prove-an-authenticated-pull.md). [Repair Authenticated Image Pulls](labs/lab-01/question.md) uses its own kind environment. The pull Secret authenticates to the live private registry; ServiceAccount probe-runner lists registry-credentials in imagePullSecrets; A fresh Pod pulls and runs the private image using the ServiceAccount credential.

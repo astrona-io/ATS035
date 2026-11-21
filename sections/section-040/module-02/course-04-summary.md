@@ -18,4 +18,10 @@ A scan compares package versions with the vulnerability database on the machine 
 - Give every exception an owner and an end date.
 - Record the scanner version and the database date with the result.
 
+
+
+## Independent live assessment
+
+Prepare with [Use A Fresh Scan As Release Evidence](course-03a-run-and-check-a-fresh-scan.md). [Scan An Image And Bind The Release Decision](labs/lab-02/question.md) uses its own qemu environment. The report matches a fresh scan of the supplied image with the lab database; The decision records the current image, database timestamp and complete high/critical count.
+
 <!-- astrona:playground:destroy -->

@@ -79,6 +79,34 @@ On your own machine, Syft writes both formats for the same image, and the packag
 
 You can now read the fields of both formats and build the name that scanners use for a component. The task on the next page records such a component list for the running image, in the same structure that CycloneDX uses.
 
+## Build the complete scoped document
+
+Use all package lines for a submission; `head -n 5` is only for inspection. Bind the inventory to a single ready Pod and its actual image ID before recording the component list:
+
+```sh
+pod=$(kubectl -n starfleet get pods -l app=probe -o jsonpath='{.items[0].metadata.name}')
+kubectl -n starfleet wait --for=condition=Ready "pod/$pod" --timeout=120s
+kubectl -n starfleet get "pod/$pod" -o jsonpath='{.status.containerStatuses[?(@.name=="probe")].imageID}' > image-id.txt
+kubectl -n starfleet exec "$pod" -- apk info -v | sort > packages.txt
+python3 - <<'PYTHON'
+import json
+from pathlib import Path
+components = []
+for line in Path('packages.txt').read_text().splitlines():
+    name, version, release = line.rsplit('-', 2)
+    version = version + '-' + release
+    components.append({'type': 'library', 'name': name, 'version': version,
+                       'purl': f'pkg:apk/alpine/{name}@{version}'})
+bom = {'bomFormat': 'CycloneDX', 'specVersion': '1.5', 'components': components}
+Path('bom.json').write_text(json.dumps(bom, indent=2) + '\n')
+print('componentCount=' + str(len(components)))
+PYTHON
+```
+
+The package-version split follows the Alpine package lines used by this exercise. Check names containing dashes and retain the release suffix. The subject in `image-id.txt`, the count and the full JSON must all describe the same inventory. A correct count cannot compensate for a missing package or an incorrect version.
+
+A ConfigMap can carry the file without shell-quoting JSON: `kubectl create configmap <name> --from-file=bom=bom.json --from-file=subject=image-id.txt`. Add the other task-specific scalar keys with `--from-literal`. In the independent lab, select its kubeconfig and use its namespace before collecting evidence. The document's scope is installed Alpine packages; it does not claim the Python packages or every file in the image.
+
 ## Common pitfalls
 
 > [!WARNING]

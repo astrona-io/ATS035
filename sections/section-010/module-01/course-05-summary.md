@@ -22,4 +22,10 @@ In the cluster, `readOnlyRootFilesystem`, `runAsNonRoot` with a numeric user, dr
 - Never put a credential in a layer; use a secret mount.
 - Run as a numeric non-root user with a read-only root filesystem.
 
+
+
+## Independent live assessment
+
+Prepare with [Build And Inspect The Final Image](course-02a-build-and-inspect-the-final-image.md). [Build A Minimal Runtime Image](labs/lab-02/question.md) uses its own qemu environment. A fresh multi-stage build produces a small final filesystem without build tools; The built image serves HTTP as a non-root user with a read-only root filesystem.
+
 <!-- astrona:playground:destroy -->

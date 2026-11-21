@@ -35,3 +35,7 @@ The cluster parts run against your playground cluster, a `kind` cluster running 
 The node already holds the `python:3.13-alpine` and `busybox:1.37.0` images, so pods that use them start without a download. Launch your playground now, and keep it running next to you while you read the parts:
 
 <!-- astrona:playground -->
+
+## Independent live assessment
+
+Prepare with [Build And Inspect The Final Image](course-02a-build-and-inspect-the-final-image.md). [Build A Minimal Runtime Image](labs/lab-02/question.md) uses its own qemu environment. A fresh multi-stage build produces a small final filesystem without build tools; The built image serves HTTP as a non-root user with a read-only root filesystem.
