@@ -75,7 +75,7 @@ Run the linter with it:
 kube-linter lint --config .kube-linter.yaml deployment-lint-probe.yaml
 ```
 
-The report now contains the extra built-in checks and omits the excluded one. An exclusion in the configuration file applies to every object, so use it for a rule that the team has decided not to apply at all.
+The report now contains the extra built-in checks and omits the excluded one. An exclusion in the configuration file applies to every object, so use it for a rule that the team has decided not to apply at all. KubeLinter also reads a file named `.kube-linter.yaml` from the current folder when you give no `--config` option, so a plain `kube-linter lint` in this folder now uses the same configuration.
 
 A team can also fix the exact list of checks. With `doNotAutoAddDefaults: true`, KubeLinter runs only the checks named under `include`, so a new KubeLinter version cannot add a check to the gate without a change to the file:
 

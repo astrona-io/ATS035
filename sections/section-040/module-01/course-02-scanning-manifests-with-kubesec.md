@@ -52,7 +52,7 @@ Scan the file:
 kubesec scan deployment-weak-probe.yaml
 ```
 
-Kubesec prints a JSON array with one object for the resource. Read these fields in order: `valid` tells whether Kubesec could parse the resource, `score` is the total, `scoring.critical` lists the privileged finding, and `scoring.advise` lists the missing hardening settings. The `jq` tool helps you read long reports:
+Kubesec prints a JSON array with one object for the resource. Read these fields in order: `valid` tells whether Kubesec could parse the resource, `score` is the total, `scoring.critical` lists the privileged finding, and `scoring.advise` lists the missing hardening settings. For this file the `message` field starts with `Failed with a score of` and the score is negative, and the command exits with code 2. The `jq` tool helps you read long reports:
 
 ```sh
 kubesec scan deployment-weak-probe.yaml | jq '.[0] | {score, critical: [.scoring.critical[]?.selector], advise: [.scoring.advise[]?.selector]}'
@@ -103,7 +103,7 @@ The critical list is empty, the score is higher than before and the advise list 
 
 ## Use the score in a gate
 
-A pipeline can fail a build when Kubesec reports a critical finding or a score below an agreed minimum. Parse the JSON with `jq` and exit with a non-zero code. Pick the minimum by policy, and record exceptions with an owner. Kubesec also runs as an HTTP service, which lets other tools post a manifest and get the JSON back, but the file-based scan above is enough for a pipeline.
+A pipeline can fail a build when Kubesec reports a critical finding or a score below an agreed minimum. The exit code of `kubesec scan` already fails the step for a critical finding, because the scan of the weak file exits with code 2 and the scan of the fixed file exits with code 0. For a minimum score, parse the JSON with `jq` and exit with a non-zero code. Pick the minimum by policy, and record exceptions with an owner. Kubesec also runs as an HTTP service, which lets other tools post a manifest and get the JSON back, but the file-based scan above is enough for a pipeline.
 
 You now know how Kubesec groups its findings, how to read selectors and points, and how to turn a report into a gate. Kubesec focuses on security fields. The next part uses KubeLinter, which checks security and also correctness and operations settings.
 

@@ -66,6 +66,22 @@ page_fails() {
   printf '%s\n' "$output"
 }
 
+# Run a scanner or linter command as the page writes it and print its output,
+# also when it exits with a non-zero code: these tools use the exit code to
+# report findings. The exit code goes to report_status.
+report_status=0
+page_report() {
+  local output
+  on_page "$1" "$2" || exit 1
+  printf '$ %s\n' "$2" >&2
+  if output="$(set +e; eval "$2" 2>&1)"; then
+    report_status=0
+  else
+    report_status=$?
+  fi
+  printf '%s\n' "$output"
+}
+
 # Write the block that follows "Save this as `<file>`" (or "as `<file>`") on a
 # page to <file> in the work folder. The third argument is the block language.
 save_block_from_page() {
@@ -154,23 +170,74 @@ resolved="$(page_run "$page" "kubectl get pods -A -o jsonpath='{range .items[*].
 printf '%s\n' "$resolved"
 expect_equal 'each line pairs a reference with an imageID' "$(grep -cvE '^[^ ]+  ([^ ]+@)?sha256:[0-9a-f]{64}$' <<<"$resolved" || true)" 0
 
-# Software bills of materials with Syft (the syft and jq steps on its files are left out)
+# Software bills of materials with Syft
 page=course-02-software-bills-of-materials-with-syft.md
+page_run "$page" 'syft scan docker.io/library/python:3.13-alpine \
+  -o spdx-json=python.spdx.json \
+  -o cyclonedx-json=python.cdx.json \
+  -o syft-json=python.syft.json'
+for document in python.spdx.json python.cdx.json python.syft.json; do
+  expect "syft wrote $document" "$(python3 -c 'import json, sys; json.load(open(sys.argv[1])); print("valid JSON")' "$document")" 'valid JSON'
+done
+spdx_count="$(page_run "$page" "jq '.packages | length' python.spdx.json")"
+cyclonedx_count="$(page_run "$page" "jq '.components | length' python.cdx.json")"
+printf 'SPDX packages: %s, CycloneDX components: %s\n' "$spdx_count" "$cyclonedx_count"
+expect_equal 'the SPDX document has one package entry for the image itself' "$(jq -r '[.packages[] | select(.name == "docker.io/library/python")] | length' python.spdx.json)" 1
+cyclonedx_files="$(jq '[.components[] | select(.type == "file")] | length' python.cdx.json)"
+printf 'CycloneDX components of type file: %s\n' "$cyclonedx_files"
+expect_equal 'the CycloneDX count is many times larger than the SPDX count' "$((cyclonedx_count > 5 * spdx_count))" 1
+expect_equal 'without its file components, CycloneDX has as many entries as SPDX' "$((cyclonedx_count - cyclonedx_files))" "$spdx_count"
+# head stops reading after ten lines, so jq can exit on a closed pipe.
+page_report "$page" "jq -r '.components[] | \"\\(.name) \\(.version)\"' python.cdx.json | head -n 10" >first-components.txt
+first_components="$(cat first-components.txt)"
+printf '%s\n' "$first_components"
+expect_equal 'the third command prints ten lines' "$(grep -c . <<<"$first_components")" 10
+expect_equal 'the SPDX name field holds the image reference' "$(jq -r .name python.spdx.json)" docker.io/library/python
 page_run "$page" 'kubectl -n starfleet exec deploy/probe -- apk info -v | sort > apk-from-pod.txt'
 cat apk-from-pod.txt
 expect 'apk info -v prints each package with its version, such as musl' "$(grep '^musl-' apk-from-pod.txt)" 'musl-1.2.'
 expect 'the list has the virtual package of the Python build' "$(cat apk-from-pod.txt)" "$(text_from_page "$page" '.python-rundeps-')"
 expect_equal 'every other line has a name, a version and a release' "$(grep -v '^\.python-rundeps-' apk-from-pod.txt | grep -cvE '^.+-[^-]+-r[0-9]+$' || true)" 0
+page_run "$page" "jq -r '.artifacts[] | select(.type == \"apk\") | \"\\(.name)-\\(.version)\"' python.syft.json | sort > apk-from-sbom.txt"
+compared="$(page_run "$page" 'diff apk-from-pod.txt apk-from-sbom.txt && echo same')"
+printf '%s\n' "$compared"
+expect_equal 'diff prints nothing and the shell prints same' "$compared" "$(text_from_page "$page" same)"
 probe_id="$(page_run "$page" "kubectl -n starfleet get pod -l app=probe -o jsonpath='{.items[0].status.containerStatuses[0].imageID}{\"\n\"}'")"
 printf '%s\n' "$probe_id"
 expect 'the probe status has a digest' "$probe_id" 'sha256:'
 
-# Vulnerability scanning with Trivy (the trivy commands are left out)
+# Vulnerability scanning with Trivy
 page=course-03-vulnerability-scanning-with-trivy.md
 page_run "$page" "running_image=\"\$(kubectl -n starfleet get pod -l app=probe -o jsonpath='{.items[0].status.containerStatuses[0].imageID}')\""
 echoed="$(page_run "$page" 'echo "$running_image"')"
 printf '%s\n' "$echoed"
 expect_equal 'the value is a repository digest or a sha256: image ID, as the page says' "$(grep -cE '^(docker\.io/library/python@)?sha256:[0-9a-f]{64}$' <<<"$echoed")" 1
+expect_equal 'kind reports the repository digest form, which the page scans as it is' "$(grep -cE '^docker\.io/library/python@sha256:[0-9a-f]{64}$' <<<"$echoed")" 1
+page_report "$page" 'trivy image "$running_image"' >trivy-full.txt
+tail -n 30 trivy-full.txt
+expect_equal 'the full scan exits with code 0' "$report_status" 0
+expect 'the output has a summary table' "$(cat trivy-full.txt)" 'Report Summary'
+expect 'the summary has the operating system target' "$(cat trivy-full.txt)" '(alpine'
+page_report "$page" 'trivy image --severity HIGH,CRITICAL --ignore-unfixed "$running_image"' >trivy-filtered.txt
+tail -n 30 trivy-filtered.txt
+expect_equal 'the filtered scan exits with code 0' "$report_status" 0
+gate_output="$(page_report "$page" 'trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --format json --output trivy-report.json "$running_image"
+echo "exit code: $?"')"
+printf '%s\n' "$gate_output" | tail -n 3
+expect 'the echo prints the exit code' "$gate_output" 'exit code: '
+expect 'the report has a Results array' "$(jq -r '.Results | type' trivy-report.json)" array
+remaining="$(jq '[.Results[].Vulnerabilities // [] | .[]] | length' trivy-report.json)"
+printf 'findings left after the filters: %s\n' "$remaining"
+if [[ "$remaining" == 0 ]]; then
+  expect 'no finding remains, so the exit code is 0' "$gate_output" 'exit code: 0'
+else
+  expect 'findings remain, so the exit code is 1' "$gate_output" 'exit code: 1'
+  expect_equal 'each finding has the fields the page names' "$(jq '[.Results[].Vulnerabilities // [] | .[] | select(has("VulnerabilityID") and has("PkgName") and has("InstalledVersion") and has("FixedVersion") and has("Severity") | not)] | length' trivy-report.json)" 0
+fi
+page_report "$page" 'trivy sbom --severity HIGH,CRITICAL --ignore-unfixed python.cdx.json' >trivy-sbom.txt
+tail -n 30 trivy-sbom.txt
+expect_equal 'the SBOM scan exits with code 0' "$report_status" 0
+expect 'the SBOM scan has a summary table' "$(cat trivy-sbom.txt)" 'Report Summary'
 
 # CI/CD pipelines and artifact repositories
 page=course-04-ci-cd-pipelines-and-artifact-repositories.md

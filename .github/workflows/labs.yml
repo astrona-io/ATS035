@@ -48,6 +48,16 @@ env:
   ORAS_VERSION: "1.4.0"
   ORAS_SHA256: "d8e1dce2fd8ce996f1d901845b688eb0cf505a6082897606f053825bb47935d1"
   KIND_VERSION: "0.33.0"
+  # Tools that the playground pages run on the learner's machine. The smoke
+  # tests run those page commands on the runner with these versions.
+  SYFT_VERSION: "1.57.0"
+  TRIVY_VERSION: "0.76.2"
+  # The course pages sign with --tlog-upload=false and no signing
+  # configuration, which cosign 3 refuses, so the smoke test uses cosign 2.
+  COSIGN_VERSION: "2.6.5"
+  HADOLINT_VERSION: "2.15.1"
+  KUBESEC_VERSION: "2.15.0"
+  KUBE_LINTER_VERSION: "0.8.3"
   ASTRONA_NO_UPDATE_CHECK: "1"
   ASTRONA_CONTAINER_ENGINE: docker
 
@@ -192,6 +202,30 @@ jobs:
             -c "${{ matrix.env.path }}" \
             --junit-xml "$RUNNER_TEMP/junit.xml" \
             --diagnostics-dir "$RUNNER_TEMP/diagnostics"
+
+      # Pinned release binaries, without checksums. Each download stops after
+      # 3 minutes and the step after 10 minutes.
+      - name: Install the scanners and linters that the pages use
+        if: matrix.env.kind == 'playground'
+        timeout-minutes: 10
+        run: |
+          set -euo pipefail
+          download() { curl -fsSL --retry 3 --connect-timeout 20 --max-time 180 "$@"; }
+          release=https://github.com
+          download "$release/anchore/syft/releases/download/v${SYFT_VERSION}/syft_${SYFT_VERSION}_linux_amd64.tar.gz" | tar -xz -C "$HOME/bin" syft
+          download "$release/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" | tar -xz -C "$HOME/bin" trivy
+          download -o "$HOME/bin/cosign" "$release/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-amd64"
+          download -o "$HOME/bin/hadolint" "$release/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-linux-x86_64"
+          download "$release/controlplaneio/kubesec/releases/download/v${KUBESEC_VERSION}/kubesec_linux_amd64.tar.gz" | tar -xz -C "$HOME/bin" kubesec
+          download -o "$HOME/bin/kube-linter" "$release/stackrox/kube-linter/releases/download/v${KUBE_LINTER_VERSION}/kube-linter-linux"
+          chmod +x "$HOME/bin/cosign" "$HOME/bin/hadolint" "$HOME/bin/kube-linter"
+          syft version
+          trivy --version
+          cosign version
+          hadolint --version
+          kubesec version
+          kube-linter version
+          jq --version
 
       - name: Start the playground and run its smoke test
         if: matrix.env.kind == 'playground'

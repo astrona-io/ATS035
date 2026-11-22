@@ -39,7 +39,7 @@ Hadolint is a Dockerfile linter. It parses the file, applies its rules and print
 hadolint Dockerfile.weak
 ```
 
-Hadolint prints findings for the lines above. Look for the rules that match the problems: `DL3007` for the `latest` tag, `DL3008` for apt packages without pinned versions, `DL3015` for the missing `--no-install-recommends`, `DL3020` for `ADD` where `COPY` is enough, `DL3042` for pip without `--no-cache-dir`, and `DL3002` for the last user being root. The exact text of each message depends on the hadolint version. A rule that you accept as an exception can be skipped with `--ignore DL3008`, and `--failure-threshold error` sets the lowest severity that makes the command exit with a non-zero code.
+Hadolint prints one line per finding, with the file name, the line number, the rule ID and a severity such as `warning`, `info` or `error`. Look for the rules that match the problems: `DL3007` for the `latest` tag, `DL3008` for apt packages without pinned versions, `DL3015` for the missing `--no-install-recommends`, `DL3009` for the apt package lists left in the layer, `DL3020` for `ADD` where `COPY` is enough, and `DL3042` for pip without `--no-cache-dir`. The command exits with code 1 because it found problems. Hadolint does not report the missing `USER` instruction. Its rule `DL3002` fires only when the last `USER` instruction names root, so you find a file with no `USER` line by reading it. The exact text of each message depends on the hadolint version. A rule that you accept as an exception can be skipped with `--ignore DL3008`, and `--failure-threshold error` sets the lowest severity that makes the command exit with a non-zero code.
 
 Trivy can lint the same file with its misconfiguration scanner (`trivy config .`), whose Dockerfile checks have IDs that begin with `DS`, for example for the root user and the `latest` tag. Two linters rarely report the same set, so a pipeline can run either one as long as the team treats the findings as a gate.
 
@@ -80,7 +80,7 @@ The base image tag now names a version and a smaller variant. The numeric `USER 
 hadolint Dockerfile.fixed
 ```
 
-The findings for the tag, the root user and `ADD` no longer appear. What remains, if anything, is the warning about the missing digest or other style rules, which you decide on per project.
+Hadolint 2.15.1 prints nothing for this file and exits with code 0. The findings for the tag, the package installation and `ADD` are gone. Hadolint has no default rule for a missing digest, so the digest pin stays a decision for the review of the file.
 
 ## Secrets stay in layers
 

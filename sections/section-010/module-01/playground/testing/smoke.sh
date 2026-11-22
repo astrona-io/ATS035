@@ -66,6 +66,22 @@ page_fails() {
   printf '%s\n' "$output"
 }
 
+# Run a scanner or linter command as the page writes it and print its output,
+# also when it exits with a non-zero code: these tools use the exit code to
+# report findings. The exit code goes to report_status.
+report_status=0
+page_report() {
+  local output
+  on_page "$1" "$2" || exit 1
+  printf '$ %s\n' "$2" >&2
+  if output="$(set +e; eval "$2" 2>&1)"; then
+    report_status=0
+  else
+    report_status=$?
+  fi
+  printf '%s\n' "$output"
+}
+
 # Write the block that follows "Save this as `<file>`" (or "as `<file>`") on a
 # page to <file> in the work folder. The third argument is the block language.
 save_block_from_page() {
@@ -190,8 +206,22 @@ expect_no 'the multi-stage history has no go build layer' "$multi_history_full" 
 single_history="$(command podman history --no-trunc scout:single)"
 expect 'the single-stage history shows the go build layer' "$single_history" 'go build'
 
-# Hardening a Dockerfile (podman on the host; hadolint is left out)
+# Hardening a Dockerfile (hadolint and podman on the host)
 page=course-03-hardening-a-dockerfile.md
+save_block_from_page "$page" Dockerfile.weak dockerfile
+page_report "$page" 'hadolint Dockerfile.weak' >hadolint-weak.txt
+cat hadolint-weak.txt
+expect_equal 'hadolint exits with code 1 for the weak file' "$report_status" 1
+for rule in DL3007 DL3008 DL3015 DL3009 DL3020 DL3042; do
+  text_from_page "$page" "\`$rule\`" >/dev/null
+  expect "hadolint reports $rule, as the page says" "$(cat hadolint-weak.txt)" "$rule"
+done
+expect_no 'hadolint does not report DL3002 without a USER instruction' "$(cat hadolint-weak.txt)" DL3002
+save_block_from_page "$page" Dockerfile.fixed dockerfile
+page_report "$page" 'hadolint Dockerfile.fixed' >hadolint-fixed.txt
+cat hadolint-fixed.txt
+expect_equal 'hadolint exits with code 0 for the fixed file' "$report_status" 0
+expect_equal 'hadolint prints nothing for the fixed file' "$(cat hadolint-fixed.txt)" ''
 save_block_from_page "$page" Dockerfile.leak dockerfile
 save_block_from_page "$page" Dockerfile.secret dockerfile
 printf 'practice-token\n' >token.txt

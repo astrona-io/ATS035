@@ -40,7 +40,7 @@ jq '.components | length' python.cdx.json
 jq -r '.components[] | "\(.name) \(.version)"' python.cdx.json | head -n 10
 ```
 
-The first two commands print a count of entries. The counts can differ by a small number, because SPDX also adds a package entry for the image itself. The third command prints the first ten component names and versions. Both formats include operating system packages from Alpine and Python packages from the interpreter installation.
+The first two commands print a count of entries, and the two counts are far apart. The SPDX document has one entry per package and one more entry for the image itself. The CycloneDX document from Syft also has one component of type `file` for each file that Syft catalogued, so its count is many times larger. Without the `file` components, both documents have the same number of entries. The third command prints the first ten component names and versions. Both formats include operating system packages from Alpine and Python packages from the interpreter installation.
 
 An SBOM should also identify what it describes. Open `python.spdx.json` and read the top-level `name` field, which holds the image reference. The reference you scanned was a tag. For a record you can trust later, scan the image by digest, so the SBOM and the artifact are tied together. The next step does this for the image that runs in the cluster.
 
@@ -80,5 +80,5 @@ You can now create SBOMs in the two standard formats and tie one to a running im
 > [!WARNING]
 > - **Scanning a tag and treating the result as the running image.** Tie the SBOM to the digest from `imageID`.
 > - **Assuming the SBOM is complete.** Syft lists what it identifies. Files copied in without a package record can be missing.
-> - **Comparing counts across formats.** SPDX and CycloneDX count differently, such as the root package entry. Compare names and versions.
+> - **Comparing counts across formats.** SPDX and CycloneDX count differently: SPDX adds an entry for the image, and the CycloneDX document from Syft also lists files. Compare names and versions.
 > - **Keeping the SBOM away from the artifact.** A document in a shared folder with no link to a digest cannot answer an incident question later.
