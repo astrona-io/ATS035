@@ -4,7 +4,7 @@ exam_objectives:
 ---
 # Run A Pod With A Restricted Security Context Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Use a host shell with the private kubeconfig for this lab's kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-035-lab-010-02-01)"
@@ -71,7 +71,7 @@ kubectl -n starfleet-035-010-02-01 exec restricted-runner -- sh -c 'touch /shoul
 
 The first command prints the user ID 10001. The second command prints an error from `touch` and returns a nonzero status. The `runAsUser` field is numeric on purpose: with `runAsNonRoot: true`, the kubelet refuses to start a container whose image names a user by text, because it cannot prove that the name is not root.
 
-After recording your result, remove the independent lab with `astrona destroy ats-035-lab-010-02-01`.
+After recording your result, remove the lab with `astrona destroy ats-035-lab-010-02-01`.
 
 ## Common pitfalls
 

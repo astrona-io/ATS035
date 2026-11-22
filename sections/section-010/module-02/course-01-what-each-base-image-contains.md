@@ -51,13 +51,13 @@ kubectl -n starfleet exec deploy/probe -- sh -c 'head -n 2 /etc/os-release; ls /
 
 The first two lines name Alpine Linux and its version. The `ls` command lists the `musl` dynamic loader, which confirms the C library. The last number is the count of installed `apk` packages. The `python` interpreter is one of them, together with its libraries.
 
-Now look at BusyBox. It ships one program that provides many commands, and the commands in `/bin` are links to it:
+Now look at BusyBox. It ships one program that provides many commands, and the commands in `/bin` are hard links to it:
 
 ```sh
 kubectl -n starfleet exec shuttle -- sh -c 'ls -l /bin/sh; busybox | head -n 3; ls /bin | wc -l'
 ```
 
-The listing shows that `sh` is a link to `busybox`. The `busybox` command prints its version and a usage text, and the last number is the count of commands in `/bin`. This image has no package manager, so the count of packages does not exist, but the shell and the standard tools are all present.
+The listing shows `/bin/sh` as a regular file with a link count of about 400 in the second column: `sh` and the other commands are hard links to the same BusyBox program, so they share one file. The `busybox` command prints its version and a usage text, and the last number is the count of commands in `/bin`. This image has no package manager, so the count of packages does not exist, but the shell and the standard tools are all present.
 
 Last, check whether either image can run a language that the other has:
 

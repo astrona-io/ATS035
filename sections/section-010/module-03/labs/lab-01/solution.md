@@ -4,7 +4,7 @@ exam_objectives:
 ---
 # Pin An Image To The Digest The Node Reports Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Use a host shell with the private kubeconfig for this lab's kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-035-lab-010-03-01)"
@@ -64,7 +64,7 @@ kubectl -n starfleet-035-010-03-01 wait --for=condition=Ready pod/pinned-runner 
 kubectl -n starfleet-035-010-03-01 get pod shuttle pinned-runner -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.containerStatuses[0].imageID}{"\n"}{end}'
 ```
 
-After recording your result, remove the independent lab with `astrona destroy ats-035-lab-010-03-01`.
+After recording your result, remove the lab with `astrona destroy ats-035-lab-010-03-01`.
 
 ## Common pitfalls
 

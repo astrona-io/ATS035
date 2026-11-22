@@ -7,10 +7,9 @@ runtime:
   type: kind
   kind:
     image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
-    # BusyBox is not preloaded: the node pulls it, so the pod's imageID
-    # carries the registry digest this lab reads.
-    preloadImages:
-    - docker.io/library/python:3.13-alpine
+    # No image is preloaded: the node pulls BusyBox and Python from the
+    # registry, so each pod's imageID carries the registry digest that the
+    # pages read (a preloaded image reports only its local image ID).
     nodes:
       workers: 1
 bootstrap:

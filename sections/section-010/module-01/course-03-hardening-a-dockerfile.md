@@ -99,7 +99,7 @@ podman build -f Dockerfile.leak -t leaky:1 .
 podman history --no-trunc leaky:1
 ```
 
-The history lists the `COPY token.txt /token.txt` instruction as its own layer. The final filesystem has no `/token.txt`, but anyone who pulls the image can unpack that layer and read the file. The same is true for a token passed with `ARG` or `ENV`: the value is recorded in the image config and in the history.
+The history lists the `COPY` instruction as its own layer. Podman records it as `/bin/sh -c #(nop) COPY file:<hash> in /token.txt`, with the hash of the copied file in place of its name. The final filesystem has no `/token.txt`, but anyone who pulls the image can unpack that layer and read the file. The same is true for a token passed with `ARG` or `ENV`: the value is recorded in the image configuration and in the history.
 
 The correct mechanism is a **secret mount**. The build engine mounts the secret as a file for the duration of one `RUN` instruction and never writes it into a layer. Save this as `Dockerfile.secret`:
 

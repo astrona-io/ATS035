@@ -28,6 +28,6 @@ test "$(kubectl config current-context)" = "kind-astro-ats-035-playground-010-01
 kubectl get nodes
 ```
 
-The playground guide contains its complete practice sequence. Independent graded tasks launch separate environments with separate names and connection commands. Keep the connection for the task you are completing. The final summary removes the module playground; each independent task gives its own removal command.
+The playground guide contains its complete practice sequence. Each graded lab starts its own kind cluster, with its own name and its own connection command. Keep the connection for the lab you are working on. The summary page of a module removes the module playground; each graded lab gives its own removal command.
 
 If startup fails, inspect the actual error. An unavailable engine, a busy published port, insufficient capacity and an addon download failure are different problems. Configuration validation can inspect references before startup, but it cannot prove the runtime or network is available. Record real output when reporting a failure, and identify the environment name. The pinned node image provides a practice baseline rather than a promise of parity with the current examination environment.
