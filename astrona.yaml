@@ -554,4 +554,5 @@ modules:
   - type: quiz
     title: Final Domain Quiz
     path: sections/final-domain-quiz.yaml
+    question_count: 12
     pass_score: 70
