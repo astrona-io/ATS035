@@ -189,9 +189,12 @@ expect_equal 'the CycloneDX count is many times larger than the SPDX count' "$((
 expect_equal 'without its file components, CycloneDX has as many entries as SPDX' "$((cyclonedx_count - cyclonedx_files))" "$spdx_count"
 # head stops reading after ten lines, so jq can exit on a closed pipe.
 page_report "$page" "jq -r '.components[] | \"\\(.name) \\(.version)\"' python.cdx.json | head -n 10" >first-components.txt
-first_components="$(cat first-components.txt)"
-printf '%s\n' "$first_components"
+cat first-components.txt
+first_components="$(grep -v '^jq: error: writing output failed: Broken pipe$' first-components.txt || true)"
 expect_equal 'the third command prints ten lines' "$(grep -c . <<<"$first_components")" 10
+if [ "$(grep -c . first-components.txt)" != 10 ]; then
+  expect 'the page names the message that jq prints on the closed pipe' "$(cat first-components.txt)" "$(text_from_page "$page" 'jq: error: writing output failed: Broken pipe')"
+fi
 expect_equal 'the SPDX name field holds the image reference' "$(jq -r .name python.spdx.json)" docker.io/library/python
 page_run "$page" 'kubectl -n starfleet exec deploy/probe -- apk info -v | sort > apk-from-pod.txt'
 cat apk-from-pod.txt
