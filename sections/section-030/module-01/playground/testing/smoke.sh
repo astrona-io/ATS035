@@ -66,6 +66,22 @@ page_fails() {
   printf '%s\n' "$output"
 }
 
+# Run a scanner or linter command as the page writes it and print its output,
+# also when it exits with a non-zero code: these tools use the exit code to
+# report findings. The exit code goes to report_status.
+report_status=0
+page_report() {
+  local output
+  on_page "$1" "$2" || exit 1
+  printf '$ %s\n' "$2" >&2
+  if output="$(set +e; eval "$2" 2>&1)"; then
+    report_status=0
+  else
+    report_status=$?
+  fi
+  printf '%s\n' "$output"
+}
+
 # Write the block that follows "Save this as `<file>`" (or "as `<file>`") on a
 # page to <file> in the work folder. The third argument is the block language.
 save_block_from_page() {
@@ -238,8 +254,7 @@ wait_for_output 'created (server dry run)' kubectl apply --dry-run=server -f pod
 expect 'with Ignore the pod is accepted' "$(page_run "$page" 'kubectl apply --dry-run=server -f pod-webhook-test.yaml' 2>&1)" 'pod/webhook-test created (server dry run)'
 page_run "$page" 'kubectl delete -f webhook-unreachable.yaml'
 
-# Signing and verifying images with cosign: the registry steps (podman on the
-# host). The cosign commands are left out: cosign is not on the CI runner.
+# Signing and verifying images with cosign (podman and cosign on the host)
 page=course-04-signing-and-verifying-images-with-cosign.md
 page_run "$page" 'podman run -d --name local-registry -p 5000:5000 docker.io/library/registry:2'
 wait_for_output '{}' curl -s http://127.0.0.1:5000/v2/ >/dev/null
@@ -249,9 +264,26 @@ page_run "$page" 'podman push --tls-verify=false --digestfile shuttle.digest loc
 digest="$(page_run "$page" 'cat shuttle.digest')"
 printf '%s\n' "$digest"
 expect_equal 'shuttle.digest holds sha256: and 64 hexadecimal characters' "$(grep -cE '^sha256:[0-9a-f]{64}$' <<<"$digest")" 1
+# cosign reads the password from COSIGN_PASSWORD when no terminal can ask for it.
+export COSIGN_PASSWORD=smoke-test-password
+key_output="$(page_run "$page" 'cosign generate-key-pair' </dev/null 2>&1)"
+printf '%s\n' "$key_output"
+expect 'cosign writes the private key' "$key_output" 'Private key written to cosign.key'
+expect 'cosign writes the public key' "$key_output" 'Public key written to cosign.pub'
+sign_output="$(page_run "$page" 'cosign sign --key cosign.key --allow-insecure-registry --tlog-upload=false "localhost:5000/starfleet/shuttle@$(cat shuttle.digest)"' </dev/null 2>&1)"
+printf '%s\n' "$sign_output"
+expect 'cosign pushes the signature to the registry' "$sign_output" 'Pushing signature to: localhost:5000/starfleet/shuttle'
+verify_output="$(page_run "$page" 'cosign verify --key cosign.pub --allow-insecure-registry --insecure-ignore-tlog=true "localhost:5000/starfleet/shuttle@$(cat shuttle.digest)"' </dev/null 2>&1)"
+printf '%s\n' "$verify_output"
+expect 'the verification lists the signature check' "$verify_output" 'The signatures were verified against the specified public key'
+expect 'the payload names the repository' "$verify_output" '"docker-reference":"localhost:5000/starfleet/shuttle"'
+expect 'the payload names the signed digest' "$verify_output" "\"docker-manifest-digest\":\"$(cat shuttle.digest)\""
 page_run "$page" 'podman tag docker.io/library/busybox:1.37.0 localhost:5000/starfleet/other:1.0'
 page_run "$page" 'podman push --tls-verify=false localhost:5000/starfleet/other:1.0'
 expect 'the second repository holds the same content' "$(curl -s -H 'Accept: application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json' -o /dev/null -w '%{http_code}' "http://127.0.0.1:5000/v2/starfleet/other/manifests/$(cat shuttle.digest)")" 200
+other_output="$(page_fails "$page" 'cosign verify --key cosign.pub --allow-insecure-registry --insecure-ignore-tlog=true "localhost:5000/starfleet/other@$(cat shuttle.digest)"' </dev/null)"
+printf '%s\n' "$other_output"
+expect 'the verification in the second repository finds no signatures' "$other_output" "$(text_from_page "$page" 'no signatures found')"
 page_run "$page" 'podman rm -f local-registry'
 
 # Playground guide

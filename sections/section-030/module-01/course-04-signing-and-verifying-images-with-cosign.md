@@ -19,7 +19,7 @@ Sign the digest and not the tag. A tag can move after you signed it, and a verif
 
 ## Prepare a local registry and an image
 
-The exercise runs on your machine. It starts a registry container, pushes an image to it and records its digest. Cosign flags change between major versions, so run `cosign sign --help` and `cosign verify --help` if a flag below is not accepted by your version.
+The exercise runs on your machine. It starts a registry container, pushes an image to it and records its digest. Cosign flags change between major versions, so run `cosign sign --help` and `cosign verify --help` if a flag below is not accepted by your version. The commands below were checked with cosign 2.6. Cosign 3 refuses `--tlog-upload=false` with the error `--tlog-upload=false is not supported with --signing-config or --use-signing-config`, unless you also add `--use-signing-config=false` to the `cosign sign` command.
 
 <!-- astrona:playground:renew -->
 

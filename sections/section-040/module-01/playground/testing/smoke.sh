@@ -66,6 +66,22 @@ page_fails() {
   printf '%s\n' "$output"
 }
 
+# Run a scanner or linter command as the page writes it and print its output,
+# also when it exits with a non-zero code: these tools use the exit code to
+# report findings. The exit code goes to report_status.
+report_status=0
+page_report() {
+  local output
+  on_page "$1" "$2" || exit 1
+  printf '$ %s\n' "$2" >&2
+  if output="$(set +e; eval "$2" 2>&1)"; then
+    report_status=0
+  else
+    report_status=$?
+  fi
+  printf '%s\n' "$output"
+}
+
 # Write the block that follows "Save this as `<file>`" (or "as `<file>`") on a
 # page to <file> in the work folder. The third argument is the block language.
 save_block_from_page() {
@@ -151,20 +167,75 @@ expect 'the stored object has a serviceAccountName you did not write' "$stored" 
 expect 'the stored object has the token volume' "$stored" 'kube-api-access-'
 expect 'the server-side dry run does not create the pod' "$(kubectl -n starfleet get pod risky-shuttle 2>&1 || true)" 'NotFound'
 
-# Scanning manifests with Kubesec and linting with KubeLinter: the commands
-# need the kubesec and kube-linter tools, which the playground does not
-# provide. Only the manifests are checked here: they must parse on the server.
+# Scanning manifests with Kubesec (kubesec and jq on the host)
 page=course-02-scanning-manifests-with-kubesec.md
 save_yaml_from_page "$page" deployment-weak-probe.yaml
 save_yaml_from_page "$page" deployment-fixed-probe.yaml
 expect 'the weak Deployment is a valid object' "$(kubectl apply --dry-run=server -f deployment-weak-probe.yaml)" 'deployment.apps/weak-probe created (server dry run)'
 expect 'the fixed Deployment is a valid object' "$(kubectl apply --dry-run=server -f deployment-fixed-probe.yaml)" 'deployment.apps/fixed-probe created (server dry run)'
+page_report "$page" 'kubesec scan deployment-weak-probe.yaml' >kubesec-weak.json
+head -n 20 kubesec-weak.json
+expect_equal 'kubesec exits with code 2 for a failed score' "$report_status" 2
+expect 'the message says the scan failed' "$(jq -r '.[0].message' kubesec-weak.json)" "$(text_from_page "$page" 'Failed with a score of')"
+expect_equal 'the weak score is negative' "$(jq '.[0].score < 0' kubesec-weak.json)" true
+expect_equal 'kubesec could parse the resource' "$(jq -r '.[0].valid' kubesec-weak.json)" true
+expect_equal 'the critical list holds the privileged finding' "$(jq -r '[.[0].scoring.critical[].id] | join(",")' kubesec-weak.json)" Privileged
+page_report "$page" "kubesec scan deployment-weak-probe.yaml | jq '.[0] | {score, critical: [.scoring.critical[]?.selector], advise: [.scoring.advise[]?.selector]}'" >kubesec-weak-summary.json
+cat kubesec-weak-summary.json
+expect 'the privileged selector is in the critical list' "$(jq -r '.critical[]' kubesec-weak-summary.json)" 'containers[] .securityContext .privileged == true'
+page_report "$page" "kubesec scan deployment-fixed-probe.yaml | jq '.[0] | {score, critical: [.scoring.critical[]?.selector], advise: [.scoring.advise[]?.selector]}'" >kubesec-fixed-summary.json
+cat kubesec-fixed-summary.json
+expect_equal 'the fixed scan exits with code 0' "$report_status" 0
+expect_equal 'the critical list of the fixed file is empty' "$(jq '.critical | length' kubesec-fixed-summary.json)" 0
+expect_equal 'the fixed score is higher' "$(jq -n --slurpfile weak kubesec-weak-summary.json --slurpfile fixed kubesec-fixed-summary.json '$fixed[0].score > $weak[0].score')" true
+expect_equal 'the fixed advise list is shorter' "$(jq -n --slurpfile weak kubesec-weak-summary.json --slurpfile fixed kubesec-fixed-summary.json '($fixed[0].advise | length) < ($weak[0].advise | length)')" true
+for advice in 'resources .limits' seccompProfile serviceAccountName; do
+  expect "the remaining advice covers $advice" "$(jq -r '.advise[]' kubesec-fixed-summary.json)" "$advice"
+done
+
+# Linting manifests with KubeLinter (kube-linter on the host)
 page=course-03-linting-manifests-with-kubelinter.md
+page_run "$page" 'kube-linter checks list' >kube-linter-checks.txt
+head -n 8 kube-linter-checks.txt
+expect 'each check shows whether it is enabled by default' "$(cat kube-linter-checks.txt)" 'Enabled by default: false'
+expect 'some checks are on by default' "$(cat kube-linter-checks.txt)" 'Enabled by default: true'
+for check in privileged-container run-as-non-root no-read-only-root-fs privilege-escalation-container latest-tag unset-cpu-requirements unset-memory-requirements; do
+  expect "the list has the check $check" "$(cat kube-linter-checks.txt)" "Name: $check"
+done
 save_yaml_from_page "$page" deployment-lint-probe.yaml
 expect 'the lint Deployment is a valid object' "$(kubectl apply --dry-run=server -f deployment-lint-probe.yaml)" 'deployment.apps/lint-probe created (server dry run)'
+page_report "$page" 'kube-linter lint deployment-lint-probe.yaml' >kube-linter-default.txt
+cat kube-linter-default.txt
+expect_equal 'the exit code is not zero' "$report_status" 1
+for check in privileged-container latest-tag run-as-non-root unset-cpu-requirements unset-memory-requirements; do
+  expect "the default lint reports $check" "$(cat kube-linter-default.txt)" "(check: $check,"
+done
+expect 'each finding names the file and the object' "$(cat kube-linter-default.txt)" 'deployment-lint-probe.yaml: (object: starfleet/lint-probe apps/v1, Kind=Deployment)'
+expect 'each finding gives a remediation' "$(cat kube-linter-default.txt)" 'remediation: '
+# The page shows the Kustomize stream as an example only: it has no ./overlay folder.
+on_page "$page" 'kubectl kustomize ./overlay | kube-linter lint -'
+save_yaml_from_page "$page" .kube-linter.yaml
+page_report "$page" 'kube-linter lint --config .kube-linter.yaml deployment-lint-probe.yaml' >kube-linter-config.txt
+cat kube-linter-config.txt
+expect_equal 'the lint with the configuration exits with code 1' "$report_status" 1
+expect_no 'the configuration omits the excluded check' "$(cat kube-linter-config.txt)" '(check: unset-cpu-requirements,'
+expect 'the configuration adds built-in checks that are off by default' "$(cat kube-linter-config.txt)" '(check: minimum-three-replicas,'
+expect_equal 'the configuration reports more findings than the default lint' "$(( $(grep -c '(check: ' kube-linter-config.txt) > $(grep -c '(check: ' kube-linter-default.txt) ))" 1
+command kube-linter lint deployment-lint-probe.yaml >kube-linter-again.txt 2>&1 || true
+expect 'without --config, KubeLinter reads .kube-linter.yaml from the current folder' "$(cat kube-linter-again.txt)" '(check: minimum-three-replicas,'
+rm .kube-linter.yaml
 
 # A release decision with image scans and Pod Security Admission
 page=course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
+page_report "$page" 'trivy image --severity HIGH,CRITICAL docker.io/library/busybox:1.37.0' >trivy-busybox.txt
+cat trivy-busybox.txt
+expect_equal 'the image scan exits with code 0' "$report_status" 0
+expect 'Trivy finds no package database to compare in the busybox image' "$(cat trivy-busybox.txt)" "$(text_from_page "$page" 'Supported files for scanner(s) not found.')"
+expect 'the summary table shows - for not scanned' "$(cat trivy-busybox.txt)" "'-': Not scanned"
+page_report "$page" 'trivy config .' >trivy-config.txt
+tail -n 40 trivy-config.txt
+expect_equal 'the configuration scan exits with code 0' "$report_status" 0
+expect 'the configuration scan reports the privileged container' "$(cat trivy-config.txt)" "should set 'securityContext.privileged' to false"
 save_from_page "$page" namespace-release-check.yaml
 save_yaml_from_page "$page" pod-privileged-shuttle.yaml
 rejected="$(page_fails "$page" 'kubectl apply -f pod-privileged-shuttle.yaml')"
