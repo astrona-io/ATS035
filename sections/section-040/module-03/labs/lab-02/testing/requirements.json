@@ -1,0 +1,80 @@
+{
+  "context": "kind-astro-ats-035-lab-040-03-02",
+  "cluster": "astro-ats-035-lab-040-03-02",
+  "namespace": "hangar-035-040-03-02",
+  "resources": [
+    {
+      "kind": "pod",
+      "name": "legacy-scanner",
+      "namespace": "hangar-035-040-03-02",
+      "expected": {
+        "metadata": {
+          "name": "legacy-scanner",
+          "namespace": "hangar-035-040-03-02"
+        },
+        "spec": {
+          "containers": [
+            {
+              "name": "scanner",
+              "image": "docker.io/library/busybox:1.37.0",
+              "securityContext": {
+                "privileged": true
+              }
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    },
+    {
+      "kind": "namespace",
+      "name": "hangar-035-040-03-02",
+      "namespace": "",
+      "expected": {
+        "metadata": {
+          "name": "hangar-035-040-03-02",
+          "labels": {
+            "pod-security.kubernetes.io/enforce": "baseline",
+            "pod-security.kubernetes.io/enforce-version": "v1.35",
+            "pod-security.kubernetes.io/warn": "restricted",
+            "pod-security.kubernetes.io/warn-version": "v1.35",
+            "pod-security.kubernetes.io/audit": "restricted",
+            "pod-security.kubernetes.io/audit-version": "v1.35"
+          }
+        }
+      },
+      "outcome": "mode-labels"
+    },
+    {
+      "kind": "deployment",
+      "name": "cargo-loader",
+      "namespace": "hangar-035-040-03-02",
+      "expected": {
+        "metadata": {
+          "name": "cargo-loader",
+          "namespace": "hangar-035-040-03-02"
+        },
+        "spec": {
+          "template": {
+            "spec": {
+              "containers": [
+                {
+                  "name": "loader",
+                  "image": "docker.io/library/busybox:1.37.0",
+                  "command": [
+                    "sh",
+                    "-c",
+                    "while true; do sleep 3600; done"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "state": "deployment",
+      "outcome": "cargo-loader-running"
+    }
+  ],
+  "behavior": []
+}

@@ -12,7 +12,7 @@ A manifest can look harmless and still ask for a privileged container, and an im
 2. Scan Images And Configuration With Trivy: image, folder and configuration scans, severity and exit-code gates, exceptions and database freshness.
 3. Enforce Workload Standards With Pod Security Admission: the Pod Security Standards, namespace labels, modes and versions, the restricted standard and exemptions.
 
-Each module has a playground, a graded lab and a summary. The second and third modules each close with a ten-question knowledge check on that module, and the section ends with a ten-question knowledge check on all three modules.
+Each module has a playground, two or more graded labs and a summary. The second and third modules each close with a ten-question knowledge check on that module, and the section ends with a ten-question knowledge check on all three modules.
 
 ## Learning Outcomes
 

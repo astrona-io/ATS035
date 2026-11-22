@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pull-diagnosis
+  namespace: starfleet-035-020-03-02
+data:
+  failedImage: docker.io/library/busybox:1.37.0-scout
+  cause: missing-manifest

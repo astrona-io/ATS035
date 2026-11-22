@@ -51,6 +51,16 @@ Verification at admission is strong for one question: did the trusted signer sig
 - **Exempted namespaces are open.** Every namespace that the policy excludes can run unsigned images.
 - **The registry can still be slow or unavailable.** Verification needs the registry at admission time, and an outage can block new pods.
 
+The list shows that admission is only one layer. The text rules that the API server can check itself still matter, and the next section shows how to combine them.
+
+## Combine text rules in one policy
+
+A signature check needs an engine, but the API server can still enforce the text rules that come before it. One ValidatingAdmissionPolicy can hold several entries in `validations`. Each entry has its own `expression` and its own `message`. With the `Deny` action, the API server rejects the request when any expression is false, and the error shows the message of a validation that failed.
+
+Write one validation for each rule, so the error tells the author which rule the pod broke. Two text rules fit well together. The first requires every image to start with the approved registry host and a `/`, for example `i.startsWith('registry.starfleet.test/')`. The `/` matters: without it, a host such as `registry.starfleet.test.example.com` also passes. The second requires a digest, with the expression `i.matches('@sha256:[a-f0-9]{64}$')`. Test each rule with a pod that breaks only that rule, so you see each message on its own.
+
+The binding decides where the rules apply. A `namespaceSelector` with `matchLabels` selects only the namespaces that carry a given label value. A namespace with another value of the same label, such as `exempt`, is not selected, and the policy checks nothing there. Keep such namespaces few and review their labels, because one changed label value switches the control on or off.
+
 ## Try it in the playground
 
 You can measure one of these gaps in the playground. List every pod in the cluster whose container image reference has no digest. These pods ran without the rule you wrote earlier:

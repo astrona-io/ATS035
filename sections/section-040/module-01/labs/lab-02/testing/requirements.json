@@ -1,0 +1,48 @@
+{
+  "context": "kind-astro-ats-035-lab-040-01-02",
+  "cluster": "astro-ats-035-lab-040-01-02",
+  "namespace": "starfleet-035-040-01-02",
+  "resources": [
+    {
+      "kind": "configmap",
+      "name": "lint-policy",
+      "namespace": "starfleet-035-040-01-02",
+      "expected": {
+        "data": {
+          "kube-linter.yaml": "checks:\n  doNotAutoAddDefaults: true\n  include:\n    - privileged-container\n    - privilege-escalation-container\n    - run-as-non-root\n    - no-read-only-root-fs\n    - latest-tag\n    - unset-cpu-requirements\n    - unset-memory-requirements\n"
+        }
+      }
+    },
+    {
+      "kind": "pod",
+      "name": "linter",
+      "namespace": "starfleet-035-040-01-02",
+      "expected": {
+        "spec": {
+          "containers": [
+            {
+              "name": "kube-linter",
+              "image": "docker.io/stackrox/kube-linter:v0.8.3-alpine",
+              "command": [
+                "sh",
+                "-c",
+                "while true; do sleep 3600; done"
+              ]
+            }
+          ],
+          "volumes": [
+            {
+              "name": "policy",
+              "configMap": {
+                "name": "lint-policy"
+              }
+            }
+          ],
+          "automountServiceAccountToken": false
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

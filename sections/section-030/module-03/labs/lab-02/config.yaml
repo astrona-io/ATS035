@@ -1,0 +1,53 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-035-lab-030-03-02
+  docs:
+    prerequisites: docs/prerequisites.md
+    examQuestion: question.md
+    caseStudy: docs/case-study.md
+    guide: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+    - docker.io/library/busybox:1.37.0
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+teardown:
+  keepCluster: false
+testing:
+  init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
+  - name: reference-result
+    type: file
+    source: solution/apply.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
+    type: file
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: plugin-enabled
+    description: The running kube-apiserver enables ImagePolicyWebhook, keeps NodeRestriction and reads /etc/kubernetes/admission/admission-config.yaml
+    type: file
+    source: validation/validate-plugin-enabled.sh
+    points: 1
+  - name: default-deny
+    description: The admission configuration sets defaultAllow false and keeps the backend kubeconfig and its address
+    type: file
+    source: validation/validate-default-deny.sh
+    points: 1
+  - name: pod-rejected
+    description: A server dry run of a new pod is rejected because the image policy backend cannot be reached
+    type: file
+    source: validation/validate-pod-rejected.sh
+    points: 1

@@ -1,0 +1,79 @@
+{
+  "context": "kind-astro-ats-035-lab-030-02-02",
+  "cluster": "astro-ats-035-lab-030-02-02",
+  "namespace": "starfleet-035-030-02-02",
+  "resources": [
+    {
+      "kind": "namespace",
+      "name": "outpost-035-030-02-02",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "outpost-035-030-02-02",
+          "labels": {
+            "training.astrona.io/release-gate": "exempt"
+          }
+        }
+      }
+    },
+    {
+      "kind": "pod",
+      "name": "drifter",
+      "namespace": "outpost-035-030-02-02",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "drifter",
+          "namespace": "outpost-035-030-02-02"
+        }
+      },
+      "state": "pod"
+    },
+    {
+      "kind": "validatingadmissionpolicy",
+      "name": "release-gate",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "admissionregistration.k8s.io/v1",
+        "kind": "ValidatingAdmissionPolicy",
+        "metadata": {
+          "name": "release-gate"
+        },
+        "spec": {
+          "failurePolicy": "Fail"
+        }
+      },
+      "outcome": "compliant-accepted"
+    },
+    {
+      "kind": "validatingadmissionpolicybinding",
+      "name": "release-gate",
+      "namespace": "",
+      "expected": {
+        "apiVersion": "admissionregistration.k8s.io/v1",
+        "kind": "ValidatingAdmissionPolicyBinding",
+        "metadata": {
+          "name": "release-gate"
+        },
+        "spec": {
+          "policyName": "release-gate",
+          "validationActions": [
+            "Deny"
+          ],
+          "matchResources": {
+            "namespaceSelector": {
+              "matchLabels": {
+                "training.astrona.io/release-gate": "enforced"
+              }
+            }
+          }
+        }
+      },
+      "outcome": "compliant-accepted"
+    }
+  ],
+  "behavior": []
+}

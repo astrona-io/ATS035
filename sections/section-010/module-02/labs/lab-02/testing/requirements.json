@@ -1,0 +1,40 @@
+{
+  "context": "kind-astro-ats-035-lab-010-02-02",
+  "cluster": "astro-ats-035-lab-010-02-02",
+  "namespace": "starfleet-035-010-02-02",
+  "resources": [
+    {
+      "kind": "deployment",
+      "name": "beacon",
+      "namespace": "starfleet-035-010-02-02",
+      "expected": {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "name": "beacon",
+          "namespace": "starfleet-035-010-02-02"
+        },
+        "spec": {
+          "template": {
+            "spec": {
+              "containers": [
+                {
+                  "name": "beacon",
+                  "image": "docker.io/library/busybox:1.37.0",
+                  "command": [
+                    "sh",
+                    "-c",
+                    "while true; do wget -qO- -T 3 http://probe/ || echo probe-unreachable; sleep 5; done"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "state": "deployment",
+      "outcome": "beacon-on-busybox"
+    }
+  ],
+  "behavior": []
+}

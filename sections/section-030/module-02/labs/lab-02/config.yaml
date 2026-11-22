@@ -1,0 +1,58 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-035-lab-030-02-02
+  docs:
+    prerequisites: docs/prerequisites.md
+    examQuestion: question.md
+    caseStudy: docs/case-study.md
+    guide: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+    - docker.io/library/busybox:1.37.0
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+teardown:
+  keepCluster: false
+testing:
+  init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
+  - name: reference-result
+    type: file
+    source: solution/apply.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
+    type: file
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: registry-rule
+    description: In starfleet-035-030-02-02 a digest-pinned image from another registry, or from a lookalike host, is rejected with the registry message only
+    type: file
+    source: validation/validate-registry-rule.sh
+    points: 1
+  - name: digest-rule
+    description: In starfleet-035-030-02-02 a tag-only image from the approved registry, in a container or an init container, is rejected with the digest message only
+    type: file
+    source: validation/validate-digest-rule.sh
+    points: 1
+  - name: compliant-accepted
+    description: Policy release-gate fails closed, its Deny binding selects only release-gate=enforced, and a pinned image from the approved registry is accepted
+    type: file
+    source: validation/validate-compliant-accepted.sh
+    points: 1
+  - name: running-pods-checked
+    description: No pod admitted before the policy and breaking it is left in starfleet-035-030-02-02
+    type: file
+    source: validation/validate-running-pods-checked.sh
+    points: 1

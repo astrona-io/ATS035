@@ -98,6 +98,14 @@ sections:
         and the runtime default seccomp profile.
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-010/module-02/labs/lab-02
+      after_reading: sections/section-010/module-02/course-01-what-each-base-image-contains.md
+      objective: Read the C library loader and the package count of a running Alpine based image and record
+        them. Move a shell-only workload to the BusyBox image and show that it has no apk and no python
+        and still works.
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-010/module-02/course-01-what-each-base-image-contains.md
     - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
@@ -125,6 +133,13 @@ sections:
       objective: Start a pod that refers to the BusyBox image by the digest that the node reports.
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-010/module-03/labs/lab-02
+      after_reading: sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+      objective: Start a pod with imagePullPolicy Never from an image that the node already holds. Make
+        a Deployment ask the registry on every container start and confirm the pull in the pod events.
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
     - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
@@ -164,6 +179,13 @@ sections:
       objective: Record installed operating-system packages and the image identity actually running them.
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-020/module-01/labs/lab-02
+      after_reading: sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
+      objective: Record every app and init container in a namespace with its image reference and the imageID
+        that the runtime resolved.
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
     - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
@@ -194,6 +216,12 @@ sections:
         identity.
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-020/module-02/labs/lab-02
+      after_reading: sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+      objective: Bind an SBOM record and a VEX statement to the running image digest instead of a tag.
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
     - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
@@ -226,6 +254,13 @@ sections:
       objective: The pull Secret authenticates to the live private registry
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-020/module-03/labs/lab-02
+      after_reading: sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+      objective: Diagnose a pod stuck in ErrImagePull, fix the image reference and record the requested
+        reference with the image ID the node pulled.
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
     - sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
@@ -310,6 +345,13 @@ sections:
       objective: Deny a pod whose image is not referenced by digest and admit a pod whose image is.
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-030/module-02/labs/lab-02
+      after_reading: sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
+      objective: Enforce an approved registry and a digest with separate messages in one ValidatingAdmissionPolicy
+        bound to one labelled namespace, and remove a pod admitted before the rule.
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-030/module-02/course-01-a-digest-rule-with-validatingadmissionpolicy.md
     - sections/section-030/module-02/course-02-signatures-attestations-and-keyless-signing.md
@@ -342,6 +384,14 @@ sections:
         to a ServiceAccount.
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-030/module-03/labs/lab-02
+      after_reading: sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+      objective: The running kube-apiserver loads ImagePolicyWebhook with its admission configuration
+        file mounted from the node With defaultAllow false, a new pod is rejected when the image policy
+        backend cannot be reached
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
     - sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
@@ -382,6 +432,14 @@ sections:
       objective: Inspect a non-executed unsafe resource definition and run a corrected restricted workload.
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-040/module-01/labs/lab-02
+      after_reading: sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
+      objective: KubeLinter with the team configuration reports no findings for the live lint-probe Deployment
+        The no-read-only-root-fs exception is recorded with a reason and an owner The hardened rollout
+        runs busybox 1.37.0 as user 10001
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
     - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
@@ -457,6 +515,14 @@ sections:
         unrestricted pod is rejected.
       status: alpha
       runtime_verification: passed
+    - id: lab-02
+      path: sections/section-040/module-03/labs/lab-02
+      after_reading: sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+      objective: The namespace enforces baseline and warns and audits restricted, each pinned to v1.35
+        A privileged pod is rejected and a baseline-only pod is admitted with a restricted warning A new
+        workload rolls out while the existing non-compliant pod keeps running
+      status: alpha
+      runtime_verification: pending
     practice_readings:
     - sections/section-040/module-03/course-01-the-pod-security-standards.md
     - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md

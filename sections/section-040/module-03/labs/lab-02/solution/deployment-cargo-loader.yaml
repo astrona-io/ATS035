@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cargo-loader
+  namespace: hangar-035-040-03-02
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cargo-loader
+  template:
+    metadata:
+      labels:
+        app: cargo-loader
+    spec:
+      containers:
+      - name: loader
+        image: docker.io/library/busybox:1.37.0
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-c", "while true; do sleep 3600; done"]

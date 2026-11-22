@@ -11,7 +11,7 @@ New QEMU labs build and inspect a minimal image, run Trivy against a fresh verif
 ## Remaining practical gaps and boundaries
 
 - The inventory labs read the live Alpine package database; they do not run Syft or inventory every language dependency.
-- The static-analysis lab checks field analysis and a repaired Pod, not execution of Kubesec or KubeLinter.
+- The first static-analysis lab checks field analysis and a repaired Pod without running a tool. The second runs KubeLinter in the cluster against the live Deployment; Kubesec is still not run.
 - Cosign uses disposable local keys and a loopback HTTP registry without a transparency log. Keyless identity, provenance verification and signature enforcement at admission remain ungraded.
 - Other pull-secret exercises still teach configuration. Authenticated-pull evidence comes specifically from section-020/module-03/labs/lab-01.
 
@@ -27,11 +27,9 @@ The four section capstones were removed so that every graded lab follows the rea
 No module lab now grades these capstone skills:
 
 - Section 010: CPU and memory requests and a memory limit on the container, a Deployment instead of a single Pod, and a Service on port 80 that targets the named port `http`, reached by Service name from the `shuttle` Pod.
-- Section 020: a separate `imageDigest` key cut from the image ID after the last `@`. The digest itself is read and graded in section-010/module-03/labs/lab-01.
-- Section 030: one ValidatingAdmissionPolicy with two validations and a separate message for each, and a namespace label `exempt` that stays unchanged while the policy applies only to `enforced`.
 - Section 040: the `imageTag` finding key, and one namespace that combines the findings, the scan gate and the restricted Pod.
 
-No new lab was written for these gaps.
+Two former capstone gaps are graded again: the separate `imageDigest` key (section-020/module-02/labs/lab-02) and one ValidatingAdmissionPolicy with two validations, separate messages and an unchanged `exempt` namespace (section-030/module-02/labs/lab-02). No lab was written for the gaps listed above.
 
 ## Runtime choice
 

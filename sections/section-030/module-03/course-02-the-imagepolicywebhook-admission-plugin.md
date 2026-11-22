@@ -48,7 +48,23 @@ The fields mean this. `kubeConfigFile` is the path of the backend kubeconfig on 
 
 The setting `defaultAllow: true` makes the plugin fail open. When the backend is down, slow or unreachable, every pod is admitted and no one sees an error. A security control should use `defaultAllow: false`, and the cluster then needs a backend with several replicas, because an outage blocks new pods.
 
-The API server runs as a static pod, so the node directory that holds the two files must also be mounted into the static pod with a volume in its manifest. A mistake in this file can stop the API server from starting, so edit with care and keep a copy of the original manifest.
+The API server runs as a static pod, so the node directory that holds the two files must also be mounted into the static pod with a volume in its manifest. A `hostPath` volume gives the pod a directory of the node. In the manifest, the container gets a `volumeMounts` item and the pod gets a `volumes` item with the same name:
+
+```yaml
+    volumeMounts:
+    - mountPath: /etc/kubernetes/admission
+      name: image-policy
+      readOnly: true
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/admission
+      type: DirectoryOrCreate
+    name: image-policy
+```
+
+A mistake in this file can stop the API server from starting, so edit with care. Keep a copy of the original manifest outside `/etc/kubernetes/manifests`, because the kubelet runs every manifest in that directory. The kubelet restarts the API server as soon as the file changes, and the plugin reads its configuration file only at that start.
+
+To test the plugin, send a server-side dry run of a new pod, for example `kubectl run test --image=busybox --dry-run=server`. The request passes through every admission plugin, but the API server does not store the pod. With `defaultAllow: false` and a backend that does not answer, the API server rejects the request with a `Forbidden` error that names the backend address.
 
 ## Look at the playground control plane
 

@@ -12,7 +12,7 @@ A container image carries every shell, package manager and library that its base
 2. Compare Base Images And Their Attack Surface: Debian, Alpine, distroless and `scratch` images, and how to restrict what a running container can reach.
 3. Keep Images Small And Fresh Over Time: digest pins and the tools that update them, image pull policy, rebuild rules, size budgets and registry retention.
 
-Each module has a playground, a graded lab and a summary. The second and third modules each close with a ten-question knowledge check on that module, and the section ends with a ten-question knowledge check on all three modules. The playground is a private `kind` cluster with Kubernetes v1.35; launch it from the landing page and keep it running while you read.
+Each module has a playground, two or more graded labs and a summary. The second and third modules each close with a ten-question knowledge check on that module, and the section ends with a ten-question knowledge check on all three modules. The playground is a private `kind` cluster with Kubernetes v1.35; launch it from the landing page and keep it running while you read.
 
 ## Learning Outcomes
 

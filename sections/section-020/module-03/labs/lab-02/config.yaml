@@ -1,0 +1,53 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-035-lab-020-03-02
+  docs:
+    prerequisites: docs/prerequisites.md
+    examQuestion: question.md
+    caseStudy: docs/case-study.md
+    guide: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+    - docker.io/library/busybox:1.37.0
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+teardown:
+  keepCluster: false
+testing:
+  init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
+  - name: reference-result
+    type: file
+    source: solution/apply.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
+    type: file
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: failure-diagnosed
+    description: ConfigMap pull-diagnosis names the image reference that failed and the cause missing-manifest
+    type: file
+    source: validation/validate-failure-diagnosed.sh
+    points: 1
+  - name: deployment-repaired
+    description: Deployment scout uses docker.io/library/busybox:1.37.0 and its rollout is complete
+    type: file
+    source: validation/validate-deployment-repaired.sh
+    points: 1
+  - name: identity-recorded
+    description: ConfigMap pull-evidence matches the requested image and the imageID of a running scout container
+    type: file
+    source: validation/validate-identity-recorded.sh
+    points: 1

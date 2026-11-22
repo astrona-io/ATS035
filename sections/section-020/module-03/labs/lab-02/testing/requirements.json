@@ -1,0 +1,76 @@
+{
+  "context": "kind-astro-ats-035-lab-020-03-02",
+  "cluster": "astro-ats-035-lab-020-03-02",
+  "namespace": "starfleet-035-020-03-02",
+  "resources": [
+    {
+      "kind": "pod",
+      "name": "drifter",
+      "namespace": "outpost-035-020-03-02",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "drifter",
+          "namespace": "outpost-035-020-03-02"
+        },
+        "spec": {
+          "containers": [
+            {
+              "name": "client",
+              "image": "docker.io/library/busybox:1.37.0"
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    },
+    {
+      "kind": "configmap",
+      "name": "pull-diagnosis",
+      "namespace": "starfleet-035-020-03-02",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "pull-diagnosis",
+          "namespace": "starfleet-035-020-03-02"
+        },
+        "data": {
+          "failedImage": "docker.io/library/busybox:1.37.0-scout",
+          "cause": "missing-manifest"
+        }
+      },
+      "outcome": "failure-diagnosed"
+    },
+    {
+      "kind": "deployment",
+      "name": "scout",
+      "namespace": "starfleet-035-020-03-02",
+      "expected": {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "name": "scout",
+          "namespace": "starfleet-035-020-03-02"
+        },
+        "spec": {
+          "replicas": 1,
+          "template": {
+            "spec": {
+              "containers": [
+                {
+                  "name": "client",
+                  "image": "docker.io/library/busybox:1.37.0"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "state": "deployment",
+      "outcome": "deployment-repaired"
+    }
+  ],
+  "behavior": []
+}

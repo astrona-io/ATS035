@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sbom-record
+  namespace: starfleet-035-020-02-02
+data:
+  format: CycloneDX
+  scope: alpine-installed-packages
+  subject: "<IMAGE_ID>"
+  imageDigest: "<IMAGE_DIGEST>"

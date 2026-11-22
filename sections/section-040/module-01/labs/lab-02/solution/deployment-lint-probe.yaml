@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lint-probe
+  namespace: starfleet-035-040-01-02
+  annotations:
+    ignore-check.kube-linter.io/no-read-only-root-fs: "the application writes /tmp/last-run; owner: platform team"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lint-probe
+  template:
+    metadata:
+      labels:
+        app: lint-probe
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+      - name: app
+        image: docker.io/library/busybox:1.37.0
+        imagePullPolicy: IfNotPresent
+        command:
+        - sh
+        - -c
+        - while true; do date > /tmp/last-run; sleep 30; done
+        securityContext:
+          privileged: false
+          allowPrivilegeEscalation: false
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi

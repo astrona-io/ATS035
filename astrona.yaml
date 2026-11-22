@@ -1,7 +1,7 @@
 training:
   id: ATS035
   title: 'CKS: Supply Chain Security'
-  description: 'Detailed reading material and reusable YAML knowledge checks for CKS: Supply Chain Security. Each module has a playground, a graded lab and a knowledge check.'
+  description: 'Detailed reading material and reusable YAML knowledge checks for CKS: Supply Chain Security. Each module has a playground, at least two graded labs and a knowledge check.'
   certification:
     name: Certified Kubernetes Security Specialist
     code: CKS
@@ -32,7 +32,7 @@ modules:
     path: sections/intro/course-03-how-this-course-is-made.md
 - id: module-010
   title: Minimize base image footprint
-  description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
+  description: Hands-on reading, a playground, at least two graded labs and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
@@ -99,6 +99,21 @@ modules:
     title: What Each Base Image Contains
     path: sections/section-010/module-02/course-01-what-each-base-image-contains.md
   - type: reading
+    title: "Compare Base Images And Move A Workload To The Smaller One \u2014 Task"
+    path: sections/section-010/module-02/labs/lab-02/question.md
+  - type: lab
+    title: Compare Base Images And Move A Workload To The Smaller One
+    path: sections/section-010/module-02/labs/lab-02
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 8m
+    learning_goals:
+    - Read the C library loader and the package count of a running Alpine based image and record them.
+    - Move a shell-only workload to the BusyBox image and show that it has no apk and no python and still works.
+  - type: reading
+    title: "Compare Base Images And Move A Workload To The Smaller One \u2014 Solution"
+    path: sections/section-010/module-02/labs/lab-02/solution.md
+  - type: reading
     title: Measure What A Running Container Can Reach
     path: sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
   - type: reading
@@ -158,6 +173,21 @@ modules:
     title: Pull Policy, Rebuild Cadence And Size Budgets
     path: sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
   - type: reading
+    title: "Choose An Image Pull Policy From What The Node Holds \u2014 Task"
+    path: sections/section-010/module-03/labs/lab-02/question.md
+  - type: lab
+    title: Choose An Image Pull Policy From What The Node Holds
+    path: sections/section-010/module-03/labs/lab-02
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 7m
+    learning_goals:
+    - Start a pod with imagePullPolicy Never from an image that the node already holds.
+    - Make a Deployment ask the registry on every container start and confirm the pull in the pod events.
+  - type: reading
+    title: "Choose An Image Pull Policy From What The Node Holds \u2014 Solution"
+    path: sections/section-010/module-03/labs/lab-02/solution.md
+  - type: reading
     title: Summary
     path: sections/section-010/module-03/course-03-summary.md
   - type: quiz
@@ -172,7 +202,7 @@ modules:
     pass_score: 70
 - id: module-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
-  description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
+  description: Hands-on reading, a playground, at least two graded labs and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
@@ -184,6 +214,20 @@ modules:
   - type: reading
     title: Stages, Trust Boundaries And Evidence
     path: sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
+  - type: reading
+    title: "Record The Images That Run In A Namespace \u2014 Task"
+    path: sections/section-020/module-01/labs/lab-02/question.md
+  - type: lab
+    title: Record The Images That Run In A Namespace
+    path: sections/section-020/module-01/labs/lab-02
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 8m
+    learning_goals:
+    - Record every app and init container in a namespace with its image reference and the imageID that the runtime resolved.
+  - type: reading
+    title: "Record The Images That Run In A Namespace \u2014 Solution"
+    path: sections/section-020/module-01/labs/lab-02/solution.md
   - type: reading
     title: Software Bills Of Materials With Syft
     path: sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
@@ -244,6 +288,20 @@ modules:
     title: Matching An SBOM To Vulnerabilities And An Image Digest
     path: sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
   - type: reading
+    title: "Bind An SBOM And A VEX Statement To An Image Digest \u2014 Task"
+    path: sections/section-020/module-02/labs/lab-02/question.md
+  - type: lab
+    title: Bind An SBOM And A VEX Statement To An Image Digest
+    path: sections/section-020/module-02/labs/lab-02
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 8m
+    learning_goals:
+    - Bind an SBOM record and a VEX statement to the running image digest instead of a tag.
+  - type: reading
+    title: "Bind An SBOM And A VEX Statement To An Image Digest \u2014 Solution"
+    path: sections/section-020/module-02/labs/lab-02/solution.md
+  - type: reading
     title: Summary
     path: sections/section-020/module-02/course-03-summary.md
   - type: quiz
@@ -257,6 +315,20 @@ modules:
   - type: reading
     title: Registries, Repositories And Who May Push Or Pull
     path: sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+  - type: reading
+    title: "Diagnose A Failed Image Pull And Record The Resolved Image \u2014 Task"
+    path: sections/section-020/module-03/labs/lab-02/question.md
+  - type: lab
+    title: Diagnose A Failed Image Pull And Record The Resolved Image
+    path: sections/section-020/module-03/labs/lab-02
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 8m
+    learning_goals:
+    - Diagnose a pod stuck in ErrImagePull, fix the image reference and record the requested reference with the image ID the node pulled.
+  - type: reading
+    title: "Diagnose A Failed Image Pull And Record The Resolved Image \u2014 Solution"
+    path: sections/section-020/module-03/labs/lab-02/solution.md
   - type: reading
     title: Pull Secrets And Service Accounts
     path: sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
@@ -302,7 +374,7 @@ modules:
     pass_score: 70
 - id: module-030
   title: Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
-  description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
+  description: Hands-on reading, a playground, at least two graded labs and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
@@ -394,6 +466,20 @@ modules:
     title: Enforcing Verification And Its Limits
     path: sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
   - type: reading
+    title: "Combine Registry And Digest Rules In One Admission Policy \u2014 Task"
+    path: sections/section-030/module-02/labs/lab-02/question.md
+  - type: lab
+    title: Combine Registry And Digest Rules In One Admission Policy
+    path: sections/section-030/module-02/labs/lab-02
+    examScope: cluster
+    difficulty: intermediate
+    estimated_duration: 12m
+    learning_goals:
+    - Enforce an approved registry and a digest with separate messages in one ValidatingAdmissionPolicy bound to one labelled namespace, and remove a pod admitted before the rule.
+  - type: reading
+    title: "Combine Registry And Digest Rules In One Admission Policy \u2014 Solution"
+    path: sections/section-030/module-02/labs/lab-02/solution.md
+  - type: reading
     title: Summary
     path: sections/section-030/module-02/course-04-summary.md
   - type: quiz
@@ -410,6 +496,21 @@ modules:
   - type: reading
     title: The ImagePolicyWebhook Admission Plugin
     path: sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+  - type: reading
+    title: "Make ImagePolicyWebhook Fail Closed \u2014 Task"
+    path: sections/section-030/module-03/labs/lab-02/question.md
+  - type: lab
+    title: Make ImagePolicyWebhook Fail Closed
+    path: sections/section-030/module-03/labs/lab-02
+    examScope: cluster
+    difficulty: advanced
+    estimated_duration: 12m
+    learning_goals:
+    - The running kube-apiserver loads ImagePolicyWebhook with its admission configuration file mounted from the node
+    - With defaultAllow false, a new pod is rejected when the image policy backend cannot be reached
+  - type: reading
+    title: "Make ImagePolicyWebhook Fail Closed \u2014 Solution"
+    path: sections/section-030/module-03/labs/lab-02/solution.md
   - type: reading
     title: Admission Failure Modes And Exemptions
     path: sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
@@ -447,7 +548,7 @@ modules:
     pass_score: 70
 - id: module-040
   title: Perform static analysis of user workloads and container images (e.g. Kubesec, KubeLinter)
-  description: Hands-on reading, a playground, a graded lab and a knowledge check for this domain area.
+  description: Hands-on reading, a playground, at least two graded labs and a knowledge check for this domain area.
   status: alpha
   content:
   - type: reading
@@ -465,6 +566,22 @@ modules:
   - type: reading
     title: Linting Manifests With KubeLinter
     path: sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
+  - type: reading
+    title: "Lint A Live Deployment With KubeLinter \u2014 Task"
+    path: sections/section-040/module-01/labs/lab-02/question.md
+  - type: lab
+    title: Lint A Live Deployment With KubeLinter
+    path: sections/section-040/module-01/labs/lab-02
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 12m
+    learning_goals:
+    - KubeLinter with the team configuration reports no findings for the live lint-probe Deployment
+    - The no-read-only-root-fs exception is recorded with a reason and an owner
+    - The hardened rollout runs busybox 1.37.0 as user 10001
+  - type: reading
+    title: "Lint A Live Deployment With KubeLinter \u2014 Solution"
+    path: sections/section-040/module-01/labs/lab-02/solution.md
   - type: reading
     title: A Release Decision With Image Scans And Pod Security Admission
     path: sections/section-040/module-01/course-04-a-release-decision-with-image-scans-and-pod-security-admission.md
@@ -555,6 +672,22 @@ modules:
   - type: reading
     title: Namespace Labels, Modes And Versions
     path: sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+  - type: reading
+    title: "Enforce Baseline And Warn On Restricted With Pod Security Admission \u2014 Task"
+    path: sections/section-040/module-03/labs/lab-02/question.md
+  - type: lab
+    title: Enforce Baseline And Warn On Restricted With Pod Security Admission
+    path: sections/section-040/module-03/labs/lab-02
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 8m
+    learning_goals:
+    - The namespace enforces baseline and warns and audits restricted, each pinned to v1.35
+    - A privileged pod is rejected and a baseline-only pod is admitted with a restricted warning
+    - A new workload rolls out while the existing non-compliant pod keeps running
+  - type: reading
+    title: "Enforce Baseline And Warn On Restricted With Pod Security Admission \u2014 Solution"
+    path: sections/section-040/module-03/labs/lab-02/solution.md
   - type: reading
     title: Meeting The Restricted Standard, Exemptions And Limits
     path: sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
