@@ -1,0 +1,60 @@
+{
+  "context": "kind-astro-ats-035-lab-010-03-02",
+  "cluster": "astro-ats-035-lab-010-03-02",
+  "namespace": "starfleet-035-010-03-02",
+  "resources": [
+    {
+      "kind": "pod",
+      "name": "offline-runner",
+      "namespace": "starfleet-035-010-03-02",
+      "expected": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "name": "offline-runner",
+          "namespace": "starfleet-035-010-03-02"
+        },
+        "spec": {
+          "containers": [
+            {
+              "name": "app",
+              "image": "docker.io/library/busybox:1.37.0",
+              "imagePullPolicy": "Never"
+            }
+          ]
+        }
+      },
+      "state": "pod",
+      "outcome": "offline-runner-runs"
+    },
+    {
+      "kind": "deployment",
+      "name": "relay",
+      "namespace": "starfleet-035-010-03-02",
+      "expected": {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "name": "relay",
+          "namespace": "starfleet-035-010-03-02"
+        },
+        "spec": {
+          "template": {
+            "spec": {
+              "containers": [
+                {
+                  "name": "relay",
+                  "image": "docker.io/library/busybox:1.37.0",
+                  "imagePullPolicy": "Always"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "state": "deployment",
+      "outcome": "relay-always-pulls"
+    }
+  ],
+  "behavior": []
+}

@@ -1,0 +1,51 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-035-lab-010-03-02
+  docs:
+    prerequisites: docs/prerequisites.md
+    examQuestion: question.md
+    caseStudy: docs/case-study.md
+    guide: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    # BusyBox 1.37.0 is preloaded so that a pod with imagePullPolicy Never
+    # can start from it. BusyBox 1.36.1 is not on the node.
+    preloadImages:
+    - docker.io/library/python:3.13-alpine
+    - docker.io/library/busybox:1.37.0
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+teardown:
+  keepCluster: false
+testing:
+  init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
+  - name: reference-result
+    type: file
+    source: solution/apply.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
+    type: file
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: offline-runner-runs
+    description: offline-runner keeps imagePullPolicy Never, names busybox:1.37.0 that the node holds, and is Ready
+    type: file
+    source: validation/validate-offline-runner-runs.sh
+    points: 1
+  - name: relay-always-pulls
+    description: The relay Deployment uses imagePullPolicy Always and the events of its ready pod show a pull from the registry
+    type: file
+    source: validation/validate-relay-always-pulls.sh
+    points: 1

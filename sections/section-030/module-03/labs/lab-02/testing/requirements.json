@@ -1,0 +1,32 @@
+{
+  "context": "kind-astro-ats-035-lab-030-03-02",
+  "cluster": "astro-ats-035-lab-030-03-02",
+  "namespace": "starfleet-035-030-03-02",
+  "resources": [
+    {
+      "kind": "pod",
+      "name": "bridge",
+      "namespace": "starfleet-035-030-03-02",
+      "expected": {
+        "metadata": {
+          "name": "bridge",
+          "namespace": "starfleet-035-030-03-02"
+        }
+      },
+      "state": "pod"
+    },
+    {
+      "kind": "pod",
+      "name": "drifter",
+      "namespace": "outpost-035-030-03-02",
+      "expected": {
+        "metadata": {
+          "name": "drifter",
+          "namespace": "outpost-035-030-03-02"
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

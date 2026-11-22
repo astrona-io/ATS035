@@ -56,19 +56,40 @@ labs:
   sections/section-030/module-01/labs/lab-02:
     preparation:
     - sections/section-030/module-01/course-05-verify-image-signature-boundaries.md
+  sections/section-010/module-02/labs/lab-02:
+    preparation:
+    - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+  sections/section-010/module-03/labs/lab-02:
+    preparation:
+    - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+  sections/section-020/module-01/labs/lab-02:
+    preparation:
+    - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
+  sections/section-020/module-02/labs/lab-02:
+    preparation:
+    - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+  sections/section-020/module-03/labs/lab-02:
+    preparation:
+    - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+  sections/section-030/module-02/labs/lab-02:
+    preparation:
+    - sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
+  sections/section-030/module-03/labs/lab-02:
+    preparation:
+    - sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+  sections/section-040/module-01/labs/lab-02:
+    preparation:
+    - sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
+  sections/section-040/module-03/labs/lab-02:
+    preparation:
+    - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
 additional_readings:
 - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
 - sections/section-010/module-01/course-03-hardening-a-dockerfile.md
-- sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
 - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
 - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
-- sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
-- sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
 - sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
 - sections/section-020/module-03/course-04-build-provenance-and-slsa-levels.md
 - sections/section-030/module-01/course-03-policy-engines-and-admission-webhooks.md
 - sections/section-030/module-01/course-04-signing-and-verifying-images-with-cosign.md
 - sections/section-030/module-02/course-02-signatures-attestations-and-keyless-signing.md
-- sections/section-030/module-02/course-03-enforcing-verification-and-its-limits.md
-- sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
-- sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md

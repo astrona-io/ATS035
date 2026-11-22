@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vex-statement
+  namespace: starfleet-035-020-02-02
+data:
+  vulnerability: TRAINING-2026-0001
+  product: "<IMAGE_DIGEST>"
+  status: not_affected
+  justification: vulnerable_code_not_in_execute_path
+  author: fleet-security-team
+  reviewBy: "2027-05-31"

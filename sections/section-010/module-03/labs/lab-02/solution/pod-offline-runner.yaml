@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: offline-runner
+  namespace: starfleet-035-010-03-02
+  labels:
+    app: offline-runner
+spec:
+  restartPolicy: Never
+  containers:
+  - name: app
+    image: docker.io/library/busybox:1.37.0
+    imagePullPolicy: Never
+    command:
+    - sh
+    - -c
+    - sleep 3600

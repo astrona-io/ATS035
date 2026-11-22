@@ -1,0 +1,18 @@
+---
+exam_objectives:
+- Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
+---
+# Prerequisites
+
+Use astrona, kubectl, Python 3, Podman and a shell. Node inspection exercises use the containers in this environment, not the physical host.
+
+Use a host shell with the private kubeconfig for this lab's kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+
+```sh
+export KUBECONFIG="$(astrona kubeconfig ats-035-lab-030-03-02)"
+test "$(kubectl config current-context)" = "kind-astro-ats-035-lab-030-03-02" || exit 1
+node_name="astro-ats-035-lab-030-03-02-control-plane"
+worker_name="astro-ats-035-lab-030-03-02-worker"
+```
+
+Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system. The commands use Podman; with Docker, write `docker` instead of `podman`.

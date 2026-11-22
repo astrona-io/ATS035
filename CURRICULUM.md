@@ -28,23 +28,23 @@ The [official objectives](https://training.linuxfoundation.org/certification/cer
 | 040 / 02 | Scan Images And Configuration With Trivy | What Trivy Scans: Images, Folders And Configuration; Severity Filters, Unfixed Findings And Exit Codes; Exceptions, Database Freshness And What A Finding Proves; Use A Fresh Scan As Release Evidence |
 | 040 / 03 | Enforce Workload Standards With Pod Security Admission | The Pod Security Standards; Namespace Labels, Modes And Versions; Meeting The Restricted Standard, Exemptions And Limits |
 
-AUTHORING.yaml records measurable goals and adaptation sources. Every objective retains its section ID. Question banks are separate from the reading manifest and follow their declared summaries. Each module has a playground and at least one graded lab, each section has a knowledge check, and the second and third modules of each section have their own knowledge check.
+AUTHORING.yaml records measurable goals and adaptation sources. Every objective retains its section ID. Question banks are separate from the reading manifest and follow their declared summaries. Each module has a playground and at least two graded labs, each section has a knowledge check, and the second and third modules of each section have their own knowledge check.
 
 ## Hands-On Coverage
 
-This course has 12 ungraded module playgrounds, all on kind, and 15 graded labs (12 on kind, 3 on a qemu VM). Each lab sits right after the reading it practises, with its task before and its solution after. Every lab passed `astrona validate` and `astrona test` on its own runtime, and every playground started with `scripts/ci/test-playground.sh`.
+This course has 12 ungraded module playgrounds, all on kind, and 24 graded labs (21 on kind, 3 on a qemu VM). Each lab sits right after the reading it practises, with its task before and its solution after. Every lab passed `astrona validate` and `astrona test` on its own runtime, and every playground started with `scripts/ci/test-playground.sh`.
 
 | Module | Labs in teaching order |
 | --- | --- |
 | 010/01 | Serve Content With A Minimal Runtime; Build A Minimal Runtime Image |
-| 010/02 | Run A Pod With A Restricted Security Context |
-| 010/03 | Pin An Image To The Digest The Node Reports |
-| 020/01 | Bind A Package Inventory To A Running Image |
-| 020/02 | Record A Structured Package Inventory |
-| 020/03 | Repair Authenticated Image Pulls |
+| 010/02 | Compare Base Images And Move A Workload To The Smaller One; Run A Pod With A Restricted Security Context |
+| 010/03 | Pin An Image To The Digest The Node Reports; Choose An Image Pull Policy From What The Node Holds |
+| 020/01 | Record The Images That Run In A Namespace; Bind A Package Inventory To A Running Image |
+| 020/02 | Record A Structured Package Inventory; Bind An SBOM And A VEX Statement To An Image Digest |
+| 020/03 | Diagnose A Failed Image Pull And Record The Resolved Image; Repair Authenticated Image Pulls |
 | 030/01 | Enforce An Approved Image Registry; Sign And Verify An Immutable Image |
-| 030/02 | Require Image Digests In A Namespace |
-| 030/03 | Enforce A Registry Policy And Attach Pull Credentials |
-| 040/01 | Analyze And Correct A Workload Security Document |
+| 030/02 | Require Image Digests In A Namespace; Combine Registry And Digest Rules In One Admission Policy |
+| 030/03 | Make ImagePolicyWebhook Fail Closed; Enforce A Registry Policy And Attach Pull Credentials |
+| 040/01 | Lint A Live Deployment With KubeLinter; Analyze And Correct A Workload Security Document |
 | 040/02 | Decide A Scan Gate From Scan Results; Scan An Image And Bind The Release Decision |
-| 040/03 | Enforce The Restricted Pod Security Standard |
+| 040/03 | Enforce Baseline And Warn On Restricted With Pod Security Admission; Enforce The Restricted Pod Security Standard |

@@ -77,6 +77,19 @@ kube-linter lint --config .kube-linter.yaml deployment-lint-probe.yaml
 
 The report now contains the extra built-in checks and omits the excluded one. An exclusion in the configuration file applies to every object, so use it for a rule that the team has decided not to apply at all.
 
+A team can also fix the exact list of checks. With `doNotAutoAddDefaults: true`, KubeLinter runs only the checks named under `include`, so a new KubeLinter version cannot add a check to the gate without a change to the file:
+
+```yaml
+checks:
+  doNotAutoAddDefaults: true
+  include:
+    - privileged-container
+    - run-as-non-root
+    - unset-memory-requirements
+```
+
+The `unset-cpu-requirements` and `unset-memory-requirements` checks look for containers that do not have both a request and a limit set, so set both to clear them. KubeLinter can also check the object that the cluster stores: `kubectl get deployment lint-probe -o yaml | kube-linter lint -` sends the live Deployment to the linter on its standard input.
+
 ## Record an exception on one object
 
 For a single object, add an annotation in the form `ignore-check.kube-linter.io/<check-name>` with a reason as its value. Add this to the Deployment metadata:

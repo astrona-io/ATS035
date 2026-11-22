@@ -72,6 +72,8 @@ The first command prints the fallback text, because BusyBox has no Python interp
 
 The `probe` image is larger because it carries a language runtime and a package manager that the application may not need after the build. The `shuttle` image is smaller because it carries one program. Neither has the final form of a minimal production image: both keep a shell, so a person or a program with code execution inside the container can run commands. A distroless image removes the shell as well, and the only way to inspect it is an ephemeral debug container.
 
+A container that only runs shell commands, such as a loop that calls `wget`, does not need the Python runtime. Alpine provides `sh` and `wget` through BusyBox, so the same command runs unchanged on the BusyBox image. Moving it there removes the interpreter and the package manager from the running container.
+
 You can now name what each kind of base image contains and read it from a running pod. The next question is what a process can reach once it runs in a container, and how a pod limits that reach.
 
 ## Common pitfalls

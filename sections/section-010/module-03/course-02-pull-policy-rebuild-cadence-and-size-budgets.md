@@ -16,6 +16,8 @@ The `imagePullPolicy` field of a container has three values:
 
 If you do not set the field, Kubernetes sets it for you. A reference with the tag `latest`, or with no tag and no digest, gets `Always`. Every other reference, including one with a digest, gets `IfNotPresent`. A moving tag with `IfNotPresent` is the risky combination: two nodes that pulled at different times keep different content under the same name.
 
+The kubelet records its decision in the events of the pod, under the reason `Pulled`. With `IfNotPresent` and an image on the node, the event says that the image is already present on the machine. With `Always`, the kubelet first records `Pulling`, and the `Pulled` event then says that it successfully pulled the image, even when no layer had to be downloaded. The pull policy is part of the pod template, so a change to it on a Deployment rolls out new pods.
+
 ## Rebuild when the base image changes
 
 An image is a copy of its base at build time. When the publisher fixes a vulnerability in the base image, your image does not change, because it still holds the old layers. The fix reaches your workload only after three steps: the image is rebuilt on the new base, the new digest is published, and the workload is redeployed with it.

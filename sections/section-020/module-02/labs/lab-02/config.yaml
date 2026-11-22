@@ -1,0 +1,54 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-035-lab-020-02-02
+  docs:
+    prerequisites: docs/prerequisites.md
+    examQuestion: question.md
+    caseStudy: docs/case-study.md
+    guide: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+    - docker.io/library/python:3.13-alpine
+    - docker.io/library/busybox:1.37.0
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+teardown:
+  keepCluster: false
+testing:
+  init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
+  - name: reference-result
+    type: file
+    source: solution/apply.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
+    type: file
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: sbom-subject
+    description: sbom-record names the imageID of a ready probe container as its subject instead of the tag
+    type: file
+    source: validation/validate-sbom-subject.sh
+    points: 1
+  - name: sbom-image-digest
+    description: sbom-record has imageDigest, the part of the live imageID after the last @
+    type: file
+    source: validation/validate-sbom-image-digest.sh
+    points: 1
+  - name: vex-statement
+    description: vex-statement marks the finding not_affected for the live image digest, with a justification, an author and a review date
+    type: file
+    source: validation/validate-vex-statement.sh
+    points: 1

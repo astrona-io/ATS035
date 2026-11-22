@@ -26,6 +26,8 @@ The matching is only as good as the SBOM. A component that is missing from the l
 
 A scanner finds a vulnerable package; it does not know whether your program calls the vulnerable function. A VEX (Vulnerability Exploitability eXchange) statement is a signed or stored claim about one vulnerability in one product. Its status is one of `not_affected`, `affected`, `fixed` or `under_investigation`. A `not_affected` status comes with a justification, such as "the vulnerable code is not reachable". CycloneDX and the OpenVEX format can both carry such statements.
 
+OpenVEX writes the justification as a fixed value. For example, `vulnerable_code_not_in_execute_path` says that the program never runs the vulnerable code, and `component_not_present` says that the component is not in the product. The product of a VEX statement must be the image digest, for the same reason as the subject of an SBOM: a tag can move to other content.
+
 A VEX statement lowers the noise in a report, but it is a claim made by a person or a tool. Treat it like an exception: record who made it, why, and when it must be reviewed.
 
 ## Bind the SBOM to an image digest
@@ -41,6 +43,8 @@ kubectl -n starfleet get pod -l app=probe -o jsonpath='{range .items[*]}{.metada
 ```
 
 The command prints one line for each `probe` pod, with the pod name and its image ID. Both replicas must show the same value, because both start from one image. If the value is only a `sha256:` image ID without a repository, the node loaded the image from an archive. The image ID is then the identity of the image configuration on that node, and you record it in the same way.
+
+When the value has the form `<repository>@sha256:<hash>`, the digest on its own is the part after the last `@`. It keeps its `sha256:` prefix. A record that needs only the digest, such as the product of a VEX statement, stores that part.
 
 Now compare the image ID with the reference in the pod specification:
 
