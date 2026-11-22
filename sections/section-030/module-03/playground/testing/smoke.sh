@@ -211,7 +211,7 @@ page_run "$page" 'kubectl label namespace failure-demo training.astrona.io/failu
 page_run "$page" 'kubectl delete -f failure-demo.yaml'
 webhook_policies="$(page_run "$page" 'kubectl get validatingwebhookconfigurations -o custom-columns=NAME:.metadata.name,POLICY:.webhooks[*].failurePolicy' 2>&1)"
 printf '%s\n' "$webhook_policies"
-expect_equal 'the playground has no webhook configuration, only the header line' "$(tr -s ' ' <<<"$webhook_policies")" "$(text_from_page "$page" 'NAME   POLICY' | tr -s ' ')"
+expect_equal 'the playground has no webhook configuration, only the header line' "$(grep -v '^\$ ' <<<"$webhook_policies" | tr -s ' ')" "$(text_from_page "$page" 'NAME   POLICY' | tr -s ' ')"
 
 # Playground guide
 page=playground/docs/overview.md
