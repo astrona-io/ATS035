@@ -52,7 +52,7 @@ Preview the effect of `enforce=restricted` on the existing namespace `starfleet`
 kubectl label --dry-run=server --overwrite namespace starfleet pod-security.kubernetes.io/enforce=restricted
 ```
 
-The output is a warning for each pod that would violate the standard, with the fields that fail. Because of `--dry-run=server`, the label is not set. This is the safe way to find out what a stricter level would break.
+The output starts with a warning that existing pods violate the new level. The API server then groups the pods that fail in the same way into one warning line: it names one pod, adds `(and 2 other pods)`, and lists the fields that fail. Because of `--dry-run=server`, the label is not set. This is the safe way to find out what a stricter level would break.
 
 Set the warning and audit modes on `hangar` and read the labels. Using `warn` first does not reject anything:
 

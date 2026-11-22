@@ -158,8 +158,9 @@ expect_equal 'each line pairs a reference with an imageID' "$(grep -cvE '^[^ ]+ 
 page=course-02-software-bills-of-materials-with-syft.md
 page_run "$page" 'kubectl -n starfleet exec deploy/probe -- apk info -v | sort > apk-from-pod.txt'
 cat apk-from-pod.txt
-expect 'apk info -v prints each package with its version, such as musl' "$(grep '^musl-' apk-from-pod.txt)" 'musl-1.2.5-r'
-expect_equal 'every line has a name, a version and a release' "$(grep -cvE '^.+-[^-]+-r[0-9]+$' apk-from-pod.txt || true)" 0
+expect 'apk info -v prints each package with its version, such as musl' "$(grep '^musl-' apk-from-pod.txt)" 'musl-1.2.'
+expect 'the list has the virtual package of the Python build' "$(cat apk-from-pod.txt)" "$(text_from_page "$page" '.python-rundeps-')"
+expect_equal 'every other line has a name, a version and a release' "$(grep -v '^\.python-rundeps-' apk-from-pod.txt | grep -cvE '^.+-[^-]+-r[0-9]+$' || true)" 0
 probe_id="$(page_run "$page" "kubectl -n starfleet get pod -l app=probe -o jsonpath='{.items[0].status.containerStatuses[0].imageID}{\"\n\"}'")"
 printf '%s\n' "$probe_id"
 expect 'the probe status has a digest' "$probe_id" 'sha256:'

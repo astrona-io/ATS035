@@ -141,7 +141,7 @@ To check a real cluster, list the configurations and read the failure policy and
 kubectl get validatingwebhookconfigurations -o custom-columns=NAME:.metadata.name,POLICY:.webhooks[*].failurePolicy
 ```
 
-The playground has no image webhook, so the list can be empty. You now know the places where a check can be switched off without deleting it, and the order in which to look for them.
+The playground has no image webhook, so the output can be only the header line `NAME   POLICY`. You now know the places where a check can be switched off without deleting it, and the order in which to look for them.
 
 ## Common pitfalls
 

@@ -215,15 +215,16 @@ page_run "$page" 'kubectl -n starfleet wait --for=condition=Ready pod/web-check 
 expect 'id reports user ID 10001' "$(page_run "$page" 'kubectl -n starfleet exec web-check -- id')" 'uid=10001'
 expect 'the write to /blocked fails with a read-only filesystem error' "$(page_fails "$page" 'kubectl -n starfleet exec web-check -- touch /blocked')" 'Read-only file system'
 page_run "$page" 'kubectl -n starfleet exec web-check -- touch /tmp/allowed'
-# The page opens an interactive shell and runs ps in it. Send the same input,
-# after a pause so that kubectl has attached first. The page says the session is
-# recorded in the container logs, so read the logs as well.
-on_page "$page" 'kubectl -n starfleet debug -it web-check --image=docker.io/library/busybox:1.37.0 --target=app -- sh'
-debug_output="$({ sleep 5; printf 'ps\n'; sleep 2; printf 'exit\n'; } | page_run "$page" 'kubectl -n starfleet debug -it web-check --image=docker.io/library/busybox:1.37.0 --target=app -- sh' 2>&1 || true)"
+# The page opens an interactive shell in the ephemeral container. A CI job has
+# no terminal, so kubectl starts the container and then cannot attach to it.
+# The shell keeps running in the container, so run the page's ps there.
+debug_output="$(page_run "$page" 'kubectl -n starfleet debug -it web-check --image=docker.io/library/busybox:1.37.0 --target=app -- sh' </dev/null 2>&1 || true)"
 printf '%s\n' "$debug_output"
 debugger="$(kubectl -n starfleet get pod web-check -o jsonpath='{.spec.ephemeralContainers[0].name}')"
-debug_output="$debug_output$(kubectl -n starfleet logs web-check -c "$debugger" 2>&1 || true)"
-expect 'ps in the ephemeral container shows the sleep process of app' "$debug_output" 'sleep 3600'
+wait_for_output startedAt kubectl -n starfleet get pod web-check -o jsonpath='{.status.ephemeralContainerStatuses[0].state.running}' >/dev/null
+processes="$(wait_for_output 'sleep 3600' kubectl -n starfleet exec web-check -c "$debugger" -- ps)"
+printf '%s\n' "$processes"
+expect 'ps in the ephemeral container shows the sleep process of app' "$processes" 'sleep 3600'
 expect 'the pod keeps the record of the ephemeral container' "$(kubectl -n starfleet get pod web-check -o jsonpath='{.spec.ephemeralContainers[*].image}')" docker.io/library/busybox:1.37.0
 save_from_page "$page" pod-bad-image.yaml
 bad_status="$(wait_for_output ImagePullBackOff kubectl -n starfleet get pod bad-image)"

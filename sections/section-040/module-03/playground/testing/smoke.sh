@@ -163,7 +163,7 @@ preview="$(page_run "$page" 'kubectl label --dry-run=server --overwrite namespac
 printf '%s\n' "$preview"
 expect 'the output is a warning about the existing pods' "$preview" 'Warning: existing pods in namespace "starfleet" violate the new PodSecurity enforce level "restricted:latest"'
 expect 'the warning names the probe pods' "$preview" 'Warning: probe-'
-expect 'the warning names the shuttle pod' "$preview" 'Warning: shuttle:'
+expect 'the warning groups the other two pods' "$preview" "$(text_from_page "$page" '(and 2 other pods)')"
 expect 'the warning lists the fields that fail' "$preview" 'runAsNonRoot != true'
 expect_no 'the label is not set' "$(kubectl get namespace starfleet -o jsonpath='{.metadata.labels}')" 'pod-security.kubernetes.io/enforce'
 page_run "$page" 'kubectl label --overwrite namespace hangar pod-security.kubernetes.io/warn=restricted pod-security.kubernetes.io/audit=restricted'

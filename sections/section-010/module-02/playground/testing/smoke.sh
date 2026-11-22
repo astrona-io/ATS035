@@ -150,7 +150,9 @@ expect 'ls lists the musl dynamic loader' "$(sed -n 3p <<<"$probe_contents")" '/
 expect 'the last line is a package count' "$(tail -1 <<<"$probe_contents" | tr -d ' ' | grep -cE '^[0-9]+$')" 1
 shuttle_contents="$(page_run "$page" "kubectl -n starfleet exec shuttle -- sh -c 'ls -l /bin/sh; busybox | head -n 3; ls /bin | wc -l'")"
 printf '%s\n' "$shuttle_contents"
-expect 'sh is a link to busybox' "$(head -1 <<<"$shuttle_contents")" 'busybox'
+sh_listing="$(head -1 <<<"$shuttle_contents")"
+expect 'the listing shows /bin/sh as a regular file' "$sh_listing" '-rwxr-xr-x'
+expect_equal 'the link count of /bin/sh is about 400 (more than 300 hard links)' "$(( $(awk '{print $2}' <<<"$sh_listing") > 300 ))" 1
 expect 'busybox prints its version' "$shuttle_contents" 'BusyBox v1.37.0'
 expect 'the last line is a count of commands' "$(tail -1 <<<"$shuttle_contents" | tr -d ' ' | grep -cE '^[0-9]+$')" 1
 expect 'shuttle prints the fallback text' "$(page_run "$page" "kubectl -n starfleet exec shuttle -- sh -c 'which python || echo \"no python in this image\"'")" "$(text_from_page "$page" 'no python in this image')"

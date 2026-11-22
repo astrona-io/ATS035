@@ -62,13 +62,13 @@ Ask the `apk` package manager in a `probe` pod for its installed packages. The `
 kubectl -n starfleet exec deploy/probe -- apk info -v | sort | head -n 5
 ```
 
-The output is five lines, each a package name followed by a version such as `1.2.5-r10`. A package name can contain dashes, so the version starts at the second dash from the end. The next command rewrites each line into a package URL with `sed`:
+The output is five lines. Most lines are a package name followed by a version and release, such as `alpine-keys-2.6-r0`. The first line can be `.python-rundeps-<date>`, a virtual package: an `apk` record that the image build creates to install the runtime dependencies of Python. It has a build date in place of a version and release. A package name can contain dashes, so the version starts at the second dash from the end. The next command rewrites each line into a package URL with `sed`:
 
 ```sh
 kubectl -n starfleet exec deploy/probe -- apk info -v | sort | head -n 5 | sed -E 's/^(.*)-([^-]+-r[0-9]+)$/pkg:apk\/alpine\/\1@\2/'
 ```
 
-Each line now has the form `pkg:apk/alpine/<name>@<version>`. This is the value of the `purl` field of a component in a CycloneDX document, and of the `purl` external reference of a package in an SPDX document. Count the packages to compare with the `components` count of any SBOM of this image:
+Each package line now has the form `pkg:apk/alpine/<name>@<version>`. The `sed` pattern needs a release such as `-r0`, so it leaves the line of the virtual package unchanged. This is the value of the `purl` field of a component in a CycloneDX document, and of the `purl` external reference of a package in an SPDX document. Count the packages to compare with the `components` count of any SBOM of this image:
 
 ```sh
 kubectl -n starfleet exec deploy/probe -- apk info -v | wc -l

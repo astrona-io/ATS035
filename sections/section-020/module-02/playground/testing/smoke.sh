@@ -159,10 +159,15 @@ page=course-01-reading-spdx-and-cyclonedx-documents.md
 first_packages="$(page_run "$page" 'kubectl -n starfleet exec deploy/probe -- apk info -v | sort | head -n 5')"
 printf '%s\n' "$first_packages"
 expect_equal 'the output is five lines' "$(wc -l <<<"$first_packages" | tr -d ' ')" 5
-expect_equal 'each line is a name followed by a version such as 1.2.5-r10' "$(grep -cE '^.+-[^-]+-r[0-9]+$' <<<"$first_packages")" 5
+package_lines="$(grep -cv '^\.python-rundeps-' <<<"$first_packages" || true)"
+expect_equal 'each package line is a name followed by a version and release' "$(grep -cE '^.+-[^-]+-r[0-9]+$' <<<"$first_packages")" "$package_lines"
+if grep -q '^\.python-rundeps-' <<<"$first_packages"; then
+  expect 'the first line is the virtual package the page names' "$(head -1 <<<"$first_packages")" "$(text_from_page "$page" '.python-rundeps-')"
+fi
 purls="$(page_run "$page" "kubectl -n starfleet exec deploy/probe -- apk info -v | sort | head -n 5 | sed -E 's/^(.*)-([^-]+-r[0-9]+)\$/pkg:apk\\/alpine\\/\\1@\\2/'")"
 printf '%s\n' "$purls"
-expect_equal 'each line has the form pkg:apk/alpine/<name>@<version>' "$(grep -cE '^pkg:apk/alpine/[^@]+@[^-]+-r[0-9]+$' <<<"$purls")" 5
+expect_equal 'each package line has the form pkg:apk/alpine/<name>@<version>' "$(grep -cE '^pkg:apk/alpine/[^@]+@[^-]+-r[0-9]+$' <<<"$purls")" "$package_lines"
+expect_equal 'sed leaves the virtual package line unchanged' "$(grep -c '^\.python-rundeps-' <<<"$purls" || true)" "$((5 - package_lines))"
 package_count="$(page_run "$page" 'kubectl -n starfleet exec deploy/probe -- apk info -v | wc -l')"
 printf '%s\n' "$package_count"
 package_count="$(tr -d ' ' <<<"$package_count")"

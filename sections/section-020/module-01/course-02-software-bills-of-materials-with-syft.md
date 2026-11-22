@@ -54,7 +54,7 @@ test "$(kubectl config current-context)" = "kind-astro-ats-035-playground-020-01
 kubectl -n starfleet exec deploy/probe -- apk info -v | sort > apk-from-pod.txt
 ```
 
-`apk info -v` prints each installed package with its version, such as `musl-1.2.5-r10`. Build the same kind of list from the Syft document. The Syft native format has an `artifacts` array in which each entry has a `type`, and Alpine packages have the type `apk`:
+`apk info -v` prints each installed package with its version and release, such as `musl-1.2.6-r3`. The exact versions change when the `python:3.13-alpine` tag moves to a newer build of the image. One line is a virtual package, `.python-rundeps-<date>`. A virtual package is an `apk` record that groups other packages: the image build creates it to install the runtime dependencies of Python, and it has a build date in place of a version and release. Build the same kind of list from the Syft document. The Syft native format has an `artifacts` array in which each entry has a `type`, and Alpine packages have the type `apk`:
 
 ```sh
 jq -r '.artifacts[] | select(.type == "apk") | "\(.name)-\(.version)"' python.syft.json | sort > apk-from-sbom.txt
