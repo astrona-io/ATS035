@@ -1,0 +1,246 @@
+# Knowledge check for section-030 module-03. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-030-03
+course_id: ATS035
+exam_code: CKS
+status: alpha
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-030/module-03
+  title: "ImagePullSecrets, ImagePolicyWebhook And Admission Failure Modes"
+placement:
+  position: after
+  reading: sections/section-030/module-03/course-04-summary.md
+questions:
+  - id: ats035-030-03-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify the Secret type and key that hold registry credentials."
+    source_readings:
+      - sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+    prompt: "Which Secret does the kubelet accept as a registry pull credential?"
+    options:
+      - id: a
+        text: "A Secret of type `Opaque` with a key named `password`"
+        explanation: "A generic Secret is not accepted for pulls, even with a password in it."
+      - id: b
+        text: "A Secret of type `kubernetes.io/dockerconfigjson` with the key `.dockerconfigjson`"
+        explanation: "Correct. The key holds a JSON document in the format of the Docker client configuration file."
+      - id: c
+        text: "A Secret of type `kubernetes.io/tls` with a certificate and a key"
+        explanation: "A TLS Secret holds a certificate for HTTPS, not registry credentials."
+      - id: d
+        text: "A ConfigMap with the registry host name"
+        explanation: "A ConfigMap holds no credentials, and the kubelet does not read it for pulls."
+    correct_option: b
+    explanation: "`kubectl create secret docker-registry` builds exactly this type and key for you."
+
+  - id: ats035-030-03-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain the namespace scope of a pull Secret."
+    source_readings:
+      - sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+    prompt: "A pod in the namespace `team-a` lists `imagePullSecrets: [{name: registry-credentials}]`. The Secret exists only in the namespace `shared`. What happens when the node pulls the private image?"
+    options:
+      - id: a
+        text: "The kubelet finds the Secret in `shared` and the pull succeeds"
+        explanation: "A pod cannot reference a Secret from another namespace."
+      - id: b
+        text: "The API server copies the Secret into `team-a`"
+        explanation: "Kubernetes does not copy Secrets between namespaces."
+      - id: c
+        text: "The kubelet uses the credentials of the `default` ServiceAccount"
+        explanation: "A ServiceAccount only lists Secret names from its own namespace. It holds no credentials of its own for the registry."
+      - id: d
+        text: "The kubelet has no credentials for the pull, and a private registry refuses it"
+        explanation: "Correct. A pod can only reference Secrets from its own namespace, so the pod stays in `ImagePullBackOff`."
+    correct_option: d
+    explanation: "Create the pull Secret in the same namespace as the pod or its ServiceAccount."
+
+  - id: ats035-030-03-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Predict how the kubelet matches a credential to an image reference."
+    source_readings:
+      - sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+    prompt: "A pull Secret has one entry for `registry.example.com`. The pod image is `registry.other.example/team/app:1.0`, which is private. Which result do you expect?"
+    options:
+      - id: a
+        text: "The kubelet sends no matching credentials, and the private registry refuses the pull"
+        explanation: "Correct. The kubelet takes the host from the image reference and looks for an entry for that host."
+      - id: b
+        text: "The kubelet sends the `registry.example.com` credentials to every registry"
+        explanation: "Credentials are matched by registry host, not sent to every registry."
+      - id: c
+        text: "The API server rejects the pod because the hosts differ"
+        explanation: "The API server does not compare pull Secrets with image hosts."
+      - id: d
+        text: "The pull succeeds because a pull Secret is present"
+        explanation: "The Secret must have an entry for the host in the image reference."
+    correct_option: a
+    explanation: "The registry host in the Secret must match the host in the image reference."
+
+  - id: ats035-030-03-q04
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Choose the credential option with the smallest exposure."
+    source_readings:
+      - sections/section-030/module-03/course-01-pull-credentials-for-private-registries.md
+    prompt: "A team wants registry credentials that an attacker cannot read from the Kubernetes API. Which option fits best?"
+    options:
+      - id: a
+        text: "One cluster-wide Secret with an account that can read every repository"
+        explanation: "A broad, shared credential exposes every repository when it leaks."
+      - id: b
+        text: "A Secret with the password encoded twice in base64"
+        explanation: "Base64 is an encoding, not protection. Anyone who reads the Secret can decode it."
+      - id: c
+        text: "A node-level credential provider that fetches short-lived tokens"
+        explanation: "Correct. The kubelet plugin fetches tokens itself, so no long-lived credential is stored as a Secret."
+      - id: d
+        text: "Putting the password in an environment variable of the pod"
+        explanation: "The kubelet does not read pod environment variables for pulls, and the password would still be readable."
+    correct_option: c
+    explanation: "Short-lived tokens from a credential provider are not stored as Secrets, so RBAC on Secrets is not the only protection."
+
+  - id: ats035-030-03-q05
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify what the ImagePolicyWebhook plugin sends to its backend."
+    source_readings:
+      - sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+    prompt: "When a pod is created and the ImagePolicyWebhook admission plugin is enabled, what does the API server send to the backend service?"
+    options:
+      - id: a
+        text: "The image layers, so the backend can scan them"
+        explanation: "The API server does not pull images and sends no layers."
+      - id: b
+        text: "A Secret with the registry credentials"
+        explanation: "The review does not contain pull credentials."
+      - id: c
+        text: "An `ImageReview` object with the container images, the namespace and the pod annotations"
+        explanation: "Correct. The backend answers with `allowed: true` or `allowed: false` and an optional reason."
+      - id: d
+        text: "A copy of the kube-apiserver static pod manifest"
+        explanation: "The manifest stays on the control plane node and is not sent to the backend."
+    correct_option: c
+    explanation: "The plugin asks the backend about the image references, and the answer decides whether the pod is admitted."
+
+  - id: ats035-030-03-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Diagnose a missing volume mount in an ImagePolicyWebhook setup."
+    source_readings:
+      - sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+    prompt: "An administrator places the admission configuration file and the backend kubeconfig in `/etc/kubernetes/admission/` on the control plane node and adds both flags to the kube-apiserver manifest. The API server reports that it cannot read the file. What is the most likely cause?"
+    options:
+      - id: a
+        text: "The backend service has only one replica"
+        explanation: "A single replica affects availability. It does not stop the API server from reading a file."
+      - id: b
+        text: "The directory is not mounted into the API server static pod with a volume"
+        explanation: "Correct. The API server runs in a static pod and can only read node files that its manifest mounts."
+      - id: c
+        text: "`defaultAllow` is set to `false`"
+        explanation: "`defaultAllow` decides what happens when the backend is unreachable, not whether a file can be read."
+      - id: d
+        text: "The plugin needs a ValidatingAdmissionPolicyBinding"
+        explanation: "ImagePolicyWebhook is configured by files and flags, not by Kubernetes objects."
+    correct_option: b
+    explanation: "Add a volume and a volume mount for the directory to the kube-apiserver manifest, and keep a copy of the original first."
+
+  - id: ats035-030-03-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain the cache fields of the ImagePolicyWebhook configuration."
+    source_readings:
+      - sections/section-030/module-03/course-02-the-imagepolicywebhook-admission-plugin.md
+    prompt: "What does `allowTTL: 50` mean in the `imagePolicy` configuration?"
+    options:
+      - id: a
+        text: "The backend must answer within 50 milliseconds"
+        explanation: "The wait before a retry is `retryBackoff`, in milliseconds. `allowTTL` is about caching."
+      - id: b
+        text: "An allowed pod may run for 50 seconds"
+        explanation: "The plugin does not limit how long a pod runs."
+      - id: c
+        text: "At most 50 images may be checked per minute"
+        explanation: "The configuration has no rate limit field like this."
+      - id: d
+        text: "The API server caches an allow answer for 50 seconds"
+        explanation: "Correct. `denyTTL` does the same for deny answers."
+    correct_option: d
+    explanation: "Cached answers reduce calls to the backend; a change in the backend takes effect after the cached answer expires."
+
+  - id: ats035-030-03-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Predict the result of a binding with the Warn action."
+    source_readings:
+      - sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+    prompt: "A registry policy has a binding with `validationActions: [\"Warn\"]` that selects the namespace. You create a pod with an unapproved image. What happens?"
+    options:
+      - id: a
+        text: "The pod is admitted, and the client prints a warning with the policy message"
+        explanation: "Correct. `Warn` returns a warning to the client and never rejects the request."
+      - id: b
+        text: "The pod is rejected with the policy message"
+        explanation: "Only `Deny` rejects the request."
+      - id: c
+        text: "The pod is admitted with no output at all"
+        explanation: "That describes an `Audit`-only binding on a cluster without an audit log."
+      - id: d
+        text: "The kubelet refuses to start the pod"
+        explanation: "Admission runs in the API server. The kubelet does not read the policy."
+    correct_option: a
+    explanation: "A warning is useful during a rollout, but a check that only warns does not protect the namespace."
+
+  - id: ats035-030-03-q09
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Explain how a namespace label can exempt a namespace from a policy."
+    source_readings:
+      - sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+    prompt: "A `Deny` binding selects namespaces with the label `training.astrona.io/failure-demo: enabled`. A user removes that label from the namespace. What follows?"
+    options:
+      - id: a
+        text: "The API server restores the label"
+        explanation: "The API server does not restore labels that a user removes."
+      - id: b
+        text: "Pods in the namespace are deleted"
+        explanation: "Admission checks requests. It never deletes pods."
+      - id: c
+        text: "The binding no longer selects the namespace, so new pods with unapproved images are admitted"
+        explanation: "Correct. The permission to label namespaces is therefore part of the control."
+      - id: d
+        text: "The policy now applies to every namespace"
+        explanation: "The selector limits the binding to labelled namespaces. Removing the label removes the namespace from it."
+    correct_option: c
+    explanation: "A label that selects a policy is also the way to leave it, so limit who may label namespaces."
+
+  - id: ats035-030-03-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Predict webhook behavior when a call times out."
+    source_readings:
+      - sections/section-030/module-03/course-03-admission-failure-modes-and-exemptions.md
+    prompt: "A validating webhook has `timeoutSeconds: 5` and `failurePolicy: Ignore`. Its service hangs and does not answer. What happens to a pod create request?"
+    options:
+      - id: a
+        text: "The API server waits until the service answers"
+        explanation: "`timeoutSeconds` bounds the wait."
+      - id: b
+        text: "The timeout counts as a failure of the webhook, and `Ignore` admits the pod"
+        explanation: "Correct. The check silently stops protecting while the service hangs."
+      - id: c
+        text: "The timeout counts as a failure, and the pod is rejected"
+        explanation: "Rejecting on failure is what `failurePolicy: Fail` does."
+      - id: d
+        text: "The pod is admitted only in `kube-system`"
+        explanation: "The failure policy applies to every request the webhook selects, not only to one namespace."
+    correct_option: b
+    explanation: "Use `failurePolicy: Fail` for a security webhook, and run enough replicas that an outage is rare."

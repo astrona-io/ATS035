@@ -1,0 +1,246 @@
+# Knowledge check for section-020 module-02. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-020-02
+course_id: ATS035
+exam_code: CKS
+status: alpha
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-020/module-02
+  title: "Generate And Read Software Bills Of Materials"
+placement:
+  position: after
+  reading: sections/section-020/module-02/course-03-summary.md
+questions:
+  - id: ats035-020-02-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Locate the component list in an SPDX document."
+    source_readings:
+      - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+    prompt: "In a JSON SPDX 2.3 document, which field lists the components?"
+    options:
+      - id: a
+        text: "`components`"
+        explanation: "`components` is the CycloneDX field name."
+      - id: b
+        text: "`creationInfo`"
+        explanation: "`creationInfo` records when and with which tool the document was created."
+      - id: c
+        text: "`packages`"
+        explanation: "Correct. Each SPDX package has a name, a `versionInfo`, licenses and external references."
+      - id: d
+        text: "`documentNamespace`"
+        explanation: "`documentNamespace` is a unique string that identifies the document."
+    correct_option: c
+    explanation: "SPDX calls components packages; CycloneDX calls them components. The content is the same."
+
+  - id: ats035-020-02-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what SPDX relationships add to a flat package list."
+    source_readings:
+      - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+    prompt: "What does the SPDX `relationships` list tell a reader that a flat package list does not?"
+    options:
+      - id: a
+        text: "Which package is the subject of the document and which packages came in as dependencies of others"
+        explanation: "Correct. `DESCRIBES`, `CONTAINS` and `DEPENDS_ON` link the elements."
+      - id: b
+        text: "Which packages have known vulnerabilities"
+        explanation: "An SBOM lists components; a scanner finds vulnerabilities."
+      - id: c
+        text: "The license text of each package"
+        explanation: "Licenses are package fields, not relationships."
+      - id: d
+        text: "The order in which the packages were installed"
+        explanation: "Relationships describe links, not installation order."
+    correct_option: a
+    explanation: "The relationships make the structure of the artifact readable, not only its contents."
+
+  - id: ats035-020-02-q03
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify the CycloneDX field that names the subject of the document."
+    source_readings:
+      - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+    prompt: "In a JSON CycloneDX 1.5 document, where is the component that the whole document describes, such as the image?"
+    options:
+      - id: a
+        text: "In `bomFormat`"
+        explanation: "`bomFormat` is the fixed word `CycloneDX`."
+      - id: b
+        text: "In `metadata.component`"
+        explanation: "Correct. `metadata` records the creation time, the tools and the described component."
+      - id: c
+        text: "In `serialNumber`"
+        explanation: "`serialNumber` identifies the document, not its subject."
+      - id: d
+        text: "In the first entry of `dependencies`"
+        explanation: "`dependencies` lists edges between component references."
+    correct_option: b
+    explanation: "The subject sits in the metadata; the parts of the subject sit in `components`."
+
+  - id: ats035-020-02-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Construct a package URL for a Python package."
+    source_readings:
+      - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+    prompt: "Which package URL type names a Python package installed from the Python package index?"
+    options:
+      - id: a
+        text: "`pkg:apk/alpine/...`"
+        explanation: "The `apk` type with the `alpine` namespace names Alpine packages."
+      - id: b
+        text: "`pkg:python/...`"
+        explanation: "The type for Python packages is not named `python`."
+      - id: c
+        text: "`pkg:docker/...`"
+        explanation: "A Python library is not an image."
+      - id: d
+        text: "`pkg:pypi/...`"
+        explanation: "Correct. The type names the package system, and for Python packages it is `pypi`."
+    correct_option: d
+    explanation: "The form is `pkg:type/namespace/name@version?qualifiers`, and the type must match the package system."
+
+  - id: ats035-020-02-q05
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Predict the effect of a wrong package URL on a scan."
+    source_readings:
+      - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+    prompt: "An SBOM records a component with the wrong version in its package URL. What happens when a scanner reads it?"
+    options:
+      - id: a
+        text: "The scanner stops with a validation error"
+        explanation: "The string is still a valid package URL, so no error appears."
+      - id: b
+        text: "The scanner reads the real version from the image"
+        explanation: "An SBOM scan works from the document, not from the image."
+      - id: c
+        text: "The scanner checks the wrong version against the advisory ranges and can report a wrong result without any error"
+        explanation: "Correct. The lookup key is wrong, so the answer is wrong, silently."
+      - id: d
+        text: "The scanner ignores the version and reports every advisory for the name"
+        explanation: "Scanners compare the version with affected ranges."
+    correct_option: c
+    explanation: "Check names, versions and release suffixes, because a scanner trusts what the document says."
+
+  - id: ats035-020-02-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what a cataloger is and why it limits an SBOM."
+    source_readings:
+      - sections/section-020/module-02/course-01-reading-spdx-and-cyclonedx-documents.md
+    prompt: "A program was copied into an image as a single file, and no cataloger of the SBOM tool recognises it. What does the SBOM show?"
+    options:
+      - id: a
+        text: "The program, marked as unknown"
+        explanation: "A tool lists only what a cataloger finds."
+      - id: b
+        text: "Nothing about the program, because a package that no cataloger recognises does not appear"
+        explanation: "Correct. Each cataloger reads one kind of source; files outside those sources are not listed."
+      - id: c
+        text: "The program, with the version taken from the file name"
+        explanation: "The tool does not guess versions from file names."
+      - id: d
+        text: "An error that stops the SBOM from being written"
+        explanation: "The tool writes the SBOM with what it found."
+    correct_option: b
+    explanation: "An SBOM is only as complete as the catalogers that produced it."
+
+  - id: ats035-020-02-q07
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify the lookup key a scanner uses to match a component."
+    source_readings:
+      - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+    prompt: "When a scanner reads an SBOM, what does it use to look up each component in a vulnerability database?"
+    options:
+      - id: a
+        text: "The package URL, or a CPE name for software without one, together with the version"
+        explanation: "Correct. A finding appears when the version falls in the affected range of an advisory."
+      - id: b
+        text: "The size of the component in bytes"
+        explanation: "Size is not a lookup key."
+      - id: c
+        text: "The license of the component"
+        explanation: "Licenses do not identify vulnerabilities."
+      - id: d
+        text: "The creation time of the SBOM"
+        explanation: "The creation time tells you how old the document is, not which advisory applies."
+    correct_option: a
+    explanation: "Because the scan works from the document, a team can rescan stored SBOMs each day without pulling images."
+
+  - id: ats035-020-02-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose the correct subject for an SBOM."
+    source_readings:
+      - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+    prompt: "Which subject makes an SBOM name exactly one image?"
+    options:
+      - id: a
+        text: "`python:3.13-alpine`"
+        explanation: "The tag can move to other content after the SBOM was made."
+      - id: b
+        text: "The Deployment name"
+        explanation: "A Deployment can run different images over time."
+      - id: c
+        text: "The registry host name"
+        explanation: "A registry holds many images."
+      - id: d
+        text: "The image digest, such as `python@sha256:<digest>`"
+        explanation: "Correct. In the cluster, the digest of what runs is in the pod status field `imageID`."
+    correct_option: d
+    explanation: "Bind every SBOM to a digest; a tag in the subject cannot prove which content it describes."
+
+  - id: ats035-020-02-q09
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what an SBOM attestation adds and what its signature proves."
+    source_readings:
+      - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+    prompt: "A team attaches a signed CycloneDX attestation to an image digest with `cosign attest`. What does a successful `cosign verify-attestation` prove?"
+    options:
+      - id: a
+        text: "That the SBOM lists every component in the image"
+        explanation: "A signature does not prove that the list is complete."
+      - id: b
+        text: "That the holder of the key signed this SBOM for this digest and that it was not changed"
+        explanation: "Correct. The signature proves origin and integrity, and the subject ties it to the digest."
+      - id: c
+        text: "That no component in the image is exploitable"
+        explanation: "An SBOM does not say which components are exploitable."
+      - id: d
+        text: "That the image was built by a trusted pipeline"
+        explanation: "That claim needs a provenance attestation."
+    correct_option: b
+    explanation: "Keep the SBOM attached to the digest, and pair it with a scan, VEX statements and provenance."
+
+  - id: ats035-020-02-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Evaluate a VEX status as evidence."
+    source_readings:
+      - sections/section-020/module-02/course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
+    prompt: "A scanner reports a vulnerability in a library. Which VEX status tells consumers that the team is still checking whether the program is affected?"
+    options:
+      - id: a
+        text: "`not_affected`"
+        explanation: "`not_affected` is a final claim that needs a justification."
+      - id: b
+        text: "`fixed`"
+        explanation: "`fixed` says the vulnerability was removed."
+      - id: c
+        text: "`under_investigation`"
+        explanation: "Correct. The four statuses are `not_affected`, `affected`, `fixed` and `under_investigation`."
+      - id: d
+        text: "`ignored`"
+        explanation: "`ignored` is not a VEX status."
+    correct_option: c
+    explanation: "A VEX statement is a claim. Record who made it, why, and when it must be reviewed."

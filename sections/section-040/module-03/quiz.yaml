@@ -1,0 +1,247 @@
+# Knowledge check for section-040 module-03. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-040-03
+course_id: ATS035
+exam_code: CKS
+status: alpha
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-040/module-03
+  title: "Enforce Workload Standards With Pod Security Admission"
+placement:
+  position: after
+  reading: sections/section-040/module-03/course-04-summary.md
+questions:
+  - id: ats035-040-03-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify a setting that no Pod Security Standard requires."
+    source_readings:
+      - sections/section-040/module-03/course-01-the-pod-security-standards.md
+    prompt: "Which setting is good practice but is not required by any Pod Security Standard?"
+    options:
+      - id: a
+        text: "`allowPrivilegeEscalation: false`"
+        explanation: "The `restricted` standard requires this on each container."
+      - id: b
+        text: "`capabilities.drop: [\"ALL\"]`"
+        explanation: "The `restricted` standard requires all capabilities to be dropped."
+      - id: c
+        text: "`readOnlyRootFilesystem: true`"
+        explanation: "Correct. It is good practice, but PSA does not check it at any level."
+      - id: d
+        text: "`seccompProfile.type: RuntimeDefault`"
+        explanation: "The `restricted` standard requires `RuntimeDefault` or `Localhost`."
+    correct_option: c
+    explanation: "Pod Security Admission checks only the fields that the standards list. A read-only root file system needs another control."
+
+  - id: ats035-040-03-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Predict a baseline decision for a pod with host access."
+    source_readings:
+      - sections/section-040/module-03/course-01-the-pod-security-standards.md
+    prompt: "A namespace has `pod-security.kubernetes.io/enforce: baseline`. You apply a pod that mounts a `hostPath` volume and sets no other special fields. What happens?"
+    options:
+      - id: a
+        text: "The API server rejects the pod, because `baseline` forbids `hostPath` volumes"
+        explanation: "Correct. `baseline` blocks known paths to privilege escalation, and host file system access is one of them."
+      - id: b
+        text: "The pod is admitted, because only `restricted` limits volumes"
+        explanation: "`baseline` already forbids `hostPath`. `restricted` adds a list of allowed volume types on top."
+      - id: c
+        text: "The pod is admitted with a warning only"
+        explanation: "The `enforce` mode rejects. Warnings come from the `warn` mode."
+      - id: d
+        text: "The kubelet removes the volume and starts the pod"
+        explanation: "Admission does not change the pod, and the kubelet does not remove volumes."
+    correct_option: a
+    explanation: "`baseline` forbids privileged containers, host namespaces, host ports and `hostPath` volumes."
+
+  - id: ats035-040-03-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Identify the capability that restricted lets a container add back."
+    source_readings:
+      - sections/section-040/module-03/course-01-the-pod-security-standards.md
+    prompt: "A container in a `restricted` namespace drops all capabilities. Which capability may it add back?"
+    options:
+      - id: a
+        text: "`SYS_ADMIN`"
+        explanation: "`SYS_ADMIN` gives broad control of the node and is not allowed."
+      - id: b
+        text: "`NET_ADMIN`"
+        explanation: "`NET_ADMIN` is not on the allowed list."
+      - id: c
+        text: "Any capability, if `runAsNonRoot` is set"
+        explanation: "The capability rule is separate from the user rule."
+      - id: d
+        text: "`NET_BIND_SERVICE`"
+        explanation: "Correct. It lets a process bind to a port below 1024, and it is the only capability `restricted` allows to add."
+    correct_option: d
+    explanation: "`restricted` requires `drop: [\"ALL\"]` and allows only `NET_BIND_SERVICE` to be added."
+
+  - id: ats035-040-03-q04
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Explain what passing the restricted standard does not prove."
+    source_readings:
+      - sections/section-040/module-03/course-01-the-pod-security-standards.md
+      - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+    prompt: "A pod passes `enforce: restricted`. Which statement is still possible?"
+    options:
+      - id: a
+        text: "The pod runs as root"
+        explanation: "`restricted` requires a non-root user, so this is not possible for a passing pod."
+      - id: b
+        text: "The image contains a package with a known critical vulnerability"
+        explanation: "Correct. PSA checks the pod specification only and does not look inside the image."
+      - id: c
+        text: "The container is privileged"
+        explanation: "Privileged containers are already forbidden by `baseline`."
+      - id: d
+        text: "The pod uses the `Unconfined` seccomp profile"
+        explanation: "`restricted` requires `RuntimeDefault` or `Localhost`."
+    correct_option: b
+    explanation: "PSA checks fields, not packages, so a release decision still needs an image scan."
+
+  - id: ats035-040-03-q05
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain what the audit mode of PSA does."
+    source_readings:
+      - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+    prompt: "A namespace has `pod-security.kubernetes.io/audit: restricted` and no other PSA labels. A pod that violates `restricted` is created. What does PSA do?"
+    options:
+      - id: a
+        text: "It allows the pod and adds an annotation to the audit log event"
+        explanation: "Correct. `audit` records the violation and does not reject anything."
+      - id: b
+        text: "It rejects the pod"
+        explanation: "Only the `enforce` mode rejects a pod."
+      - id: c
+        text: "It returns a warning to the client"
+        explanation: "Warnings come from the `warn` mode."
+      - id: d
+        text: "It deletes the pod after it starts"
+        explanation: "PSA checks requests and never deletes pods."
+    correct_option: a
+    explanation: "Each mode has one effect: `enforce` rejects, `audit` annotates the audit event and `warn` warns the client."
+
+  - id: ats035-040-03-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain the effect of a missing version label."
+    source_readings:
+      - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+    prompt: "A namespace sets `pod-security.kubernetes.io/enforce: restricted` and no `enforce-version` label. What is the risk?"
+    options:
+      - id: a
+        text: "PSA checks nothing until a version is set"
+        explanation: "Without a version label, the mode still applies, with the value `latest`."
+      - id: b
+        text: "PSA uses the oldest version of the standard"
+        explanation: "The default is `latest`, not the oldest version."
+      - id: c
+        text: "The mode follows the API server version, so a cluster upgrade can start to reject pods"
+        explanation: "Correct. Pin a version such as `v1.35` to keep the check stable, and update it on purpose."
+      - id: d
+        text: "The label is rejected by the API server"
+        explanation: "The label is valid without a version label."
+    correct_option: c
+    explanation: "`latest` follows the API server, so a new rule in the standard takes effect at the next upgrade."
+
+  - id: ats035-040-03-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Predict the effect of raising enforce on running pods."
+    source_readings:
+      - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+    prompt: "You set `pod-security.kubernetes.io/enforce: restricted` on a namespace where two running pods do not meet `restricted`. What happens to those pods?"
+    options:
+      - id: a
+        text: "They are evicted at once"
+        explanation: "PSA does not evict pods."
+      - id: b
+        text: "The label change is rejected"
+        explanation: "The label is set. The API server only returns a warning about existing pods."
+      - id: c
+        text: "They are changed to meet `restricted`"
+        explanation: "PSA never changes pods."
+      - id: d
+        text: "They keep running; the next pod created for them is checked"
+        explanation: "Correct. PSA checks a pod when it is created or updated, so a restart or rollout meets the new level."
+    correct_option: d
+    explanation: "Raising a level affects new requests. Preview the effect with `--dry-run=server` before you set the label."
+
+  - id: ats035-040-03-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Diagnose a stalled rollout in an enforcing namespace."
+    source_readings:
+      - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+    prompt: "In a namespace with `enforce: restricted`, you apply a Deployment whose pod template sets no security settings. `kubectl get deployment` shows 0 ready pods. Where do you find the reason?"
+    options:
+      - id: a
+        text: "In the Deployment status, which shows the PSA error message"
+        explanation: "The Deployment was accepted. The rejected requests are the pod creations by the ReplicaSet."
+      - id: b
+        text: "In the events of the ReplicaSet, which failed to create pods"
+        explanation: "Correct. `enforce` applies to pods, so the ReplicaSet controller receives the rejection."
+      - id: c
+        text: "In the kubelet log on the node"
+        explanation: "The pods were never created, so no kubelet received them."
+      - id: d
+        text: "In the image scan report"
+        explanation: "PSA does not use image scans."
+    correct_option: b
+    explanation: "`audit` and `warn` check the template of a Deployment, but `enforce` acts on the pods the ReplicaSet tries to create."
+
+  - id: ats035-040-03-q09
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why a numeric runAsUser is needed with runAsNonRoot."
+    source_readings:
+      - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+    prompt: "A pod sets `runAsNonRoot: true`. Its image declares its user by name, not by number. Why should the pod also set a numeric `runAsUser`?"
+    options:
+      - id: a
+        text: "Without a number, the kubelet cannot prove that the user is not root and refuses to start the container"
+        explanation: "Correct. A numeric `runAsUser` makes the non-root check reliable."
+      - id: b
+        text: "PSA requires `runAsUser` to be 1000"
+        explanation: "PSA forbids `runAsUser: 0` but does not require a specific number."
+      - id: c
+        text: "The API server converts names to numbers only for `runAsUser`"
+        explanation: "The API server does not read users from the image."
+      - id: d
+        text: "A numeric user drops all capabilities"
+        explanation: "Capabilities are set with `capabilities.drop`, not with the user."
+    correct_option: a
+    explanation: "`runAsNonRoot` is enforced by the kubelet when it starts the container, and it needs a numeric user to check."
+
+  - id: ats035-040-03-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Identify where PSA exemptions are configured and who controls them."
+    source_readings:
+      - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+    prompt: "Where are PSA exemptions for usernames, runtime class names and namespaces configured?"
+    options:
+      - id: a
+        text: "In a namespace label that the namespace owner sets"
+        explanation: "An exemption is not a namespace label, so a namespace owner cannot grant it to themselves."
+      - id: b
+        text: "In the pod's `securityContext`"
+        explanation: "A pod cannot exempt itself from the standard."
+      - id: c
+        text: "In the API server admission configuration, as a cluster-wide decision"
+        explanation: "Correct. Review this list in an audit, because an exempt namespace has no pod-level protection."
+      - id: d
+        text: "In a ValidatingAdmissionPolicyBinding"
+        explanation: "PSA is a built-in admission plugin and is not configured by policy bindings."
+    correct_option: c
+    explanation: "Exemptions are set by the cluster administrator in the admission configuration, together with the defaults for each mode."

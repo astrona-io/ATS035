@@ -13,7 +13,7 @@ questions, scoped to concepts taught in the course.
 ## Fields And Rendering
 
 - `id`: stable bank or question identity; preserve it when editing wording.
-- `scope`: section or domain checkpoint.
+- `scope`: module, section or domain checkpoint.
 - `placement`: relative reading path after which the checkpoint belongs.
 - `learning_objective`: the measurable outcome checked by the question.
 - `source_readings`: author traceability to the teaching; not learner navigation.

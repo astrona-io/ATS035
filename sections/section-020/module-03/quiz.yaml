@@ -1,0 +1,247 @@
+# Knowledge check for section-020 module-03. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-020-03
+course_id: ATS035
+exam_code: CKS
+status: alpha
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-020/module-03
+  title: "Provenance, Artifact Repositories And Pull Access"
+placement:
+  position: after
+  reading: sections/section-020/module-03/course-05-summary.md
+questions:
+  - id: ats035-020-03-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Name the parts of a full image reference."
+    source_readings:
+      - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+    prompt: "In the reference `registry.example.test/team/probe:1.4`, what is `team/probe`?"
+    options:
+      - id: a
+        text: "The registry host"
+        explanation: "The registry host is `registry.example.test`."
+      - id: b
+        text: "The repository path"
+        explanation: "Correct. A repository is a named collection of related images inside a registry."
+      - id: c
+        text: "The tag"
+        explanation: "The tag is `1.4`."
+      - id: d
+        text: "The digest"
+        explanation: "The digest is not written in this reference; the registry resolves it from the tag."
+    correct_option: b
+    explanation: "A reference has a registry host, a repository path, a tag and, once resolved, a digest."
+
+  - id: ats035-020-03-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose the registry setting that stops a tag from moving."
+    source_readings:
+      - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+    prompt: "A release tag `1.4` must always mean one build. Which registry setting enforces this?"
+    options:
+      - id: a
+        text: "A pull-through cache"
+        explanation: "A cache controls where external content enters, not whether tags move."
+      - id: b
+        text: "A retention rule"
+        explanation: "Retention deletes old images; it does not stop a push to an existing tag."
+      - id: c
+        text: "Audit logs"
+        explanation: "Audit logs record a moved tag but do not prevent it."
+      - id: d
+        text: "Immutable tags"
+        explanation: "Correct. The registry refuses to move a tag to a new digest."
+    correct_option: d
+    explanation: "Without immutable tags, a push can silently replace the content behind a tag that deployments use."
+
+  - id: ats035-020-03-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Assign push and pull rights to the right identities."
+    source_readings:
+      - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+    prompt: "Which assignment of rights on a production repository follows the separation described for registries?"
+    options:
+      - id: a
+        text: "The pipeline identity pushes, the cluster identity pulls, and developers have neither right by default"
+        explanation: "Correct. Administrators who can delete or change settings are a small, separate group."
+      - id: b
+        text: "Developers push, so they can fix problems quickly"
+        explanation: "Only the pipeline identity should push to production repositories."
+      - id: c
+        text: "The cluster uses one administrator credential for push and pull"
+        explanation: "A leaked shared administrator credential reaches every repository."
+      - id: d
+        text: "Every identity can push and pull, and audit logs catch misuse"
+        explanation: "Logs show misuse after the fact; they do not prevent it."
+    correct_option: a
+    explanation: "Each identity gets only the right its purpose needs."
+
+  - id: ats035-020-03-q04
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Diagnose a denied pull from the event message."
+    source_readings:
+      - sections/section-020/module-03/course-01-registries-repositories-and-who-may-push-or-pull.md
+    prompt: "A pod shows `ImagePullBackOff`, and its event message contains `authentication required`. What is the cause?"
+    options:
+      - id: a
+        text: "The tag or digest does not exist"
+        explanation: "A missing tag or digest gives a message about a missing manifest."
+      - id: b
+        text: "The node has no free disk space"
+        explanation: "The message would not mention authentication."
+      - id: c
+        text: "The registry refused the credential or received none"
+        explanation: "Correct. Messages with `unauthorized` or `authentication required` point to the credential."
+      - id: d
+        text: "The pod has `imagePullPolicy: Never`"
+        explanation: "That gives `ErrImageNeverPull` without contacting a registry."
+    correct_option: c
+    explanation: "Read the event message: authorization, missing image, certificate failure and timeout need different repairs."
+
+  - id: ats035-020-03-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain the scope of a pull secret."
+    source_readings:
+      - sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+    prompt: "The pull secret `registry-credentials` exists in the namespace `build`. A pod in the namespace `starfleet` lists it in `imagePullSecrets`. What happens?"
+    options:
+      - id: a
+        text: "The kubelet finds the secret in `build` and pulls"
+        explanation: "The kubelet does not look in other namespaces."
+      - id: b
+        text: "The pod cannot use it, because a pod can use only pull secrets in its own namespace"
+        explanation: "Correct. Create the secret in the pod's namespace."
+      - id: c
+        text: "The API server copies the secret into `starfleet`"
+        explanation: "Kubernetes does not copy secrets between namespaces."
+      - id: d
+        text: "The pull works if the secret type is `Opaque`"
+        explanation: "The type does not change the namespace rule, and pull secrets use `kubernetes.io/dockerconfigjson`."
+    correct_option: b
+    explanation: "A pull secret belongs to a namespace, like every Secret."
+
+  - id: ats035-020-03-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why the `auths` key must match the image host."
+    source_readings:
+      - sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+    prompt: "A pull secret has `auths` keyed by `registry.example.test`. The pod image is `mirror.example.test/team/probe:1.4`. What does the kubelet do with the secret?"
+    options:
+      - id: a
+        text: "It uses the entry, because both hosts end in `example.test`"
+        explanation: "The key must match the host exactly."
+      - id: b
+        text: "It rewrites the image to `registry.example.test`"
+        explanation: "The kubelet does not rewrite image references."
+      - id: c
+        text: "It sends the credential to every host it contacts"
+        explanation: "The kubelet sends an entry only to the host it is keyed by."
+      - id: d
+        text: "It does not use the entry, because the host differs"
+        explanation: "Correct. The `auths` key must match the registry host in the image reference."
+    correct_option: d
+    explanation: "Write the server exactly as it appears in the image reference, including any port."
+
+  - id: ats035-020-03-q07
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Predict the effect of changing a service account on an existing pod."
+    source_readings:
+      - sections/section-020/module-03/course-02-pull-secrets-and-service-accounts.md
+      - sections/section-020/module-03/course-03-prove-an-authenticated-pull.md
+    prompt: "A pod already failed to pull. You add a pull secret to the `imagePullSecrets` of its service account. Why does the existing pod still lack the secret?"
+    options:
+      - id: a
+        text: "The ServiceAccount admission controller copies the pull secrets only when a pod is created"
+        explanation: "Correct. Recreate the pod so the admission step runs again."
+      - id: b
+        text: "The kubelet caches the service account for one day"
+        explanation: "No such cache causes this. The pod object was set at creation."
+      - id: c
+        text: "Service accounts cannot carry pull secrets"
+        explanation: "The `imagePullSecrets` field of a service account exists for this purpose."
+      - id: d
+        text: "The secret must be listed in the Deployment, not the service account"
+        explanation: "The service account field covers every pod created with that account."
+    correct_option: a
+    explanation: "Updating the service account does not rewrite existing pods."
+
+  - id: ats035-020-03-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Choose a test that proves a pull used registry credentials."
+    source_readings:
+      - sections/section-020/module-03/course-03-prove-an-authenticated-pull.md
+    prompt: "Which test best shows that the kubelet pulled an image with the registry credential?"
+    options:
+      - id: a
+        text: "Reading the Secret and checking that its type is `kubernetes.io/dockerconfigjson`"
+        explanation: "A correctly shaped secret does not prove that a kubelet used it."
+      - id: b
+        text: "Checking that an old pod with the image is still running"
+        explanation: "A running container can hide broken credentials, because it was pulled earlier."
+      - id: c
+        text: "Starting a fresh pod with `imagePullPolicy: Always` against a registry that refuses anonymous access"
+        explanation: "Correct. The new launch must resolve the image against the registry, which accepts only a valid credential."
+      - id: d
+        text: "Pulling a public replacement image"
+        explanation: "A public image needs no credential, so it proves nothing about authentication."
+    correct_option: c
+    explanation: "Test a new pull against a registry that requires login, and read the events when it fails."
+
+  - id: ats035-020-03-q09
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Distinguish the SLSA build levels."
+    source_readings:
+      - sections/section-020/module-03/course-04-build-provenance-and-slsa-levels.md
+    prompt: "What does SLSA Build L3 add over Build L2?"
+    options:
+      - id: a
+        text: "Provenance exists for the first time"
+        explanation: "Provenance already exists at Build L1."
+      - id: b
+        text: "The build platform is hardened: builds are isolated and the signing key is not reachable from the build steps"
+        explanation: "Correct. A build at L3 cannot forge its own provenance."
+      - id: c
+        text: "The source code is reviewed for flaws"
+        explanation: "SLSA levels describe build integrity, not code quality."
+      - id: d
+        text: "The provenance is signed by a hosted build platform"
+        explanation: "Signed provenance from a hosted platform is already Build L2."
+    correct_option: b
+    explanation: "L1 provenance exists, L2 it is signed by a hosted platform, L3 the platform is hardened against forgery."
+
+  - id: ats035-020-03-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Explain the limit of what provenance proves."
+    source_readings:
+      - sections/section-020/module-03/course-04-build-provenance-and-slsa-levels.md
+    prompt: "A signed provenance statement shows that the approved pipeline built a digest from a protected branch. The build fetched a compromised dependency. What does the provenance show?"
+    options:
+      - id: a
+        text: "Nothing, because a compromised build cannot produce provenance"
+        explanation: "The build produces provenance as usual."
+      - id: b
+        text: "A failed signature"
+        explanation: "The platform signs the record normally, so the signature is valid."
+      - id: c
+        text: "A warning that the inputs are unsafe"
+        explanation: "Provenance records inputs; it does not judge them."
+      - id: d
+        text: "The compromised dependency, recorded faithfully as one of the resolved inputs"
+        explanation: "Correct. Provenance proves which builder produced the digest from which inputs, not that the inputs were safe."
+    correct_option: d
+    explanation: "Read provenance together with the SBOM, a vulnerability scan and source control rules."

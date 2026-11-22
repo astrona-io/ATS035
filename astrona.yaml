@@ -124,6 +124,11 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-010/module-02/course-03-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Compare Base Images And Their Attack Surface'
+    path: sections/section-010/module-02/quiz.yaml
+    question_count: 10
+    pass_score: 70
   - type: reading
     title: Keep Images Small And Fresh Over Time
     path: sections/section-010/module-03/course.md
@@ -155,6 +160,11 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-010/module-03/course-03-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Keep Images Small And Fresh Over Time'
+    path: sections/section-010/module-03/quiz.yaml
+    question_count: 10
+    pass_score: 70
   - type: quiz
     title: 'Knowledge Check: Minimize The Base Image Footprint'
     path: sections/section-010/module-01/quiz.yaml
@@ -236,6 +246,11 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-020/module-02/course-03-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Generate And Read Software Bills Of Materials'
+    path: sections/section-020/module-02/quiz.yaml
+    question_count: 10
+    pass_score: 70
   - type: reading
     title: Provenance, Artifact Repositories And Pull Access
     path: sections/section-020/module-03/course.md
@@ -275,6 +290,11 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-020/module-03/course-05-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Provenance, Artifact Repositories And Pull Access'
+    path: sections/section-020/module-03/quiz.yaml
+    question_count: 10
+    pass_score: 70
   - type: quiz
     title: 'Knowledge Check: Understand The Software Supply Chain'
     path: sections/section-020/module-01/quiz.yaml
@@ -376,6 +396,11 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-030/module-02/course-04-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Require Image Digests And Verify Signatures'
+    path: sections/section-030/module-02/quiz.yaml
+    question_count: 10
+    pass_score: 70
   - type: reading
     title: ImagePullSecrets, ImagePolicyWebhook And Admission Failure Modes
     path: sections/section-030/module-03/course.md
@@ -410,6 +435,11 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-030/module-03/course-04-summary.md
+  - type: quiz
+    title: 'Knowledge Check: ImagePullSecrets, ImagePolicyWebhook And Admission Failure Modes'
+    path: sections/section-030/module-03/quiz.yaml
+    question_count: 10
+    pass_score: 70
   - type: quiz
     title: 'Knowledge Check: Admission Control, Permitted Registries And Signed Images'
     path: sections/section-030/module-01/quiz.yaml
@@ -511,6 +541,11 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-040/module-02/course-05-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Scan Images And Configuration With Trivy'
+    path: sections/section-040/module-02/quiz.yaml
+    question_count: 10
+    pass_score: 70
   - type: reading
     title: Enforce Workload Standards With Pod Security Admission
     path: sections/section-040/module-03/course.md
@@ -546,6 +581,11 @@ modules:
   - type: reading
     title: Summary
     path: sections/section-040/module-03/course-04-summary.md
+  - type: quiz
+    title: 'Knowledge Check: Enforce Workload Standards With Pod Security Admission'
+    path: sections/section-040/module-03/quiz.yaml
+    question_count: 10
+    pass_score: 70
   - type: quiz
     title: 'Knowledge Check: Static Analysis Of Workloads And Images'
     path: sections/section-040/module-01/quiz.yaml

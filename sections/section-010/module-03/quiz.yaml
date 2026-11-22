@@ -1,0 +1,246 @@
+# Knowledge check for section-010 module-03. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-010-03
+course_id: ATS035
+exam_code: CKS
+status: alpha
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-010/module-03
+  title: "Keep Images Small And Fresh Over Time"
+placement:
+  position: after
+  reading: sections/section-010/module-03/course-03-summary.md
+questions:
+  - id: ats035-010-03-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain what the container runtime checks when it pulls by digest."
+    source_readings:
+      - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+    prompt: "A pod refers to `busybox@sha256:<digest>`. What does the container runtime do with the digest during the pull?"
+    options:
+      - id: a
+        text: "It uses the digest only as a label for humans"
+        explanation: "The digest is not a label. The runtime enforces it."
+      - id: b
+        text: "It checks the downloaded bytes against the digest and refuses content that does not match"
+        explanation: "Correct. The digest is the SHA-256 hash of the manifest, so changed content fails the check."
+      - id: c
+        text: "It asks the registry which tag the digest belongs to and pulls that tag"
+        explanation: "The runtime pulls by digest; it does not need a tag."
+      - id: d
+        text: "It encrypts the image with the digest as the key"
+        explanation: "A digest is a hash, not an encryption key."
+    correct_option: b
+    explanation: "Because the runtime verifies the hash, every node that pulls the reference runs the same bytes."
+
+  - id: ats035-010-03-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Describe how an update tool keeps a digest pin current."
+    source_readings:
+      - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+    prompt: "How do tools such as Renovate or Dependabot move a digest pin forward?"
+    options:
+      - id: a
+        text: "They change the running Deployment in the cluster directly"
+        explanation: "The update tool never changes the cluster directly."
+      - id: b
+        text: "They delete the old digest from the registry"
+        explanation: "They do not manage registry content."
+      - id: c
+        text: "They replace the digest with the tag `latest`"
+        explanation: "That would remove the pin instead of moving it."
+      - id: d
+        text: "They find a newer digest for the tag in the registry and open a pull request that a person or pipeline reviews, scans and merges"
+        explanation: "Correct. The change reaches the cluster through the normal review and deployment path."
+    correct_option: d
+    explanation: "The pin stays exact, and every move of the pin is a reviewed change in Git."
+
+  - id: ats035-010-03-q03
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Choose the right digest for a cluster with nodes of different CPU architectures."
+    source_readings:
+      - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+    prompt: "A cluster has amd64 and arm64 nodes. Which digest should the manifest pin so that pods start on both kinds of node?"
+    options:
+      - id: a
+        text: "The digest of the image index, which lists one manifest for each architecture"
+        explanation: "Correct. Each node picks the manifest for its own architecture from the index."
+      - id: b
+        text: "The digest of the amd64 manifest"
+        explanation: "The digest of a single manifest works only on its architecture."
+      - id: c
+        text: "The image ID of the form `sha256:` from one node"
+        explanation: "That value names the image configuration on one node and is not a pullable reference."
+      - id: d
+        text: "Any digest, because the runtime converts it for the node"
+        explanation: "The runtime does not convert an image between architectures."
+    correct_option: a
+    explanation: "Pin the index digest for workloads that may run on more than one architecture."
+
+  - id: ats035-010-03-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Locate the resolved digest of a running container."
+    source_readings:
+      - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
+    prompt: "A Deployment uses the tag `3.13-alpine`. Which field shows the exact content that a pod of the Deployment runs?"
+    options:
+      - id: a
+        text: "`spec.containers[0].image` of the pod"
+        explanation: "That field holds the reference that was requested, here the tag."
+      - id: b
+        text: "`spec.containers[0].imagePullPolicy` of the pod"
+        explanation: "The pull policy says when to pull, not what was pulled."
+      - id: c
+        text: "`status.containerStatuses[0].imageID` of the pod"
+        explanation: "Correct. The status holds the image name, `@sha256:` and the digest the runtime resolved."
+      - id: d
+        text: "`metadata.labels` of the Deployment"
+        explanation: "Labels are free text set by people and say nothing reliable about the content."
+    correct_option: c
+    explanation: "The specification shows what was asked for; the status shows what the runtime got."
+
+  - id: ats035-010-03-q05
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Predict the default pull policy that Kubernetes sets."
+    source_readings:
+      - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+    prompt: "A container sets `image: busybox:latest` and no `imagePullPolicy`. Which policy does Kubernetes set?"
+    options:
+      - id: a
+        text: "`IfNotPresent`"
+        explanation: "Kubernetes sets `IfNotPresent` for references with a tag other than `latest` or with a digest."
+      - id: b
+        text: "`Always`"
+        explanation: "Correct. A reference with the tag `latest`, or with no tag and no digest, gets `Always`."
+      - id: c
+        text: "`Never`"
+        explanation: "Kubernetes never sets `Never` by default."
+      - id: d
+        text: "No policy, so the node chooses at random"
+        explanation: "Kubernetes always fills in a policy when the field is empty."
+    correct_option: b
+    explanation: "The default depends on the reference: `latest` or no tag gives `Always`, everything else gives `IfNotPresent`."
+
+  - id: ats035-010-03-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why a moving tag with `IfNotPresent` is risky."
+    source_readings:
+      - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+    prompt: "A Deployment uses the tag `app:stable` with `imagePullPolicy: IfNotPresent`. The publisher moves the tag to a new build. What can happen?"
+    options:
+      - id: a
+        text: "Every node pulls the new build at once"
+        explanation: "`IfNotPresent` does not contact the registry when the node already holds the image."
+      - id: b
+        text: "The kubelet refuses to start pods until the tag stops moving"
+        explanation: "The kubelet does not track tag changes."
+      - id: c
+        text: "The registry blocks the move because a Deployment uses the tag"
+        explanation: "Only an immutable-tag setting in the registry blocks a move, and it does not know about Deployments."
+      - id: d
+        text: "Nodes that pulled before the move keep the old build, and new nodes get the new one, under the same name"
+        explanation: "Correct. Two nodes then run different content under one reference."
+    correct_option: d
+    explanation: "Pin a digest or use a unique tag for each build so every node runs the same content."
+
+  - id: ats035-010-03-q07
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify the pod status caused by `imagePullPolicy: Never` on a node without the image."
+    source_readings:
+      - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+    prompt: "A pod uses `imagePullPolicy: Never` and the node does not hold the image. Which status does the pod show?"
+    options:
+      - id: a
+        text: "`ErrImageNeverPull`"
+        explanation: "Correct. The node never contacts a registry and reports that the image is not present."
+      - id: b
+        text: "`ImagePullBackOff` after a refused registry login"
+        explanation: "No registry was contacted, so there is no login."
+      - id: c
+        text: "`Running`, with an empty filesystem"
+        explanation: "A container cannot start without its image."
+      - id: d
+        text: "`Completed`"
+        explanation: "The container never started, so it cannot complete."
+    correct_option: a
+    explanation: "`Never` makes a pod fail on every node that lacks the image."
+
+  - id: ats035-010-03-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why a rebuild with a cached base layer does not deliver a base image fix."
+    source_readings:
+      - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+    prompt: "A pipeline rebuilds an image after the base image publisher fixed a vulnerability, but a scan still shows the old finding. What is the most likely cause?"
+    options:
+      - id: a
+        text: "The scanner database is newer than the image"
+        explanation: "A newer database would know about the fix, not hide it."
+      - id: b
+        text: "Rebuilds never change the base layers"
+        explanation: "A rebuild on a freshly pulled base does change them."
+      - id: c
+        text: "The build reused a cached copy of the old base layer instead of pulling the current base"
+        explanation: "Correct. Pipelines pull the base image explicitly before building for this reason."
+      - id: d
+        text: "The fix only applies to images pinned by tag"
+        explanation: "How the base is referenced does not limit which fixes it contains."
+    correct_option: c
+    explanation: "A rebuild is only a fix when it starts from the current base and the new digest is then deployed."
+
+  - id: ats035-010-03-q09
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify the purpose of a `.dockerignore` file."
+    source_readings:
+      - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+    prompt: "What does a `.dockerignore` file do?"
+    options:
+      - id: a
+        text: "It lists packages that the package manager must not install"
+        explanation: "Package selection belongs in the Dockerfile instructions."
+      - id: b
+        text: "It lists files that the build context must not send to the builder, such as `.git` and local environment files"
+        explanation: "Correct. It keeps secrets and unneeded files out of the build and speeds it up."
+      - id: c
+        text: "It tells the registry which old images to delete"
+        explanation: "That is a registry retention rule."
+      - id: d
+        text: "It makes the kubelet ignore an image on the node"
+        explanation: "The kubelet does not read this file."
+    correct_option: b
+    explanation: "Files that never reach the builder cannot end up in an image layer."
+
+  - id: ats035-010-03-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Choose the control that addresses a specific registry or pipeline risk."
+    source_readings:
+      - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+    prompt: "A registry holds thousands of old builds with known vulnerabilities that anyone with pull rights can still run. Which control addresses this directly?"
+    options:
+      - id: a
+        text: "A size budget in the pipeline"
+        explanation: "A size budget limits growth of new images; it does not remove old ones."
+      - id: b
+        text: "An immutable-tag setting"
+        explanation: "Immutable tags stop a tag from moving; they do not remove old builds."
+      - id: c
+        text: "A `.dockerignore` file"
+        explanation: "This file only affects what a new build receives."
+      - id: d
+        text: "A retention rule that deletes images older than a set age or beyond a count"
+        explanation: "Correct. Retention removes old, vulnerable builds so they are no longer available for pulling."
+    correct_option: d
+    explanation: "Each control answers one problem: budgets for growth, immutable tags for moving tags, retention for old content."

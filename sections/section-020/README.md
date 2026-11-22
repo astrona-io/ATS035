@@ -12,7 +12,7 @@ A new library vulnerability is announced and someone asks which running images c
 2. Generate And Read Software Bills Of Materials: SPDX and CycloneDX fields, package URLs, vulnerability matching, VEX statements and attestations bound to an image digest.
 3. Provenance, Artifact Repositories And Pull Access: registry roles, immutable tags and retention, pull secrets and service accounts, build provenance and SLSA levels.
 
-Each module ends with a summary. The section ends with one ten-question knowledge check. The parts carry the hands-on steps, and each lab follows the part that practises its skill. Each module has a private `kind` playground with Kubernetes v1.35; launch it from the landing page and keep it running while you read.
+Each module ends with a summary. The second and third modules each close with a ten-question knowledge check on that module, and the section ends with a ten-question knowledge check on all three modules. The parts carry the hands-on steps, and each lab follows the part that practises its skill. Each module has a private `kind` playground with Kubernetes v1.35; launch it from the landing page and keep it running while you read.
 
 ## Learning Outcomes
 

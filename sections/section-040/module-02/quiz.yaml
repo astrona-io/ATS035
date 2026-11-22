@@ -1,0 +1,246 @@
+# Knowledge check for section-040 module-02. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-040-02
+course_id: ATS035
+exam_code: CKS
+status: alpha
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-040/module-02
+  title: "Scan Images And Configuration With Trivy"
+placement:
+  position: after
+  reading: sections/section-040/module-02/course-05-summary.md
+questions:
+  - id: ats035-040-02-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Choose the Trivy command for a source folder."
+    source_readings:
+      - sections/section-040/module-02/course-01-what-trivy-scans-images-folders-and-configuration.md
+    prompt: "You want Trivy to read the lock files of a source repository for vulnerable dependencies and to look for credentials in its files. Which command fits?"
+    options:
+      - id: a
+        text: "`trivy image <name>`"
+        explanation: "This command scans a container image, not a folder on disk."
+      - id: b
+        text: "`trivy fs --scanners vuln,secret <folder>`"
+        explanation: "Correct. `trivy fs` scans a folder, and the flag selects the vulnerability and secret scanners."
+      - id: c
+        text: "`trivy config <folder>`"
+        explanation: "This command looks for misconfigurations in configuration files, not vulnerable dependencies."
+      - id: d
+        text: "`trivy version`"
+        explanation: "This command prints the Trivy version and the database date. It scans nothing."
+    correct_option: b
+    explanation: "Each Trivy command reads one kind of input, and `--scanners` selects which checks run on it."
+
+  - id: ats035-040-02-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Identify the kind of finding from its identifier."
+    source_readings:
+      - sections/section-040/module-02/course-01-what-trivy-scans-images-folders-and-configuration.md
+    prompt: "A Trivy report lists a finding whose identifier starts with `KSV`. What kind of finding is it?"
+    options:
+      - id: a
+        text: "A known flaw in a package version"
+        explanation: "Package flaws are identified by CVE numbers."
+      - id: b
+        text: "A credential found in a file"
+        explanation: "A credential is a secret finding, not a `KSV` rule."
+      - id: c
+        text: "A finding that has no fixed version"
+        explanation: "Whether a fix exists is shown by `FixedVersion`, not by the identifier prefix."
+      - id: d
+        text: "A risky setting in a Kubernetes manifest found by the misconfiguration scanner"
+        explanation: "Correct. Kubernetes misconfiguration rules have identifiers that start with `KSV`, for example a container that runs as root."
+    correct_option: d
+    explanation: "A misconfiguration is a risky setting, not a flaw in code, so it needs a change to the manifest."
+
+  - id: ats035-040-02-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what an image scan leaves unchecked."
+    source_readings:
+      - sections/section-040/module-02/course-01-what-trivy-scans-images-folders-and-configuration.md
+    prompt: "`trivy image` reports no findings for an image. The Pod manifest that runs it sets `privileged: true`. Which statement is correct?"
+    options:
+      - id: a
+        text: "The image scan did not read the manifest, so the privileged setting is unchecked"
+        explanation: "Correct. Run `trivy config` or another manifest check to find risky settings."
+      - id: b
+        text: "The privileged setting is safe because the image is clean"
+        explanation: "A clean image does not make a privileged container safe."
+      - id: c
+        text: "The image scan would have reported the setting as a CVE"
+        explanation: "The vulnerability scanner reads packages, not Pod settings."
+      - id: d
+        text: "Trivy cannot scan manifests at all"
+        explanation: "`trivy config` scans Kubernetes manifests for misconfigurations."
+    correct_option: a
+    explanation: "Vulnerabilities, misconfigurations and secrets answer different questions, so scan each input."
+
+  - id: ats035-040-02-q04
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain what the unfixed filter removes."
+    source_readings:
+      - sections/section-040/module-02/course-02-severity-filters-unfixed-findings-and-exit-codes.md
+    prompt: "Which findings does `--ignore-unfixed` remove from the result?"
+    options:
+      - id: a
+        text: "Findings with a LOW severity"
+        explanation: "Severity is filtered with `--severity`."
+      - id: b
+        text: "Findings listed in `.trivyignore`"
+        explanation: "The ignore file is a separate exception list."
+      - id: c
+        text: "Findings that have no fixed version yet"
+        explanation: "Correct. A team cannot fix them by updating a package, so they are tracked separately."
+      - id: d
+        text: "Findings in application dependencies"
+        explanation: "The flag is about fixability, not about where the package comes from."
+    correct_option: c
+    explanation: "Unfixed findings stay visible in a full report even when the gate ignores them."
+
+  - id: ats035-040-02-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose an exit code that separates findings from scan errors."
+    source_readings:
+      - sections/section-040/module-02/course-02-severity-filters-unfixed-findings-and-exit-codes.md
+    prompt: "A pipeline must tell a failed scan apart from a scan that found blocking findings. Which setting helps?"
+    options:
+      - id: a
+        text: "Leave `--exit-code` at its default"
+        explanation: "The default is `0`, so findings never fail the step."
+      - id: b
+        text: "Use a distinct value for findings, for example `--exit-code 10`"
+        explanation: "Correct. Trivy also exits non-zero when the scan itself fails, so a distinct number marks the findings case."
+      - id: c
+        text: "Use `--format table`"
+        explanation: "The format changes the report, not the exit code."
+      - id: d
+        text: "Use `--exit-code 0`"
+        explanation: "With `0`, a scan with findings still succeeds."
+    correct_option: b
+    explanation: "Read the exit code, not the table, and give findings their own value when the pipeline must react differently."
+
+  - id: ats035-040-02-q06
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Apply severity and unfixed filters to a list of findings."
+    source_readings:
+      - sections/section-040/module-02/course-02-severity-filters-unfixed-findings-and-exit-codes.md
+    prompt: "A report has five findings: CRITICAL with a fix, HIGH with a fix, CRITICAL without a fix, LOW with a fix, and HIGH with a fix. The gate uses `--severity HIGH,CRITICAL --ignore-unfixed` and no ignore file. How many findings block the release?"
+    options:
+      - id: a
+        text: "Two"
+        explanation: "Both HIGH findings have a fix, so they both count, together with the fixable CRITICAL one."
+      - id: b
+        text: "Five"
+        explanation: "The LOW finding is removed by the severity filter, and the unfixed one by `--ignore-unfixed`."
+      - id: c
+        text: "Four"
+        explanation: "The CRITICAL finding without a fix is removed by `--ignore-unfixed`."
+      - id: d
+        text: "Three"
+        explanation: "Correct. The CRITICAL with a fix and the two HIGH findings with a fix remain."
+    correct_option: d
+    explanation: "Filter by severity first, then by fixability, then by exceptions. Only findings that pass every step block."
+
+  - id: ats035-040-02-q07
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Predict what happens when an exception expires."
+    source_readings:
+      - sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
+    prompt: "A `.trivyignore` line reads `CVE-2025-00000 exp:2026-12-31`. What happens after that date?"
+    options:
+      - id: a
+        text: "Trivy reports the finding again, so the gate fails again and forces a new decision"
+        explanation: "Correct. That is why an exception should always have a date."
+      - id: b
+        text: "The finding is removed from the database"
+        explanation: "The ignore file does not change the vulnerability database."
+      - id: c
+        text: "Trivy keeps ignoring the finding"
+        explanation: "The `exp:` date ends the exception."
+      - id: d
+        text: "The image is deleted from the registry"
+        explanation: "Trivy does not change registries."
+    correct_option: a
+    explanation: "An exception with an end date and an owner cannot quietly become a permanent hole in the gate."
+
+  - id: ats035-040-02-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why a scan of the same image can change."
+    source_readings:
+      - sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
+    prompt: "An image was clean last month. Today a scan of the same digest shows a new CRITICAL finding. What is the most likely reason?"
+    options:
+      - id: a
+        text: "The image changed in the registry under the same digest"
+        explanation: "A digest names fixed content. Different content has a different digest."
+      - id: b
+        text: "Trivy scans a random sample of packages"
+        explanation: "Trivy compares all the packages it can identify."
+      - id: c
+        text: "The vulnerability database was updated with a new entry"
+        explanation: "Correct. Record the database update time next to every result to explain such changes."
+      - id: d
+        text: "The severity filter was removed by the registry"
+        explanation: "The registry does not change scan options."
+    correct_option: c
+    explanation: "A scan compares packages with the database at scan time, so a newer database can change the result."
+
+  - id: ats035-040-02-q09
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "State what a vulnerability finding proves and what it does not."
+    source_readings:
+      - sections/section-040/module-02/course-03-exceptions-database-freshness-and-what-a-finding-proves.md
+    prompt: "What does a vulnerability finding from Trivy prove?"
+    options:
+      - id: a
+        text: "That an attacker can use the flaw in your workload"
+        explanation: "The scan does not test whether the flaw can be reached or used."
+      - id: b
+        text: "That an installed package version is listed as affected in the database"
+        explanation: "Correct. Reachability and real risk need more evidence."
+      - id: c
+        text: "That every binary in the image was checked"
+        explanation: "A binary copied without a package record may produce no finding."
+      - id: d
+        text: "That the severity fits your environment"
+        explanation: "The severity comes from the database, not from your workload."
+    correct_option: b
+    explanation: "A scan is evidence for a decision, not the decision itself."
+
+  - id: ats035-040-02-q10
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Identify the values that bind a scan result to the content and the knowledge used."
+    source_readings:
+      - sections/section-040/module-02/course-04-run-and-check-a-fresh-scan.md
+    prompt: "A release decision is based on a fresh Trivy report. Which two values let a later reader check which content was scanned and with which knowledge?"
+    options:
+      - id: a
+        text: "The image tag and the name of the pipeline"
+        explanation: "A tag can move, and a pipeline name does not identify the database."
+      - id: b
+        text: "The number of LOW findings and the Trivy output format"
+        explanation: "Neither value identifies the image content or the database."
+      - id: c
+        text: "The registry host name and the namespace"
+        explanation: "These values do not identify the exact image or the database snapshot."
+      - id: d
+        text: "The image ID from the report and the database update time"
+        explanation: "Correct. The image ID ties the findings to content, and the database timestamp identifies the knowledge used."
+    correct_option: d
+    explanation: "Record the image identity and the database date with the decision, so two scans can be compared."

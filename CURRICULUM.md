@@ -28,7 +28,7 @@ The [official objectives](https://training.linuxfoundation.org/certification/cer
 | 040 / 02 | Scan Images And Configuration With Trivy | What Trivy Scans: Images, Folders And Configuration; Severity Filters, Unfixed Findings And Exit Codes; Exceptions, Database Freshness And What A Finding Proves; Use A Fresh Scan As Release Evidence |
 | 040 / 03 | Enforce Workload Standards With Pod Security Admission | The Pod Security Standards; Namespace Labels, Modes And Versions; Meeting The Restricted Standard, Exemptions And Limits |
 
-AUTHORING.yaml records measurable goals and adaptation sources. Every objective retains its section ID. Question banks are separate from the reading manifest and follow their declared summaries. Each module has a playground and at least one graded lab, and each section has a knowledge check.
+AUTHORING.yaml records measurable goals and adaptation sources. Every objective retains its section ID. Question banks are separate from the reading manifest and follow their declared summaries. Each module has a playground and at least one graded lab, each section has a knowledge check, and the second and third modules of each section have their own knowledge check.
 
 ## Hands-On Coverage
 
