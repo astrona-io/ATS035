@@ -64,4 +64,4 @@ sudo docker export built-server | tar -tf -
 sudo docker rm -f built-server
 ```
 
-`curl` prints `built-service`. The file list has `server` and the few files Docker adds to every container (for example `etc/hosts` and `proc/`), but no compiler, no shell and no `server.c`. The grader repeats these checks with its own build and its own container.
+`curl` prints `built-service`. The file list has `server`, but no compiler, no shell and no `server.c`. The grader repeats these checks with its own build and its own container.
