@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sbom-probe
+  namespace: starfleet-035-020-01-03
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      initContainers:
+      - name: rootfs
+        image: <IMAGE_ID>
+        imagePullPolicy: IfNotPresent
+        command:
+        - cp
+        - -a
+        - /bin
+        - /etc
+        - /lib
+        - /sbin
+        - /usr
+        - /var
+        - /scan/
+        volumeMounts:
+        - name: scan
+          mountPath: /scan
+      containers:
+      - name: syft
+        image: docker.io/anchore/syft:v1.57.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - scan
+        - dir:/scan
+        - --quiet
+        - --output
+        - cyclonedx-json
+        env:
+        - name: SYFT_CHECK_FOR_APP_UPDATE
+          value: "false"
+        volumeMounts:
+        - name: scan
+          mountPath: /scan
+          readOnly: true
+      volumes:
+      - name: scan
+        emptyDir: {}

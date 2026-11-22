@@ -187,6 +187,29 @@ page_run "$page" "kubectl -n starfleet patch serviceaccount default -p '{\"image
 page_run "$page" 'kubectl -n starfleet delete secret registry-credentials'
 expect_equal 'the ServiceAccount has no pull Secret after the clean-up' "$(kubectl -n starfleet get serviceaccount default -o jsonpath='{.imagePullSecrets}')" ''
 
+# Make an SBOM of a running image in the cluster
+page=course-05-make-an-sbom-of-a-running-image-in-the-cluster.md
+probe_image="$(page_run "$page" "kubectl -n starfleet get pod -l app=probe -o jsonpath='{.items[0].status.containerStatuses[0].image}{\" \"}{.items[0].status.containerStatuses[0].imageID}{\"\n\"}'")"
+printf '%s\n' "$probe_image"
+expect_equal 'the line has the image name and a digest or a sha256: image ID' "$(grep -cE '^docker\.io/library/python:3\.13-alpine (docker\.io/library/python@)?sha256:[0-9a-f]{64}$' <<<"$probe_image")" 1
+save_from_page "$page" job-sbom-probe.yaml
+job_wait="$(page_run "$page" 'kubectl -n starfleet wait --for=condition=Complete job/sbom-probe --timeout=180s')"
+printf '%s\n' "$job_wait"
+expect_equal 'the wait reports the Complete condition' "$job_wait" "$(text_from_page "$page" 'job.batch/sbom-probe condition met')"
+page_run "$page" 'kubectl -n starfleet logs job/sbom-probe -c syft > probe.cdx.json'
+expect_equal 'the log is a CycloneDX document' "$(jq -r .bomFormat probe.cdx.json)" CycloneDX
+tool="$(page_run "$page" "jq -r '.metadata.tools.components[] | \"\\(.name) \\(.version)\"' probe.cdx.json")"
+printf '%s\n' "$tool"
+expect_equal 'the document names the pinned Syft version' "$tool" "$(text_from_page "$page" 'syft 1.57.0')"
+sbom_count="$(page_run "$page" "jq '[.components[] | select(.purl // \"\" | startswith(\"pkg:apk/\"))] | length' probe.cdx.json")"
+pod_count="$(page_run "$page" "kubectl -n starfleet exec deploy/probe -- grep -c '^P:' /lib/apk/db/installed")"
+printf '%s %s\n' "$sbom_count" "$pod_count"
+expect_equal 'the SBOM has Alpine packages' "$(( sbom_count > 0 ))" 1
+expect_equal 'the two numbers are equal' "$sbom_count" "$pod_count"
+init_id="$(page_run "$page" "kubectl -n starfleet get pod -l job-name=sbom-probe -o jsonpath='{.items[0].status.initContainerStatuses[0].imageID}{\"\n\"}'")"
+printf '%s\n' "$init_id"
+expect_equal 'the init container ran the image ID of the probe pod' "$init_id" "${probe_image#* }"
+
 # Playground guide
 page=playground/docs/overview.md
 pods="$(page_run "$page" 'kubectl -n starfleet get pods -o wide')"

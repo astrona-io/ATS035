@@ -12,6 +12,8 @@ A server-side dry run of a label change lists the existing pods that would viola
 
 Exemptions for users, runtime classes and namespaces are set in the API server admission configuration, not by namespace owners. PSA complements static analysis and image scanning: it enforces a minimum on the cluster, and the other tools find issues earlier or outside its reach.
 
+One release can pass through three controls in order. Static analysis of the workload document finds settings such as `privileged: true`, a missing `runAsNonRoot` and a `latest` image tag. A scan gate counts only `HIGH` and `CRITICAL` findings that have a fixed version and are not waived, and it blocks the release when one remains. PSA then rejects the unsafe pod in a namespace that enforces `restricted`, even when someone skips the pipeline, but it does not check image tags or vulnerabilities.
+
 - Preview a stricter level with `--dry-run=server` before you enforce it.
 - Pin the version label and update it on purpose.
 - Fix every field in the error message, not only the first one.

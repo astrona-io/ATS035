@@ -8,7 +8,7 @@ A container image reaches a cluster through a chain of steps: source code, depen
 
 Keep one sentence in mind for this module: **know what is in each artifact, know how and where it was built, and know who may change each step.** You will list the images that run in the playground cluster, create a software bill of materials (SBOM) for an image with Syft, scan the image and the SBOM with Trivy, and study how CI/CD pipelines and artifact repositories fit into the chain.
 
-The module has four parts. **Stages, Trust Boundaries And Evidence** maps the chain and lists what each kind of evidence proves. **Software Bills Of Materials With Syft** creates SPDX and CycloneDX documents and compares an SBOM with the packages that the running pod reports. **Vulnerability Scanning With Trivy** scans an image and an SBOM, filters the findings and explains why a result ages. **CI/CD Pipelines And Artifact Repositories** covers credentials, build permissions, registry settings and pull secrets.
+The module has five parts. **Stages, Trust Boundaries And Evidence** maps the chain and lists what each kind of evidence proves. **Software Bills Of Materials With Syft** creates SPDX and CycloneDX documents and compares an SBOM with the packages that the running pod reports. **Vulnerability Scanning With Trivy** scans an image and an SBOM, filters the findings and explains why a result ages. **CI/CD Pipelines And Artifact Repositories** covers credentials, build permissions, registry settings and pull secrets. **Make An SBOM Of A Running Image In The Cluster** runs a pinned Syft image in a Job and ties the SBOM to the running image ID.
 
 ## Learning objectives
 
@@ -19,6 +19,7 @@ After this module you can:
 - Generate an SBOM in SPDX and CycloneDX formats with Syft and read the package list.
 - Scan an image or an SBOM with Trivy, filter by severity and fix state, and use the exit code in a pipeline.
 - Describe how to limit credentials in CI/CD and how a cluster authenticates to a private registry.
+- Make an SBOM inside the cluster with a pinned Syft image in a Job and compare it with the running pod.
 
 ## Before you start
 

@@ -1,0 +1,58 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-035-lab-040-03-03
+  docs:
+    prerequisites: docs/prerequisites.md
+    examQuestion: question.md
+    caseStudy: docs/case-study.md
+    guide: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+    - docker.io/library/busybox:1.37.0
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+teardown:
+  keepCluster: false
+testing:
+  init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
+  - name: reference-result
+    type: file
+    source: solution/apply.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
+    type: file
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: restricted-namespace
+    description: The namespace enforces, warns on and audits the restricted standard at version v1.35, rejects the unsafe document and does not run it
+    type: file
+    source: validation/validate-restricted-namespace.sh
+    points: 1
+  - name: analysis-findings
+    description: The analysis-findings ConfigMap records the privileged setting, the two missing fields and the image tag of the unsafe document
+    type: file
+    source: validation/validate-analysis-findings.sh
+    points: 1
+  - name: scan-gate
+    description: The scan-gate ConfigMap holds the decision and the blocking, waived and unfixed findings from the scan results and the ignore list
+    type: file
+    source: validation/validate-scan-gate.sh
+    points: 1
+  - name: corrected-reader
+    description: The corrected-reader pod meets the restricted standard and is ready
+    type: file
+    source: validation/validate-corrected-reader.sh
+    points: 1

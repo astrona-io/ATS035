@@ -1,0 +1,58 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-035-lab-040-01-03
+  docs:
+    prerequisites: docs/prerequisites.md
+    examQuestion: question.md
+    caseStudy: docs/case-study.md
+    guide: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    # Kubesec 2.15.0 on Alpine, the tool the task runs inside the cluster.
+    # It reads the Kubernetes schemas from /schemas (SCHEMA_LOCATION), so it
+    # needs no network. Index digest on 2026-11-22:
+    # sha256:6735b7f3d1c8b3abde5c6e49d260759e90693a70d699f9d44bec9ef4ccc8b995
+    preloadImages:
+    - docker.io/kubesec/kubesec:v2.15.0
+    - docker.io/library/busybox:1.37.0
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+teardown:
+  keepCluster: false
+testing:
+  init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
+  - name: reference-result
+    type: file
+    source: solution/apply.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
+    type: file
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: kubesec-passes
+    description: Kubesec in the scanner pod reports no critical finding and a score of at least 10 for the live score-probe Deployment
+    type: file
+    source: validation/validate-kubesec-passes.sh
+    points: 1
+  - name: score-recorded
+    description: The kubesec-report ConfigMap records the object name and the current Kubesec score of the live score-probe Deployment
+    type: file
+    source: validation/validate-score-recorded.sh
+    points: 1
+  - name: hardened-rollout
+    description: Every running score-probe pod is from the current rollout, runs busybox 1.37.0 as user 10001 and has written its state file
+    type: file
+    source: validation/validate-hardened-rollout.sh
+    points: 1

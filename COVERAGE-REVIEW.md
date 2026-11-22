@@ -10,8 +10,8 @@ New QEMU labs build and inspect a minimal image, run Trivy against a fresh verif
 
 ## Remaining practical gaps and boundaries
 
-- The inventory labs read the live Alpine package database; they do not run Syft or inventory every language dependency.
-- The first static-analysis lab checks field analysis and a repaired Pod without running a tool. The second runs KubeLinter in the cluster against the live Deployment; Kubesec is still not run.
+- The first two inventory labs read the live Alpine package database. The Syft lab (section-020/module-01/labs/lab-03) runs a pinned Syft image in a Job against the root file system of the running image and compares the CycloneDX packages with the Alpine database. No lab inventories language dependencies or grades a VEX document made by a tool.
+- The workload-document lab checks field analysis and a repaired Pod without running a tool. The Kubesec lab (section-040/module-01/labs/lab-03) and the KubeLinter lab (section-040/module-01/labs/lab-02) run pinned tool images in the cluster against the live Deployment.
 - Cosign uses disposable local keys and a loopback HTTP registry without a transparency log. Keyless identity, provenance verification and signature enforcement at admission remain ungraded.
 - Other pull-secret exercises still teach configuration. Authenticated-pull evidence comes specifically from section-020/module-03/labs/lab-01.
 
@@ -24,12 +24,12 @@ The four section capstones were removed so that every graded lab follows the rea
 - Section 030: an approved-registry ValidatingAdmissionPolicy (section-030/module-01/labs/lab-01), a digest ValidatingAdmissionPolicy that leaves an unlabelled namespace admitted (section-030/module-02/labs/lab-01) and a Deny binding with pull credentials (section-030/module-03/labs/lab-01).
 - Section 040: workload findings recorded without deploying (section-040/module-01/labs/lab-01), a scan gate (section-040/module-02/labs/lab-01) and restricted Pod Security Admission with a rejected privileged Pod (section-040/module-03/labs/lab-01).
 
-No module lab now grades these capstone skills:
+The former capstone gaps are graded again:
 
-- Section 010: CPU and memory requests and a memory limit on the container, a Deployment instead of a single Pod, and a Service on port 80 that targets the named port `http`, reached by Service name from the `shuttle` Pod.
-- Section 040: the `imageTag` finding key, and one namespace that combines the findings, the scan gate and the restricted Pod.
-
-Two former capstone gaps are graded again: the separate `imageDigest` key (section-020/module-02/labs/lab-02) and one ValidatingAdmissionPolicy with two validations, separate messages and an unchanged `exempt` namespace (section-030/module-02/labs/lab-02). No lab was written for the gaps listed above.
+- The separate `imageDigest` key (section-020/module-02/labs/lab-02).
+- One ValidatingAdmissionPolicy with two validations, separate messages and an unchanged `exempt` namespace (section-030/module-02/labs/lab-02).
+- CPU and memory requests and a memory limit on a Deployment, and a Service on port 80 that targets the named port `http`, reached by name from the `shuttle` Pod (section-010/module-03/labs/lab-03).
+- One namespace that combines the findings with the `imageTag` key, the scan gate and the restricted Pod (section-040/module-03/labs/lab-03).
 
 ## Runtime choice
 

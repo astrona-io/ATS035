@@ -17,10 +17,11 @@ After this module you can:
 - Preview a label change with `--dry-run=server` and explain what it lists.
 - Write a pod that passes the `restricted` standard and read the error of a pod that fails it.
 - Explain what PSA does not check and who can exempt a user, a namespace or a runtime class.
+- Take one workload through static analysis, a scan gate and restricted admission in one namespace.
 
 ## Before you start
 
-You need Kubernetes basics: pods, namespaces, labels, `kubectl apply` and the `securityContext` field of a pod. You do not need any tool on your own machine except `kubectl`.
+You need Kubernetes basics: pods, namespaces, labels, `kubectl apply` and the `securityContext` field of a pod. You need `kubectl` and `jq`, a command-line JSON processor, on your own machine.
 
 The playground cluster is a `kind` cluster running Kubernetes 1.35. PSA is enabled by default in this version.
 
@@ -35,7 +36,8 @@ The playground cluster is a `kind` cluster running Kubernetes 1.35. PSA is enabl
 1. The Pod Security Standards
 2. Namespace labels, modes and versions
 3. Meeting the restricted standard, exemptions and limits
-4. Summary
+4. Release a workload through analysis, a scan gate and restricted admission
+5. Summary
 
 Launch your playground now, and keep it running next to you while you read:
 

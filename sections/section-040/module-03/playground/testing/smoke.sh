@@ -188,6 +188,38 @@ save_yaml_from_page "$page" pod-passing-reader.yaml
 page_run "$page" 'kubectl apply -f pod-passing-reader.yaml'
 page_run "$page" 'kubectl -n gate wait --for=condition=Ready pod/passing-reader --timeout=120s'
 
+# Release a workload through analysis, a scan gate and restricted admission
+page=course-04-release-a-workload-through-analysis-a-scan-gate-and-restricted-admission.md
+save_block_from_page "$page" pod-unsafe-reader.json json
+analysis="$(page_run "$page" "jq -c '{image: .spec.containers[0].image, pod: .spec.securityContext, container: .spec.containers[0].securityContext}' pod-unsafe-reader.json")"
+printf '%s\n' "$analysis"
+expect_equal 'the analysis prints the line that the page shows' "$analysis" "$(text_from_page "$page" '{"image":"docker.io/library/busybox:latest","pod":null,"container":{"privileged":true}}')"
+tag="$(page_run "$page" "jq -r '.spec.containers[0].image | split(\":\") | last' pod-unsafe-reader.json")"
+text_from_page "$page" 'The command prints `latest`' >/dev/null
+expect_equal 'the tag is latest' "$tag" latest
+save_block_from_page "$page" scan-results.json json
+save_block_from_page "$page" trivyignore.txt text
+gate_command="$(python3 - "$module_directory/$page" <<'PY'
+import re, sys
+blocks = re.findall(r'```sh\n(.*?)```', open(sys.argv[1]).read(), re.S)
+print(next(block for block in blocks if block.startswith('jq -r --rawfile')).rstrip('\n'))
+PY
+)"
+gate="$(page_run "$page" "$gate_command")"
+printf '%s\n' "$gate"
+expect_equal 'the gate fails on the fixed CRITICAL finding' "$gate" "$(text_from_page "$page" 'fail: EXAMPLE-0001')"
+save_from_page "$page" namespace-release.yaml
+dry_run="$(page_fails "$page" 'kubectl apply --dry-run=server -f pod-unsafe-reader.json')"
+printf '%s\n' "$dry_run"
+expect 'the API server rejects the pod for the restricted standard' "$dry_run" "$(text_from_page "$page" 'violates PodSecurity "restricted:v1.35"')"
+expect 'the error names the privileged rule' "$dry_run" 'privileged'
+expect 'the error names the pod' "$dry_run" 'unsafe-reader'
+expect_no 'the dry run stored nothing' "$(kubectl -n release get pods -o name)" unsafe-reader
+save_from_page "$page" pod-corrected-reader.yaml
+ready="$(page_run "$page" 'kubectl -n release wait --for=condition=Ready pod/corrected-reader --timeout=180s')"
+printf '%s\n' "$ready"
+expect_equal 'the corrected pod is Ready' "$ready" "$(text_from_page "$page" 'pod/corrected-reader condition met')"
+
 # Playground guide
 page=playground/docs/overview.md
 pods="$(page_run "$page" 'kubectl -n starfleet get pods -o wide')"

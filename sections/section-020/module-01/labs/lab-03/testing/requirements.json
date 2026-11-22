@@ -1,0 +1,37 @@
+{
+  "context": "kind-astro-ats-035-lab-020-01-03",
+  "cluster": "astro-ats-035-lab-020-01-03",
+  "namespace": "starfleet-035-020-01-03",
+  "resources": [
+    {
+      "kind": "deployment",
+      "name": "probe",
+      "namespace": "starfleet-035-020-01-03",
+      "expected": {
+        "spec": {
+          "replicas": 2,
+          "template": {
+            "spec": {
+              "containers": [
+                {
+                  "name": "probe",
+                  "image": "docker.io/library/python:3.13-alpine"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "state": "deployment"
+    },
+    {
+      "kind": "job",
+      "name": "sbom-probe",
+      "namespace": "starfleet-035-020-01-03",
+      "expected": {},
+      "state": "job",
+      "outcome": "scan-job"
+    }
+  ],
+  "behavior": []
+}

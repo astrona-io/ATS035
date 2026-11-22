@@ -1,0 +1,59 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-035-lab-020-01-03
+  docs:
+    prerequisites: docs/prerequisites.md
+    examQuestion: question.md
+    caseStudy: docs/case-study.md
+    guide: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    # Syft 1.57.0, the tool the task runs inside the cluster. Index digest on
+    # 2026-11-22:
+    # sha256:3c70e6d5979364cefdc22b51617a78fd264574d3bd6b4f84a351204147025e2a
+    # python:3.13-alpine is not preloaded: the node pulls it from the
+    # registry, so the pod status reports its repository digest in imageID.
+    preloadImages:
+    - docker.io/anchore/syft:v1.57.0
+    - docker.io/library/busybox:1.37.0
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+teardown:
+  keepCluster: false
+testing:
+  init:
+  - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
+    type: file
+    source: testing/verify-start.sh
+  - name: reference-result
+    type: file
+    source: solution/apply.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
+    type: file
+    source: testing/wait-solved.sh
+validation:
+  scripts:
+  - name: scan-job
+    description: The sbom-probe Job completed, ran Syft 1.57.0 and copied the files from the exact image digest that the probe pods run
+    type: file
+    source: validation/validate-scan-job.sh
+    points: 1
+  - name: sbom-packages
+    description: The probe-sbom ConfigMap holds a CycloneDX SBOM from Syft 1.57.0 that lists every installed Alpine package of the running probe image
+    type: file
+    source: validation/validate-sbom-packages.sh
+    points: 1
+  - name: sbom-subject
+    description: The probe-sbom ConfigMap records the image ID of a ready probe container
+    type: file
+    source: validation/validate-sbom-subject.sh
+    points: 1

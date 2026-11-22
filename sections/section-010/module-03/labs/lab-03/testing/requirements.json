@@ -1,0 +1,60 @@
+{
+  "context": "kind-astro-ats-035-lab-010-03-03",
+  "cluster": "astro-ats-035-lab-010-03-03",
+  "namespace": "starfleet-035-010-03-03",
+  "resources": [
+    {
+      "kind": "pod",
+      "name": "shuttle",
+      "namespace": "starfleet-035-010-03-03",
+      "expected": {
+        "spec": {
+          "containers": [
+            {
+              "name": "client",
+              "image": "docker.io/library/busybox:1.37.0"
+            }
+          ]
+        }
+      },
+      "state": "pod"
+    },
+    {
+      "kind": "configmap",
+      "name": "minimal-site",
+      "namespace": "starfleet-035-010-03-03",
+      "expected": {
+        "data": {
+          "index.html": "minimal-web-version=v1\n"
+        }
+      },
+      "outcome": "pinned-deployment"
+    },
+    {
+      "kind": "service",
+      "name": "minimal-web",
+      "namespace": "starfleet-035-010-03-03",
+      "expected": {
+        "spec": {
+          "selector": {
+            "app": "minimal-web"
+          },
+          "ports": [
+            {
+              "port": 80,
+              "targetPort": "http"
+            }
+          ]
+        }
+      },
+      "outcome": "service-by-name"
+    }
+  ],
+  "behavior": [
+    {
+      "args": ["kubectl", "-n", "starfleet-035-010-03-03", "exec", "shuttle", "--", "wget", "-qO-", "-T", "5", "http://minimal-web"],
+      "equals": "minimal-web-version=v1",
+      "outcome": "service-by-name"
+    }
+  ]
+}

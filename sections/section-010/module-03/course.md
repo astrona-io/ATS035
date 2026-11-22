@@ -8,7 +8,7 @@ A minimal image is not minimal for long. The packages in its base image receive 
 
 Keep one sentence in mind for this module: **name the exact content that runs, and replace that content on a schedule and whenever a fix is published.** You will read digests in the playground cluster, run a workload that is pinned to a digest, and watch how the image pull policy decides when a node downloads an image.
 
-The module has two parts. **Pin Images By Digest And Keep The Pin Current** explains digest pinning and the tools that update pins. **Pull Policy, Rebuild Cadence And Size Budgets** explains `imagePullPolicy`, the rebuild rules after a vulnerability fix, size budgets and registry retention.
+The module has three parts. **Pin Images By Digest And Keep The Pin Current** explains digest pinning and the tools that update pins. **Pull Policy, Rebuild Cadence And Size Budgets** explains `imagePullPolicy`, the rebuild rules after a vulnerability fix, size budgets and registry retention. **Resource Budgets And A Service For A Small Image** runs a minimal web server as a Deployment with CPU and memory requests and a memory limit, and reaches it through a Service.
 
 ## Learning objectives
 
@@ -19,6 +19,8 @@ After this module you can:
 - Explain how `imagePullPolicy` and the tag decide when a node pulls an image.
 - Describe when to rebuild an image and why a base image fix does not reach an existing image by itself.
 - Describe a size budget, a `.dockerignore` file and registry retention rules.
+- Set CPU and memory requests and a memory limit on a Deployment and read the limit from the container cgroup.
+- Reach a Deployment through a Service that targets a named container port.
 
 ## Before you start
 
