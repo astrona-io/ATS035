@@ -1,8 +1,23 @@
 #!/usr/bin/env bash
+# Runs inside the lab VM from /opt/astrona-lab after vm/install.sh built the cluster.
+# Starting state: Docker with a registry on 127.0.0.1:5000 that holds the
+# unsigned images scout:v1 and unsigned:v1, Cosign v3.1.4, the training key
+# pair in /srv/signing and an unrelated key pair in /opt/astrona-live. The
+# grader keeps its own copies of the image references and key hashes there.
 set -euo pipefail
-sudo cloud-init status --wait >/dev/null
+context="${ASTRONA_KUBE_CONTEXT:-kubernetes-admin@astro-ats-035-lab-030-01-02}"
+if [[ "$(kubectl config current-context)" != "$context" ]]; then
+  printf 'Refusing to operate on another Kubernetes context\n' >&2
+  exit 1
+fi
+# cloud-init can still hold the package lock right after the VM starts.
+sudo cloud-init status --wait >/dev/null || true
 sudo apt-get update -qq
-sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq docker.io curl python3 ca-certificates
+# The cluster already runs on the containerd package. Hold its version and
+# keep its configuration, so installing Docker does not restart the cluster.
+sudo apt-mark hold containerd >/dev/null
+sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+  -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold docker.io curl python3 ca-certificates
 sudo systemctl enable --now docker
 case "$(uname -m)" in
  x86_64) arch=amd64; checksum=424e2c97d0b45fd7a6b608a87f090f35633f4c23ece5f092d48bba11aaf4bbfa ;;
@@ -39,38 +54,3 @@ for repository,file in [('scout','image'),('unsigned','unsigned')]:
 REFS
 sudo cp /srv/signing/image.txt /opt/astrona-live/image.txt
 sudo cp /srv/signing/unsigned.txt /opt/astrona-live/unsigned.txt
-
-sudo install -d /opt/astrona-live
-sudo tee /opt/astrona-live/check.py >/dev/null <<'PY_CHECK'
-
-import json,pathlib,subprocess,sys,urllib.request
-def run(args): return subprocess.run(args,text=True,capture_output=True,timeout=60)
-def verify(key,reference): return run(['cosign','verify','--key',key,'--insecure-ignore-tlog=true','--allow-insecure-registry',reference])
-def check(outcome):
-    with urllib.request.urlopen('http://127.0.0.1:5000/v2/',timeout=5) as response:
-        if response.status!=200: raise RuntimeError('The registry must remain available')
-    assert run(['sha256sum','-c','/opt/astrona-live/keys.sha256']).returncode==0, 'Preserve both trust keys'
-    image=pathlib.Path('/opt/astrona-live/image.txt').read_text().strip()
-    unsigned=pathlib.Path('/opt/astrona-live/unsigned.txt').read_text().strip()
-    assert pathlib.Path('/srv/signing/image.txt').read_text().strip()==image, 'Preserve the supplied image digest'
-    accepted=verify('/srv/signing/training.pub',image)
-    assert accepted.returncode==0, 'Sign the exact supplied image digest with the training key'
-    signatures=json.loads(accepted.stdout)
-    assert signatures and all(s['critical']['image']['docker-manifest-digest']==image.split('@')[1] for s in signatures), 'The verified claims must bind the image digest'
-    if outcome=='trust-boundary':
-        wrong=verify('/opt/astrona-live/other.pub',image)
-        assert wrong.returncode!=0 and any(t in wrong.stderr.lower() for t in ('no matching signatures','signature verification','invalid signature','failed to verify signature')), 'Reject the signed image under an unrelated public key: '+wrong.stderr[-1800:]
-        absent=verify('/srv/signing/training.pub',unsigned)
-        assert absent.returncode!=0 and any(t in absent.stderr.lower() for t in ('no signatures','no matching signatures','no matching attestations','not found','manifest unknown')), 'Reject the unsigned image under the trusted key'
-    elif outcome!='image-signature': raise RuntimeError('Unknown outcome')
-
-if __name__ == '__main__':
-    try:
-        check(sys.argv[1])
-    except AssertionError as error:
-        print('FAIL:', error); sys.exit(1)
-    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
-        print('ERROR:', error); sys.exit(2)
-    print('PASS:', sys.argv[1])
-
-PY_CHECK

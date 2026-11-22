@@ -2,7 +2,7 @@
 
 An image digest identifies content but does not identify who approved it. Cosign signs a digest and stores a signature artifact with the image in a registry. Verification needs a trusted key and the intended digest. Accepting whichever key accompanies an artifact would let an untrusted publisher choose its own authority.
 
-This independent VM supplies two disposable key pairs and a loopback registry. The exercise uses local key trust, not keyless identity or a public transparency log. Run commands inside the VM.
+The commands in this part need a Linux virtual machine (VM), not the Kubernetes playground. The lab VM on the next page has Cosign, a container registry that Docker runs on the loopback address `127.0.0.1:5000`, and two disposable key pairs. The exercise uses a local key pair as the trust anchor, not keyless identity or a public transparency log.
 
 <!-- astrona:playground:renew -->
 
@@ -26,7 +26,7 @@ cosign verify --key /srv/signing/training.pub --insecure-ignore-tlog=true --allo
 
 Both should fail for signature reasons. A connection error proves only that the registry cannot be reached, so verify registry health with `curl --fail http://127.0.0.1:5000/v2/` and keep the successful trusted-key check as a control.
 
-The lab's HTTP and transparency-log exceptions keep this disposable exercise independent of public identities and services. They do not disable cryptographic signature checking. Production workflows need their own trusted key or identity policy, registry TLS, key handling and transparency requirements.
+The HTTP and transparency-log exceptions let this disposable exercise run without public identities and services. They do not disable cryptographic signature checking. Production workflows need their own trusted key or identity policy, registry TLS, key handling and transparency requirements.
 
 ## Common pitfalls
 

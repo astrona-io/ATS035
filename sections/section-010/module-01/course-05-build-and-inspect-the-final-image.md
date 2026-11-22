@@ -2,7 +2,7 @@
 
 A multi-stage Dockerfile separates tools needed to compile an application from files needed to run it. Removing a compiler in a later layer of one stage does not remove its bytes from earlier layers. Copying the compiled output into a new `scratch` stage gives the final image a filesystem containing only the selected artifact.
 
-This independent VM provides a small C HTTP server and a cached compiler image. The task is image construction; the source is fixed. Run all commands in that VM.
+The commands in this part need a Linux virtual machine (VM) with Docker, not the Kubernetes playground. The lab VM on the next page has Docker, a small C HTTP server in `/srv/build/server.c` and the `gcc:15.2.0` compiler image in its local image cache. The source stays fixed; the work is to build a better image from it.
 
 <!-- astrona:playground:renew -->
 

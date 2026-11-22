@@ -1,0 +1,7 @@
+# Sign And Verify An Immutable Image
+
+Sign the supplied image digest in a loopback registry with a Cosign key pair, verify it with the matching public key, and prove that an unrelated key and an unsigned digest both fail.
+
+The task and solution use a VM from the pinned `24.04-cks` image with a one-node kubeadm cluster. The cluster only carries the context guard and the shared grader's readiness check; the task itself uses Docker and Cosign. `bootstrap/setup.sh` installs `docker.io` (keeping the image's containerd configuration), downloads Cosign v3.1.4 with a pinned checksum, runs `registry:2.8.3` on `127.0.0.1:5000`, pushes `busybox:1.37.0` as `scout:v1` and `alpine:3.18.0` as `unsigned:v1`, and writes the digest references read from the registry. It creates the training key pair in `/srv/signing` and an unrelated key pair in `/opt/astrona-live`, with root-owned copies of the references and the key hashes there. `testing/live.py` runs `cosign verify` with sudo for both outcomes and matches the signature error text of the rejection cases.
+
+`vm/` holds the scripts astrona pipes into the VM; regenerate them with `python3 scripts/ci/vm-lab.py <this folder>` after you change a lab file. Run `astrona test` on this folder: `vm/install.sh` builds the cluster and runs `bootstrap/setup.sh` in the VM, `testing/verify-start.sh` checks that every outcome fails on the starting state, then `solution/apply.sh` applies the reference solution and every outcome must pass.

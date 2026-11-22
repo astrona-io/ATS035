@@ -1,0 +1,7 @@
+# Scan An Image And Bind The Release Decision
+
+Scan the cached `alpine:3.18.0` image with Trivy against a fixed database snapshot, save the complete JSON report, and write a release decision that names the image ID, the database time and the complete HIGH and CRITICAL count.
+
+The task and solution use a VM from the pinned `24.04-cks` image with a one-node kubeadm cluster. The cluster only carries the context guard and the shared grader's readiness check; the task itself uses Docker and Trivy. `bootstrap/setup.sh` installs `docker.io` (keeping the image's containerd configuration), downloads Trivy v0.76.2 with a pinned checksum, pulls `alpine:3.18.0`, downloads the Trivy database to `/var/cache/trivy-training` and stores its hashes in `/opt/astrona-live/db.sha256`. `testing/live.py` runs a fresh offline Trivy scan with sudo, compares the image ID, the targets and every vulnerability tuple with `/srv/scan/report.json`, and recomputes the decision. It refuses to grade with a database older than 72 hours.
+
+`vm/` holds the scripts astrona pipes into the VM; regenerate them with `python3 scripts/ci/vm-lab.py <this folder>` after you change a lab file. Run `astrona test` on this folder: `vm/install.sh` builds the cluster and runs `bootstrap/setup.sh` in the VM, `testing/verify-start.sh` checks that every outcome fails on the starting state, then `solution/apply.sh` applies the reference solution and every outcome must pass.

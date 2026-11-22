@@ -11,6 +11,7 @@ import unittest
 import yaml
 
 CHECKER = Path(__file__).with_name("check-course-structure.py")
+SHARED = Path(__file__).with_name("lab-files")
 MODULE = "sections/section-010/module-01"
 LAB = MODULE + "/labs/lab-01"
 LESSON = MODULE + "/course-01-discovery.md"
@@ -24,18 +25,23 @@ class CourseStructureTests(unittest.TestCase):
         script = self.root / "scripts/ci/check-course-structure.py"
         script.parent.mkdir(parents=True)
         shutil.copyfile(CHECKER, script)
+        shutil.copyfile(CHECKER.with_name("vm-lab.py"), script.with_name("vm-lab.py"))
+        shutil.copytree(SHARED, script.with_name("lab-files"))
         self.script = script
         self.write(LESSON, "# Discovery\n\n```sh\ninspect\n```\n")
-        self.write(LAB + "/question.md", "# Question\n\n1. Inspect the source.\n2. Repair discovery.\n3. Verify the targets.\n")
-        self.write(LAB + "/testing/verify-start.sh", "#!/bin/sh\nexit 0\n")
+        self.write(LAB + "/question.md", "# Question\n\nAllow about 10 minutes for the tasks.\n\n"
+                   "1. Inspect the source.\n2. Repair discovery.\n3. Verify the targets.\n")
+        for path, shared in (("testing/check.py", "check.py"), ("testing/verify-start.sh", "verify-start.sh"),
+                             ("testing/wait-solved.sh", "wait-solved.sh"),
+                             ("validation/validate-check.sh", "validate-outcome.sh")):
+            self.write(LAB + "/" + path, (SHARED / shared).read_text())
         self.write(LAB + "/solution/apply.sh", "#!/bin/sh\nexit 0\n")
-        self.write(LAB + "/validation/check.sh", "#!/bin/sh\nexit 0\n")
         self.config = {
             "metadata": {"name": "discovery", "docs": {"question": "question.md"}},
             "testing": {"init": [
                 {"type": "file", "source": "testing/verify-start.sh"},
                 {"type": "file", "source": "solution/apply.sh"}]},
-            "validation": {"scripts": [{"type": "file", "source": "validation/check.sh", "points": 1}]},
+            "validation": {"scripts": [{"name": "check", "type": "file", "source": "validation/validate-check.sh", "points": 1}]},
         }
         self.write_yaml(LAB + "/config.yaml", self.config)
         self.content = [
@@ -96,6 +102,23 @@ class CourseStructureTests(unittest.TestCase):
         self.config["testing"]["init"].reverse()
         self.write_yaml(LAB + "/config.yaml", self.config)
         self.assert_rejected("verify the starting state before the solution")
+
+    def test_changed_shared_file_fails(self):
+        self.write(LAB + "/testing/check.py", "print('PASS: every outcome')\n")
+        self.assert_rejected("testing/check.py differs from scripts/ci/lab-files/check.py")
+
+    def test_changed_grader_wrapper_fails(self):
+        self.write(LAB + "/validation/validate-check.sh", "#!/bin/sh\necho 'PASS: check'\n")
+        self.assert_rejected("differs from scripts/ci/lab-files/validate-outcome.sh")
+
+    def test_missing_time_line_fails(self):
+        self.write(LAB + "/question.md", "# Question\n\n1. Inspect the source.\n2. Repair discovery.\n")
+        self.assert_rejected("Allow about N minutes")
+
+    def test_qemu_lab_must_use_vm_wrappers(self):
+        self.config["runtime"] = {"type": "qemu"}
+        self.write_yaml(LAB + "/config.yaml", self.config)
+        self.assert_rejected("testing.init of a qemu lab must be")
 
     def test_runtime_collision_fails(self):
         playground = MODULE + "/playground"

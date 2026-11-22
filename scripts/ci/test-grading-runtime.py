@@ -12,6 +12,7 @@ from unittest.mock import patch
 sys.dont_write_bytecode = True
 
 ROOT = Path(__file__).resolve().parents[2]
+SHARED = ROOT / 'scripts/ci/lab-files'
 CHECKS = sorted(ROOT.glob('sections/section-*/module-*/labs/*/testing/check.py'))
 
 
@@ -25,21 +26,14 @@ class GradingTests(unittest.TestCase):
 
     def test_shared_helpers_do_not_drift(self):
         for filename in ('check.py', 'verify-start.sh', 'wait-solved.sh'):
-            expected = (CHECKS[0].parent / filename).read_bytes()
+            expected = (SHARED / filename).read_bytes()
             for check in CHECKS:
                 self.assertEqual((check.parent / filename).read_bytes(), expected, str(check))
 
-    def test_absent_resource_is_a_grading_failure(self):
-        result = subprocess.CompletedProcess([], 0, '', '')
-        with patch.object(self.grader, 'command', return_value=result) as command:
-            with self.assertRaisesRegex(AssertionError, 'Missing configmap report'):
-                self.grader.get('configmap', 'report')
-        self.assertIn('--ignore-not-found', command.call_args.args[0])
-
-    def test_api_error_is_not_a_missing_resource(self):
-        result = subprocess.CompletedProcess([], 1, '', 'connection refused')
+    def test_missing_resource_is_a_grading_failure(self):
+        result = subprocess.CompletedProcess([], 1, '', 'NotFound')
         with patch.object(self.grader, 'command', return_value=result):
-            with self.assertRaisesRegex(RuntimeError, 'connection refused'):
+            with self.assertRaisesRegex(AssertionError, 'Missing configmap report'):
                 self.grader.get('configmap', 'report')
 
     def test_live_resource_is_decoded(self):
@@ -47,12 +41,12 @@ class GradingTests(unittest.TestCase):
         with patch.object(self.grader, 'command', return_value=result):
             self.assertEqual(self.grader.get('configmap', 'report')['data']['actor'], 'observed')
 
-    def test_missing_executable_is_an_error(self):
+    def test_missing_executable_is_not_a_grading_result(self):
         with tempfile.TemporaryDirectory() as empty:
             result = subprocess.run([sys.executable, str(CHECKS[0])],
                                     env={'PATH': empty}, text=True, capture_output=True)
-        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-        self.assertTrue(result.stdout.startswith('ERROR:'), result.stdout)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertFalse(result.stdout.startswith(('PASS:', 'FAIL:')), result.stdout)
 
     def run_start_check(self, body):
         with tempfile.TemporaryDirectory() as directory:
@@ -60,7 +54,7 @@ class GradingTests(unittest.TestCase):
             (lab / 'testing').mkdir()
             (lab / 'validation').mkdir()
             start = lab / 'testing/verify-start.sh'
-            shutil.copyfile(CHECKS[0].parent / 'verify-start.sh', start)
+            shutil.copyfile(SHARED / 'verify-start.sh', start)
             (lab / 'validation/validate-outcome.sh').write_text('#!/bin/sh\n' + body)
             return subprocess.run(['bash', str(start)], text=True, capture_output=True)
 

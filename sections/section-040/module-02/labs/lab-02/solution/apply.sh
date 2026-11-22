@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
+# Reference solution: a full offline scan and the decision computed from it.
 set -euo pipefail
+context="${ASTRONA_KUBE_CONTEXT:-kubernetes-admin@astro-ats-035-lab-040-02-02}"
+if [[ "$(kubectl config current-context)" != "$context" ]]; then
+  printf 'Refusing to operate on another Kubernetes context\n' >&2
+  exit 1
+fi
 sudo trivy image --cache-dir /var/cache/trivy-training --skip-db-update --offline-scan --image-src docker --scanners vuln --format json --output /srv/scan/report.json alpine:3.18.0
 sudo python3 - <<'DECISION'
 import json,pathlib

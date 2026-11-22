@@ -1,11 +1,27 @@
 #!/usr/bin/env bash
+# Runs inside the lab VM from /opt/astrona-lab after vm/install.sh built the cluster.
+# Starting state: Docker with the cached gcc:15.2.0 image, the HTTP server
+# source in /srv/build/server.c and a one-stage Dockerfile that keeps the
+# compiler and runs as root. /opt/astrona-live/server.c is the grader's copy
+# of the source.
 set -euo pipefail
-sudo cloud-init status --wait >/dev/null
+context="${ASTRONA_KUBE_CONTEXT:-kubernetes-admin@astro-ats-035-lab-010-01-02}"
+if [[ "$(kubectl config current-context)" != "$context" ]]; then
+  printf 'Refusing to operate on another Kubernetes context\n' >&2
+  exit 1
+fi
+# cloud-init can still hold the package lock right after the VM starts.
+sudo cloud-init status --wait >/dev/null || true
 sudo apt-get update -qq
-sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq docker.io curl python3
+# The cluster already runs on the containerd package. Hold its version and
+# keep its configuration, so installing Docker does not restart the cluster.
+sudo apt-mark hold containerd >/dev/null
+sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+  -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold docker.io curl python3
 sudo systemctl enable --now docker
 sudo docker pull gcc:15.2.0
-sudo install -d -m 0777 /srv/build /opt/astrona-live
+sudo install -d -m 0777 /srv/build
+sudo install -d /opt/astrona-live
 sudo tee /srv/build/server.c >/dev/null <<'SOURCE'
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -33,56 +49,3 @@ ENTRYPOINT ["/server"]
 DOCKERFILE
 sudo chmod 0666 /srv/build/Dockerfile
 
-sudo install -d /opt/astrona-live
-sudo tee /opt/astrona-live/check.py >/dev/null <<'PY_CHECK'
-
-import io,json,pathlib,re,subprocess,sys,tarfile,time,urllib.request,uuid
-def run(args,timeout=60): return subprocess.run(args,text=True,capture_output=True,timeout=timeout)
-def check(outcome):
-    assert pathlib.Path('/srv/build/server.c').read_bytes()==pathlib.Path('/opt/astrona-live/server.c').read_bytes(), 'Preserve the supplied application source'
-    recipe=pathlib.Path('/srv/build/Dockerfile').read_text()
-    assert len(re.findall(r'^FROM\s',recipe,re.M|re.I))>=2 and re.search(r'^COPY\s+--from=',recipe,re.M|re.I), 'Use separate build and final stages'
-    build=run(['docker','build','--network=none','--no-cache','-t','training-built:graded','/srv/build'],timeout=180)
-    assert build.returncode==0, 'The Dockerfile must build without downloading dependencies: '+build.stderr[-300:]
-    spec=json.loads(run(['docker','image','inspect','training-built:graded']).stdout)[0]
-    assert spec['Size'] < 10*1024*1024, 'Keep the final image below 10 MiB'
-    assert spec['Config']['User'] in ('65532','65532:65532'), 'Set the image user to UID 65532'
-    container='build-proof-'+uuid.uuid4().hex[:8]
-    created=run(['docker','create','--name',container,'--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','-p','127.0.0.1::8080','training-built:graded'])
-    if created.returncode: raise RuntimeError(created.stderr)
-    try:
-        archive=subprocess.run(['docker','export',container],capture_output=True,timeout=30)
-        if archive.returncode: raise RuntimeError(archive.stderr.decode())
-        with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
-            names=[m.name.lstrip('./') for m in tar]
-        assert 'server' in names, 'Include the compiled server'
-        assert not any(n.endswith(('/gcc','/cc','/sh','/bash','server.c')) for n in names), 'Exclude compilers, shells and source from the final filesystem'
-        if outcome=='running-image':
-            start=run(['docker','start',container])
-            if start.returncode: raise RuntimeError(start.stderr)
-            address=run(['docker','port',container,'8080/tcp']).stdout.strip()
-            deadline=time.monotonic()+10
-            while True:
-                try:
-                    with urllib.request.urlopen('http://'+address,timeout=2) as reply: body=reply.read()
-                    break
-                except OSError:
-                    if time.monotonic()>deadline: raise AssertionError('The restricted container must serve HTTP')
-                    time.sleep(0.5)
-            assert body==b'built-service\n', 'Preserve the application response'
-            pid=json.loads(run(['docker','inspect',container]).stdout)[0]['State']['Pid']
-            status=pathlib.Path('/proc/'+str(pid)+'/status').read_text()
-            assert re.search(r'^Uid:\s+65532\s+65532\s+65532\s+65532$',status,re.M), 'The running process must have UID 65532'
-        elif outcome!='built-image': raise RuntimeError('Unknown outcome')
-    finally: run(['docker','rm','-f',container])
-
-if __name__ == '__main__':
-    try:
-        check(sys.argv[1])
-    except AssertionError as error:
-        print('FAIL:', error); sys.exit(1)
-    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
-        print('ERROR:', error); sys.exit(2)
-    print('PASS:', sys.argv[1])
-
-PY_CHECK
