@@ -4,7 +4,7 @@ exam_objectives:
 ---
 # Guided Practice: Decide A Scan Gate From Scan Results
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Use a host shell with the private kubeconfig for this module's playground kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
 
 <!-- astrona:playground:renew -->
 

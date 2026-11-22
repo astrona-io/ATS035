@@ -4,7 +4,7 @@ exam_objectives:
 ---
 # Require Image Digests In A Namespace Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Use a host shell with the private kubeconfig for this lab's kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-035-lab-030-02-01)"
@@ -96,7 +96,7 @@ kubectl get validatingadmissionpolicybinding require-digest -o jsonpath='{.spec.
 
 The policy needs a few seconds before it takes effect. Then send three pods through admission with `kubectl create --dry-run=server -f`. A pod with the image `docker.io/library/busybox:1.37.0` in `pinned-images-035-030-02-01` must fail with the policy message. A pod with the image `docker.io/library/busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa` must be accepted. The first pod must be accepted in the `starfleet-035-030-02-01` namespace, because the binding selects only labelled namespaces. The commands deliberately target one environment. No example command output is presented as evidence of a completed run. A matching field alone does not establish that the API server enforces it.
 
-After recording your result, remove the independent lab with `astrona destroy ats-035-lab-030-02-01`.
+After recording your result, remove the lab with `astrona destroy ats-035-lab-030-02-01`.
 
 ## Common pitfalls
 

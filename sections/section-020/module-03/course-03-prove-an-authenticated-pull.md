@@ -1,12 +1,12 @@
 # Prove An Image Pull Uses Registry Credentials
 
-A correctly shaped pull Secret does not prove that a kubelet used it. Test a fresh Pod against a registry that refuses anonymous access. The independent lab provides a local registry and a failed Pod so the credential change has an observable effect.
+A correctly shaped pull Secret does not prove that a kubelet used it. Test a fresh Pod against a registry that refuses anonymous access. The graded lab that follows this page provides a local registry and a failed Pod, so the credential change has an effect you can see.
 
 The registry account is disposable and the network is private to this environment. Its HTTP endpoint keeps certificate provisioning out of this exercise. Real deployments should use trusted TLS; image pull credentials alone do not encrypt a connection.
 
 <!-- astrona:playground:renew -->
 
-In the independent lab, inspect the supplied endpoint and image:
+In the lab's kind cluster, inspect the supplied endpoint and image:
 
 ```sh
 namespace=starfleet-035-020-03-01

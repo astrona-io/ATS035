@@ -14,7 +14,7 @@ Allow about 6 minutes for the tasks. Cluster startup adds time.
 
 The isolated environment has two healthy probe replicas, an internal Service and two client Pods. The namespace `hangar-035-040-03-01` exists without Pod Security Admission labels, so every pod is accepted there.
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Use a host shell with the private kubeconfig for this lab's kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-035-lab-040-03-01)"

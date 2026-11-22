@@ -104,7 +104,7 @@ PYTHON
 
 The package-version split follows the Alpine package lines used by this exercise. Check names containing dashes and retain the release suffix. The subject in `image-id.txt`, the count and the full JSON must all describe the same inventory. A correct count cannot compensate for a missing package or an incorrect version.
 
-A ConfigMap can carry the file without shell-quoting JSON: `kubectl create configmap <name> --from-file=bom=bom.json --from-file=subject=image-id.txt`. Add the other task-specific scalar keys with `--from-literal`. In the independent lab, select its kubeconfig and use its namespace before collecting evidence. The document's scope is installed Alpine packages; it does not claim the Python packages or every file in the image.
+A ConfigMap can carry the file without shell-quoting JSON: `kubectl create configmap <name> --from-file=bom=bom.json --from-file=subject=image-id.txt`. Add the other task-specific scalar keys with `--from-literal`. A graded lab has its own kubeconfig and namespace, so select both before you collect evidence. The document's scope is installed Alpine packages; it does not claim the Python packages or every file in the image.
 
 ## Common pitfalls
 

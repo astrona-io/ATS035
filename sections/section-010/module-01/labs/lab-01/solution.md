@@ -4,7 +4,7 @@ exam_objectives:
 ---
 # Serve Content With A Minimal Runtime Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Use a host shell with the private kubeconfig for this lab's kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-035-lab-010-01-01)"
@@ -84,7 +84,7 @@ kubectl -n starfleet-035-010-01-01 wait --for=condition=Ready pod/minimal-server
 
 Select an image providing only the required HTTP process and verify its running contents. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required denial or correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.
 
-After recording your result, remove the independent lab with `astrona destroy ats-035-lab-010-01-01`.
+After recording your result, remove the lab with `astrona destroy ats-035-lab-010-01-01`.
 
 ## Common pitfalls
 

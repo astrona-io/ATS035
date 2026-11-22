@@ -4,7 +4,7 @@ exam_objectives:
 ---
 # Decide A Scan Gate From Scan Results Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Use a host shell with the private kubeconfig for this lab's kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-035-lab-040-02-01)"
@@ -105,7 +105,7 @@ kubectl -n starfleet-035-040-02-01 get configmap scan-gate -o jsonpath='{.data}'
 
 Compute a release gate decision from supplied Trivy-style scan results and record it. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required result. A matching field alone does not establish that a controller reconciled it.
 
-After recording your result, remove the independent environment with `astrona destroy ats-035-lab-040-02-01`.
+After recording your result, remove the lab with `astrona destroy ats-035-lab-040-02-01`.
 
 ## Common pitfalls
 

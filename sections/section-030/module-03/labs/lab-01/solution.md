@@ -4,7 +4,7 @@ exam_objectives:
 ---
 # Enforce A Registry Policy And Attach Pull Credentials Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Use a host shell with the private kubeconfig for this lab's kind cluster. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-035-lab-030-03-01)"
@@ -80,7 +80,7 @@ kubectl -n gated-images-035-030-03-01 get secret registry-credentials -o jsonpat
 
 The binding needs a few seconds before it takes effect. Then send a pod with the image `unapproved.example/reader:v1` through `kubectl create --dry-run=server`; it must fail with the policy message. Send a pod with the image `docker.io/library/busybox:1.37.0` and `serviceAccountName: deployer` with `-o json`; the accepted object lists `registry-credentials` under `imagePullSecrets`, which the ServiceAccount admission plugin copies from the ServiceAccount. The commands deliberately target one environment. No example command output is presented as evidence of a completed run.
 
-After recording your result, remove the independent lab with `astrona destroy ats-035-lab-030-03-01`.
+After recording your result, remove the lab with `astrona destroy ats-035-lab-030-03-01`.
 
 ## Common pitfalls
 
