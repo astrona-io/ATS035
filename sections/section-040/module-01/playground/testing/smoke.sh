@@ -273,4 +273,50 @@ expect 'analyzed-reader runs as the non-root user' "$(kubectl -n starfleet exec 
 expect 'analyzed-reader has a read-only root filesystem' "$(kubectl -n starfleet exec analyzed-reader -- touch /blocked 2>&1 || true)" 'Read-only file system'
 expect 'the playground grader passes after the guide steps' "$(bash "$playground_directory/validate.sh" 2>&1)" 'Required resource contract and behavior verified'
 
+# Kubesec lab solution: run the solution's scan on the lab objects and print
+# the lines that the solution quotes. The lab namespaces exist only for this
+# check and are removed at the end.
+lab=labs/lab-03
+solution_page="$module_directory/$lab/solution.md"
+kubesec_scan="$(python3 - "$solution_page" <<'PY'
+import re, sys
+blocks = re.findall(r'```sh\n(.*?)```', open(sys.argv[1]).read(), re.S)
+scans = {block for block in blocks if 'kubesec scan -' in block}
+assert len(scans) == 1, 'the solution must show one scan command'
+print(scans.pop().rstrip('\n'))
+PY
+)"
+solution_yaml="$(python3 - "$solution_page" <<'PY'
+import re, sys
+text = open(sys.argv[1]).read()
+print(re.search(r'Save this as `deployment-score-probe.yaml`:\s*```yaml\n(.*?)```', text, re.S).group(1), end='')
+PY
+)"
+expect_equal 'the solution page shows the YAML that the lab solution applies' "$solution_yaml" "$(cat "$module_directory/$lab/solution/deployment-score-probe.yaml")"
+kubectl apply -f "$module_directory/$lab/bootstrap/manifests/start.yaml"
+kubectl -n starfleet-035-040-01-03 wait --for=condition=Ready pod/scanner --timeout=180s
+kubectl -n starfleet-035-040-01-03 rollout status deployment/score-probe --timeout=180s
+printf '$ %s\n' "$kubesec_scan" >&2
+weak_report="$(eval "$kubesec_scan" || true)"
+printf '%s\n' "$weak_report"
+weak_message="$(jq -r '.message' <<<"$weak_report")"
+printf 'Kubesec message for the starting Deployment: %s\n' "$weak_message"
+expect_equal 'the solution quotes the failing message that Kubesec printed' "$(grep -o 'Failed with a score of -\?[0-9]* points' "$solution_page" | sort -u)" "$weak_message"
+expect_equal 'the critical list holds Privileged' "$(jq -r '.critical | join(",")' <<<"$weak_report")" Privileged
+for rule in RunAsNonRoot RunAsUser ReadOnlyRootFilesystem CapDropAll; do
+  expect "the first advise list names $rule" "$(jq -r '.advise | join(",")' <<<"$weak_report")" "$rule"
+done
+kubectl apply -f "$module_directory/$lab/solution/deployment-score-probe.yaml"
+kubectl -n starfleet-035-040-01-03 rollout status deployment/score-probe --timeout=180s
+printf '$ %s\n' "$kubesec_scan" >&2
+fixed_report="$(eval "$kubesec_scan")"
+printf '%s\n' "$fixed_report"
+fixed_message="$(jq -r '.message' <<<"$fixed_report")"
+printf 'Kubesec message for the fixed Deployment: %s\n' "$fixed_message"
+expect_equal 'the solution quotes the passing message that Kubesec printed' "$(grep -o 'Passed with a score of [0-9]* points' "$solution_page" | sort -u)" "$fixed_message"
+expect_equal 'the solution records the same score' "$(grep -o 'score=[0-9]*$' "$solution_page" | sort -u)" "score=$(jq -r '.score' <<<"$fixed_report")"
+expect_equal 'the critical list is empty' "$(jq -r '.critical | length' <<<"$fixed_report")" 0
+expect_equal 'the advise list holds the three rules that the solution names' "$(jq -r '.advise | sort | join(",")' <<<"$fixed_report")" 'ApparmorAny,HostUsers,ServiceAccountName'
+kubectl delete namespace starfleet-035-040-01-03 outpost-035-040-01-03 --wait=false
+
 printf 'PASS: every page command gave the expected result (%s checks)\n' "$checks"

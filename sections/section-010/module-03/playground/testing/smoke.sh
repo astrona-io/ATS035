@@ -177,6 +177,33 @@ expect 'the events say that the image is not present with a pull policy of Never
 expect_no 'the node never contacted a registry' "$never_events" 'Pulling image'
 page_run "$page" 'kubectl -n starfleet delete pod never-pull'
 
+# Resource budgets and a Service
+page=course-03-resource-budgets-and-a-service-for-a-small-image.md
+probe_resources="$(page_run "$page" "kubectl -n starfleet get deployment probe -o jsonpath='{.spec.template.spec.containers[0].resources}{\"\n\"}'")"
+printf '%s\n' "$probe_resources"
+expect_equal 'the probe container has the requests and the memory limit that the page names' "$(jq -c . <<<"$probe_resources")" '{"limits":{"memory":"128Mi"},"requests":{"cpu":"10m","memory":"32Mi"}}'
+text_from_page "$page" '`10m` of CPU' >/dev/null
+text_from_page "$page" 'at most `128Mi` of memory' >/dev/null
+save_from_page "$page" deployment-tiny-web.yaml
+rollout="$(page_run "$page" 'kubectl -n starfleet rollout status deployment/tiny-web --timeout=120s')"
+printf '%s\n' "$rollout"
+expect 'the rollout completes' "$rollout" 'deployment "tiny-web" successfully rolled out'
+qos="$(page_run "$page" "kubectl -n starfleet get pod -l app=tiny-web -o jsonpath='{.items[0].status.qosClass}{\"\n\"}'")"
+printf '%s\n' "$qos"
+expect_equal 'the pod is Burstable' "$qos" "$(text_from_page "$page" Burstable)"
+memory_max="$(page_run "$page" 'kubectl -n starfleet exec deploy/tiny-web -- cat /sys/fs/cgroup/memory.max')"
+printf '%s\n' "$memory_max"
+expect_equal 'the cgroup holds the 64Mi limit in bytes' "$memory_max" "$(text_from_page "$page" 67108864)"
+save_from_page "$page" service-tiny-web.yaml
+slices="$(wait_for_output 8080 kubectl -n starfleet get endpointslices -l kubernetes.io/service-name=tiny-web)"
+on_page "$page" 'kubectl -n starfleet get endpointslices -l kubernetes.io/service-name=tiny-web'
+printf '%s\n' "$slices"
+expect 'the EndpointSlice lists port 8080' "$slices" 8080
+expect 'the EndpointSlice lists the pod IP address' "$slices" "$(kubectl -n starfleet get pod -l app=tiny-web -o jsonpath='{.items[0].status.podIP}')"
+page_body="$(page_run "$page" 'kubectl -n starfleet exec shuttle -- wget -qO- http://tiny-web')"
+printf '%s\n' "$page_body"
+expect_equal 'the shuttle pod gets the page through the Service name' "$page_body" "$(text_from_page "$page" tiny-web-version=v1)"
+
 # Playground guide
 page=playground/docs/overview.md
 shuttle_id="$(page_run "$page" "kubectl -n starfleet get pod shuttle -o jsonpath='{.status.containerStatuses[0].imageID}{\"\n\"}'")"

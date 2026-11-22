@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: starfleet-035-010-03-03
+  labels:
+    project: starfleet-035-010-03-03
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: outpost-035-010-03-03
+  labels:
+    project: outpost-035-010-03-03
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shuttle
+  namespace: starfleet-035-010-03-03
+  labels:
+    app: shuttle
+spec:
+  restartPolicy: Never
+  containers:
+  - name: client
+    image: docker.io/library/busybox:1.37.0
+    command:
+    - sh
+    - -c
+    - while true; do sleep 3600; done
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drifter
+  namespace: outpost-035-010-03-03
+  labels:
+    app: drifter
+spec:
+  restartPolicy: Never
+  containers:
+  - name: client
+    image: docker.io/library/busybox:1.37.0
+    command:
+    - sh
+    - -c
+    - sleep 3600

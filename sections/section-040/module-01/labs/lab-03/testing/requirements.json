@@ -1,0 +1,30 @@
+{
+  "context": "kind-astro-ats-035-lab-040-01-03",
+  "cluster": "astro-ats-035-lab-040-01-03",
+  "namespace": "starfleet-035-040-01-03",
+  "resources": [
+    {
+      "kind": "pod",
+      "name": "scanner",
+      "namespace": "starfleet-035-040-01-03",
+      "expected": {
+        "spec": {
+          "containers": [
+            {
+              "name": "kubesec",
+              "image": "docker.io/kubesec/kubesec:v2.15.0",
+              "command": [
+                "sh",
+                "-c",
+                "while true; do sleep 3600; done"
+              ]
+            }
+          ],
+          "automountServiceAccountToken": false
+        }
+      },
+      "state": "pod"
+    }
+  ],
+  "behavior": []
+}

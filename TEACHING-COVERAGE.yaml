@@ -83,6 +83,22 @@ labs:
   sections/section-040/module-03/labs/lab-02:
     preparation:
     - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+  sections/section-010/module-03/labs/lab-03:
+    preparation:
+    - sections/section-010/module-03/course-03-resource-budgets-and-a-service-for-a-small-image.md
+  sections/section-020/module-01/labs/lab-03:
+    preparation:
+    - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
+    - sections/section-020/module-01/course-05-make-an-sbom-of-a-running-image-in-the-cluster.md
+  sections/section-040/module-01/labs/lab-03:
+    preparation:
+    - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
+  sections/section-040/module-03/labs/lab-03:
+    preparation:
+    - sections/section-040/module-03/course-01-the-pod-security-standards.md
+    - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
+    - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+    - sections/section-040/module-03/course-04-release-a-workload-through-analysis-a-scan-gate-and-restricted-admission.md
 additional_readings:
 - sections/section-010/module-01/course-02-multi-stage-builds-and-minimal-base-images.md
 - sections/section-010/module-01/course-03-hardening-a-dockerfile.md

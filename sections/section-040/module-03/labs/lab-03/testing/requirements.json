@@ -1,0 +1,107 @@
+{
+  "context": "kind-astro-ats-035-lab-040-03-03",
+  "cluster": "astro-ats-035-lab-040-03-03",
+  "namespace": "starfleet-035-040-03-03",
+  "resources": [
+    {
+      "kind": "configmap",
+      "name": "analysis-source",
+      "namespace": "starfleet-035-040-03-03",
+      "expected": {
+        "data": {
+          "workload.json": "{\"apiVersion\": \"v1\", \"kind\": \"Pod\", \"metadata\": {\"name\": \"unsafe-source\", \"namespace\": \"starfleet-035-040-03-03\"}, \"spec\": {\"containers\": [{\"command\": [\"sh\", \"-c\", \"sleep 3600\"], \"image\": \"docker.io/library/busybox:latest\", \"name\": \"reader\", \"securityContext\": {\"privileged\": true}}], \"restartPolicy\": \"Never\"}}"
+        }
+      }
+    },
+    {
+      "kind": "configmap",
+      "name": "scan-results",
+      "namespace": "starfleet-035-040-03-03",
+      "expected": {
+        "data": {
+          "results.json": "{\n  \"ArtifactName\": \"docker.io/library/python:3.13-alpine\",\n  \"Results\": [\n    {\n      \"Target\": \"fixture-os-packages\",\n      \"Vulnerabilities\": [\n        {\n          \"VulnerabilityID\": \"FIXTURE-0001\",\n          \"PkgName\": \"libexample\",\n          \"InstalledVersion\": \"1.0.0\",\n          \"FixedVersion\": \"1.0.1\",\n          \"Severity\": \"CRITICAL\"\n        },\n        {\n          \"VulnerabilityID\": \"FIXTURE-0002\",\n          \"PkgName\": \"libsample\",\n          \"InstalledVersion\": \"2.3.3\",\n          \"FixedVersion\": \"2.3.4\",\n          \"Severity\": \"HIGH\"\n        },\n        {\n          \"VulnerabilityID\": \"FIXTURE-0003\",\n          \"PkgName\": \"libunfixed\",\n          \"InstalledVersion\": \"4.1.0\",\n          \"FixedVersion\": \"\",\n          \"Severity\": \"CRITICAL\"\n        },\n        {\n          \"VulnerabilityID\": \"FIXTURE-0004\",\n          \"PkgName\": \"libminor\",\n          \"InstalledVersion\": \"0.9.0\",\n          \"FixedVersion\": \"0.9.1\",\n          \"Severity\": \"LOW\"\n        },\n        {\n          \"VulnerabilityID\": \"FIXTURE-0005\",\n          \"PkgName\": \"libwaived\",\n          \"InstalledVersion\": \"5.0.0\",\n          \"FixedVersion\": \"5.0.1\",\n          \"Severity\": \"HIGH\"\n        }\n      ]\n    }\n  ]\n}\n"
+        }
+      }
+    },
+    {
+      "kind": "configmap",
+      "name": "scan-exceptions",
+      "namespace": "starfleet-035-040-03-03",
+      "expected": {
+        "data": {
+          "trivyignore.txt": "# Accepted by the platform team until the next base image rebuild.\nFIXTURE-0005\n"
+        }
+      }
+    },
+    {
+      "kind": "namespace",
+      "name": "starfleet-035-040-03-03",
+      "namespace": "",
+      "expected": {
+        "metadata": {
+          "labels": {
+            "pod-security.kubernetes.io/enforce": "restricted",
+            "pod-security.kubernetes.io/enforce-version": "v1.35",
+            "pod-security.kubernetes.io/warn": "restricted",
+            "pod-security.kubernetes.io/audit": "restricted"
+          }
+        }
+      },
+      "outcome": "restricted-namespace"
+    },
+    {
+      "kind": "configmap",
+      "name": "analysis-findings",
+      "namespace": "starfleet-035-040-03-03",
+      "expected": {
+        "data": {
+          "privileged": "true",
+          "runAsNonRoot": "missing",
+          "allowPrivilegeEscalation": "missing",
+          "imageTag": "latest"
+        }
+      },
+      "outcome": "analysis-findings"
+    },
+    {
+      "kind": "pod",
+      "name": "corrected-reader",
+      "namespace": "starfleet-035-040-03-03",
+      "expected": {
+        "spec": {
+          "restartPolicy": "Never",
+          "securityContext": {
+            "runAsNonRoot": true,
+            "runAsUser": 1000,
+            "runAsGroup": 1000,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "containers": [
+            {
+              "name": "reader",
+              "image": "docker.io/library/busybox:1.37.0",
+              "command": [
+                "sh",
+                "-c",
+                "sleep 3600"
+              ],
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "state": "pod",
+      "outcome": "corrected-reader"
+    }
+  ],
+  "behavior": []
+}

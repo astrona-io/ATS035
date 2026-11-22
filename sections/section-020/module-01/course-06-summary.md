@@ -16,6 +16,8 @@ Trivy matches the components of an image or an SBOM with a vulnerability databas
 
 A pipeline needs short-lived credentials, least privilege, isolated runners, pinned inputs, reviewed definitions and secrets kept out of logs and layers. The best practice is to build once and promote the same digest. A registry needs private repositories, a read-only credential for nodes, immutable tags and separate repositories for candidate and release images. A cluster authenticates to a private registry with a `kubernetes.io/dockerconfigjson` Secret that a pod or ServiceAccount lists in `imagePullSecrets`. Base64 is not encryption, so RBAC decides who can read it.
 
+An SBOM can also be made inside the cluster. A Job copies the root file system of the running image into an `emptyDir` volume with an init container, and a pinned Syft image scans that folder. The CycloneDX document names the Syft version under `metadata.tools.components`, and the image ID of the init container ties the document to the content that runs.
+
 - Record digests, not tags.
 - An SBOM lists components; a scan reports known problems at one time.
 - SPDX and CycloneDX are the standard SBOM formats.

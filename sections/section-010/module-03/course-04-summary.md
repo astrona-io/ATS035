@@ -14,9 +14,12 @@ The `imagePullPolicy` field decides when a node pulls. `IfNotPresent` pulls when
 
 An image is a copy of its base image at build time, so a fix in the base reaches a workload only after a rebuild, a new digest and a redeployment. Rebuild on a schedule and when a scanner reports a fixed vulnerability, and pull the base explicitly so a cache does not repeat old content. A size budget, a `.dockerignore` file and registry retention rules keep images small and remove old builds. An immutable-tag setting stops a tag from moving.
 
+A running container needs a budget as well. The scheduler places a pod by its CPU and memory requests, and the kubelet passes the limits to the container runtime, which writes them into the Linux control group (cgroup) of the container. A container at its CPU limit is slowed down, and a container past its memory limit loses a process to the kernel with the reason `OOMKilled`. A pod with requests and only a memory limit has the quality of service (QoS) class `Burstable`. A Service gives the pods of a Deployment one stable name and virtual IP address, and a `targetPort` that names a container port follows that name when the port number changes.
+
 - Run by digest when exact content matters, and update the digest by pull request.
 - Rebuild on a schedule and on a fixed vulnerability.
 - Keep a size budget and remove unneeded files from the build context.
 - Delete old images from the registry and make tags immutable.
+- Set CPU and memory requests and a memory limit on every workload, and reach it through a Service.
 
 <!-- astrona:playground:destroy -->

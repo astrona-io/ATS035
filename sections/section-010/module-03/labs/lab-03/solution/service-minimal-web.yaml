@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minimal-web
+  namespace: starfleet-035-010-03-03
+spec:
+  selector:
+    app: minimal-web
+  ports:
+  - name: http
+    port: 80
+    targetPort: http

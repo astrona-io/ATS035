@@ -188,8 +188,27 @@ modules:
     title: "Choose An Image Pull Policy From What The Node Holds \u2014 Solution"
     path: sections/section-010/module-03/labs/lab-02/solution.md
   - type: reading
+    title: Resource Budgets And A Service For A Small Image
+    path: sections/section-010/module-03/course-03-resource-budgets-and-a-service-for-a-small-image.md
+  - type: reading
+    title: "Run A Pinned Web Server With A Resource Budget And A Service \u2014 Task"
+    path: sections/section-010/module-03/labs/lab-03/question.md
+  - type: lab
+    title: Run A Pinned Web Server With A Resource Budget And A Service
+    path: sections/section-010/module-03/labs/lab-03
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 12m
+    learning_goals:
+    - The minimal-web Deployment runs httpd from the BusyBox digest of the shuttle pod on the named port http
+    - The web container requests CPU and memory and its cgroup enforces a 64Mi memory limit
+    - The shuttle pod reaches minimal-web through a Service on port 80 that targets the named port http
+  - type: reading
+    title: "Run A Pinned Web Server With A Resource Budget And A Service \u2014 Solution"
+    path: sections/section-010/module-03/labs/lab-03/solution.md
+  - type: reading
     title: Summary
-    path: sections/section-010/module-03/course-03-summary.md
+    path: sections/section-010/module-03/course-04-summary.md
   - type: quiz
     title: 'Knowledge Check: Keep Images Small And Fresh Over Time'
     path: sections/section-010/module-03/quiz.yaml
@@ -257,8 +276,27 @@ modules:
     title: CI/CD Pipelines And Artifact Repositories
     path: sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
   - type: reading
+    title: Make An SBOM Of A Running Image In The Cluster
+    path: sections/section-020/module-01/course-05-make-an-sbom-of-a-running-image-in-the-cluster.md
+  - type: reading
+    title: "Make An SBOM Of A Running Image With Syft \u2014 Task"
+    path: sections/section-020/module-01/labs/lab-03/question.md
+  - type: lab
+    title: Make An SBOM Of A Running Image With Syft
+    path: sections/section-020/module-01/labs/lab-03
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 15m
+    learning_goals:
+    - A Job runs Syft 1.57.0 in the cluster on the files of the exact image digest that the probe pods run
+    - The stored CycloneDX SBOM lists every installed Alpine package of the running image
+    - The SBOM is stored with the image ID of a ready probe container
+  - type: reading
+    title: "Make An SBOM Of A Running Image With Syft \u2014 Solution"
+    path: sections/section-020/module-01/labs/lab-03/solution.md
+  - type: reading
     title: Summary
-    path: sections/section-020/module-01/course-05-summary.md
+    path: sections/section-020/module-01/course-06-summary.md
   - type: reading
     title: Generate And Read Software Bills Of Materials
     path: sections/section-020/module-02/course.md
@@ -564,6 +602,22 @@ modules:
     title: Scanning Manifests With Kubesec
     path: sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
   - type: reading
+    title: "Score A Live Deployment With Kubesec \u2014 Task"
+    path: sections/section-040/module-01/labs/lab-03/question.md
+  - type: lab
+    title: Score A Live Deployment With Kubesec
+    path: sections/section-040/module-01/labs/lab-03
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 12m
+    learning_goals:
+    - Kubesec in the cluster reports no critical finding and a score of at least 10 for the live score-probe Deployment
+    - The kubesec-report ConfigMap records the current Kubesec score of the live Deployment
+    - The hardened rollout runs busybox 1.37.0 as user 10001 with a read-only root file system
+  - type: reading
+    title: "Score A Live Deployment With Kubesec \u2014 Solution"
+    path: sections/section-040/module-01/labs/lab-03/solution.md
+  - type: reading
     title: Linting Manifests With KubeLinter
     path: sections/section-040/module-01/course-03-linting-manifests-with-kubelinter.md
   - type: reading
@@ -712,8 +766,28 @@ modules:
     title: "Enforce The Restricted Pod Security Standard \u2014 Solution"
     path: sections/section-040/module-03/labs/lab-01/solution.md
   - type: reading
+    title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
+    path: sections/section-040/module-03/course-04-release-a-workload-through-analysis-a-scan-gate-and-restricted-admission.md
+  - type: reading
+    title: "Release A Workload Through Analysis, A Scan Gate And Restricted Admission \u2014 Task"
+    path: sections/section-040/module-03/labs/lab-03/question.md
+  - type: lab
+    title: Release A Workload Through Analysis, A Scan Gate And Restricted Admission
+    path: sections/section-040/module-03/labs/lab-03
+    examScope: namespace
+    difficulty: intermediate
+    estimated_duration: 15m
+    learning_goals:
+    - The namespace enforces the restricted standard and rejects the unsafe document in a server-side dry run
+    - The static findings, including the image tag, are recorded from the workload document
+    - The scan gate separates blocking, waived and unfixed findings
+    - The corrected reader pod meets the restricted standard and is ready
+  - type: reading
+    title: "Release A Workload Through Analysis, A Scan Gate And Restricted Admission \u2014 Solution"
+    path: sections/section-040/module-03/labs/lab-03/solution.md
+  - type: reading
     title: Summary
-    path: sections/section-040/module-03/course-04-summary.md
+    path: sections/section-040/module-03/course-05-summary.md
   - type: quiz
     title: 'Knowledge Check: Enforce Workload Standards With Pod Security Admission'
     path: sections/section-040/module-03/quiz.yaml

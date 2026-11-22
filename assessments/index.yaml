@@ -16,7 +16,7 @@ banks:
   question_count: 10
   placement:
     position: after
-    reading: sections/section-010/module-03/course-03-summary.md
+    reading: sections/section-010/module-03/course-04-summary.md
   covered_sections:
   - section-010
 - id: ats035-020-02
@@ -64,7 +64,7 @@ banks:
   question_count: 10
   placement:
     position: after
-    reading: sections/section-040/module-03/course-04-summary.md
+    reading: sections/section-040/module-03/course-05-summary.md
   covered_sections:
   - section-040
 - id: ats035-final
@@ -72,7 +72,7 @@ banks:
   question_count: 12
   placement:
     position: after
-    reading: sections/section-040/module-03/course-04-summary.md
+    reading: sections/section-040/module-03/course-05-summary.md
   covered_sections:
   - section-010
   - section-020

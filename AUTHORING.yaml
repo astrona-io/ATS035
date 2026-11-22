@@ -116,15 +116,19 @@ sections:
     - Explain digest pin maintenance with update tools.
     - Explain imagePullPolicy defaults and behavior.
     - Describe rebuild rules, size budgets and registry retention.
+    - Set CPU and memory requests and a memory limit and reach a Deployment through a Service with a named target port.
     outline:
     - Pin Images By Digest And Keep The Pin Current
     - Pull Policy, Rebuild Cadence And Size Budgets
+    - Resource Budgets And A Service For A Small Image
     playground: true
     module_lab: true
     sources:
     - reading: sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
       adapted_from: null
     - reading: sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+      adapted_from: null
+    - reading: sections/section-010/module-03/course-03-resource-budgets-and-a-service-for-a-small-image.md
       adapted_from: null
     labs:
     - id: lab-01
@@ -140,9 +144,16 @@ sections:
         a Deployment ask the registry on every container start and confirm the pull in the pod events.
       status: alpha
       runtime_verification: passed
+    - id: lab-03
+      path: sections/section-010/module-03/labs/lab-03
+      after_reading: sections/section-010/module-03/course-03-resource-budgets-and-a-service-for-a-small-image.md
+      objective: Run a minimal BusyBox web server pinned to the digest of the shuttle pod, with CPU and memory requests and a 64Mi memory limit, and reach it through a Service on port 80 that targets the named port http.
+      status: alpha
+      runtime_verification: passed
     practice_readings:
     - sections/section-010/module-03/course-01-pin-images-by-digest-and-keep-the-pin-current.md
     - sections/section-010/module-03/course-02-pull-policy-rebuild-cadence-and-size-budgets.md
+    - sections/section-010/module-03/course-03-resource-budgets-and-a-service-for-a-small-image.md
 - id: section-020
   title: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
   curriculum_item: Understand your supply chain (e.g. SBOM, CI/CD, artifact repositories)
@@ -161,6 +172,7 @@ sections:
     - Software Bills Of Materials With Syft
     - Vulnerability Scanning With Trivy
     - CI/CD Pipelines And Artifact Repositories
+    - Make An SBOM Of A Running Image In The Cluster
     playground: true
     module_lab: true
     sources:
@@ -171,6 +183,8 @@ sections:
     - reading: sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
       adapted_from: null
     - reading: sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
+      adapted_from: null
+    - reading: sections/section-020/module-01/course-05-make-an-sbom-of-a-running-image-in-the-cluster.md
       adapted_from: null
     labs:
     - id: lab-01
@@ -186,11 +200,18 @@ sections:
         that the runtime resolved.
       status: alpha
       runtime_verification: passed
+    - id: lab-03
+      path: sections/section-020/module-01/labs/lab-03
+      after_reading: sections/section-020/module-01/course-05-make-an-sbom-of-a-running-image-in-the-cluster.md
+      objective: Make a CycloneDX SBOM of the running probe image with a pinned Syft image in a Job, and store it with the runtime image ID.
+      status: alpha
+      runtime_verification: passed
     practice_readings:
     - sections/section-020/module-01/course-01-stages-trust-boundaries-and-evidence.md
     - sections/section-020/module-01/course-02-software-bills-of-materials-with-syft.md
     - sections/section-020/module-01/course-03-vulnerability-scanning-with-trivy.md
     - sections/section-020/module-01/course-04-ci-cd-pipelines-and-artifact-repositories.md
+    - sections/section-020/module-01/course-05-make-an-sbom-of-a-running-image-in-the-cluster.md
   - id: module-02
     title: Generate And Read Software Bills Of Materials
     objectives:
@@ -440,6 +461,12 @@ sections:
         runs busybox 1.37.0 as user 10001
       status: alpha
       runtime_verification: passed
+    - id: lab-03
+      path: sections/section-040/module-01/labs/lab-03
+      after_reading: sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
+      objective: Scan a live Deployment with a pinned Kubesec image in the cluster, fix it to a score of at least 10 with no critical finding, and record the score.
+      status: alpha
+      runtime_verification: passed
     practice_readings:
     - sections/section-040/module-01/course-01-what-static-analysis-can-and-cannot-show.md
     - sections/section-040/module-01/course-02-scanning-manifests-with-kubesec.md
@@ -498,6 +525,7 @@ sections:
     - The Pod Security Standards
     - Namespace Labels, Modes And Versions
     - Meeting The Restricted Standard, Exemptions And Limits
+    - Release A Workload Through Analysis, A Scan Gate And Restricted Admission
     playground: true
     module_lab: true
     sources:
@@ -506,6 +534,8 @@ sections:
     - reading: sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
       adapted_from: null
     - reading: sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+      adapted_from: null
+    - reading: sections/section-040/module-03/course-04-release-a-workload-through-analysis-a-scan-gate-and-restricted-admission.md
       adapted_from: null
     labs:
     - id: lab-01
@@ -523,7 +553,14 @@ sections:
         workload rolls out while the existing non-compliant pod keeps running
       status: alpha
       runtime_verification: passed
+    - id: lab-03
+      path: sections/section-040/module-03/labs/lab-03
+      after_reading: sections/section-040/module-03/course-04-release-a-workload-through-analysis-a-scan-gate-and-restricted-admission.md
+      objective: Record the analysis findings and the scan gate of a workload, enforce the restricted Pod Security Standard on the namespace, and run a corrected pod.
+      status: alpha
+      runtime_verification: passed
     practice_readings:
     - sections/section-040/module-03/course-01-the-pod-security-standards.md
     - sections/section-040/module-03/course-02-namespace-labels-modes-and-versions.md
     - sections/section-040/module-03/course-03-meeting-restricted-exemptions-and-limits.md
+    - sections/section-040/module-03/course-04-release-a-workload-through-analysis-a-scan-gate-and-restricted-admission.md
