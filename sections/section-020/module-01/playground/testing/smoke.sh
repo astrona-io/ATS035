@@ -1,19 +1,206 @@
 #!/usr/bin/env bash
+# Runs the commands that the module pages and the playground guide teach and
+# fails when one of them does not give the result the page describes.
+# Every command is first looked up on its page and then run exactly as the
+# page writes it, and every YAML file comes from the page, so the pages and
+# this test cannot drift apart. scripts/ci/test-playground.sh runs it with
+# KUBECONFIG set to the playground cluster.
 set -euo pipefail
-context="${ASTRONA_KUBE_CONTEXT:-kind-astro-ats-035-playground-020-01}"
+# Keep set -e inside $(...), so a failed page lookup also stops a captured command.
+shopt -s inherit_errexit 2>/dev/null || true
+cluster_name=astro-ats-035-playground-020-01
+context="${ASTRONA_KUBE_CONTEXT:-kind-$cluster_name}"
 if [[ "$(kubectl config current-context)" != "$context" ]]; then
   printf 'Refusing to operate on another Kubernetes context\n' >&2
   exit 1
 fi
-lab_directory="$(cd "$(dirname "$0")/.." && pwd)"
-if bash "$lab_directory/validate.sh"; then
-  printf 'Starting state unexpectedly passes grading\n' >&2
+engine="${ASTRONA_CONTAINER_ENGINE:-podman}"
+module_directory="$(cd "$(dirname "$0")/../.." && pwd)"
+playground_directory="$module_directory/playground"
+work_directory="$(mktemp -d)"
+trap 'rm -rf "$work_directory"' EXIT
+# The pages save files in the current folder, so work in an empty one.
+cd "$work_directory"
+node_name="$cluster_name-control-plane"
+worker_name="$cluster_name-worker"
+
+# The pages run node commands as `podman exec "$worker_name" ...`. The kind
+# nodes run on the engine named in ASTRONA_CONTAINER_ENGINE (Docker in CI), so
+# send an exec on a node of this cluster there. Every other podman command runs
+# the real podman.
+podman() {
+  if [[ "${1:-}" == exec && "${2:-}" == "$cluster_name"-* ]]; then
+    command "$engine" "$@"
+  else
+    command podman "$@"
+  fi
+}
+
+# Fail unless the page has this exact command in one of its ```sh blocks.
+on_page() {
+  python3 - "$module_directory/$1" "$2" <<'PY'
+import re, sys
+page, command = sys.argv[1:]
+blocks = re.findall(r'```sh\n(.*?)```', open(page).read(), re.S)
+if not any(command in block for block in blocks):
+    sys.exit('the page ' + page + ' has no command: ' + command)
+PY
+}
+
+# Run a command exactly as the page writes it.
+page_run() {
+  on_page "$1" "$2" || exit 1
+  printf '$ %s\n' "$2" >&2
+  eval "$2"
+}
+
+# Run a command that the page says must fail, and print its output.
+page_fails() {
+  local output
+  on_page "$1" "$2" || exit 1
+  printf '$ %s\n' "$2" >&2
+  if output="$(eval "$2" 2>&1)"; then
+    printf 'FAIL: the command succeeded, the page says it fails: %s\n%s\n' "$2" "$output" >&2
+    exit 1
+  fi
+  printf '%s\n' "$output"
+}
+
+# Write the block that follows "Save this as `<file>`" (or "as `<file>`") on a
+# page to <file> in the work folder. The third argument is the block language.
+save_block_from_page() {
+  python3 - "$module_directory/$1" "$2" "${3:-yaml}" "$work_directory/$2" <<'PY'
+import re, sys
+page, name, language, target = sys.argv[1:]
+text = open(page).read()
+match = re.search(r'as `' + re.escape(name) + r'`.*?```' + re.escape(language) + r'\n(.*?)```', text, re.S)
+if not match:
+    sys.exit('no ' + language + ' block for ' + name + ' in ' + page)
+open(target, 'w').write(match.group(1))
+PY
+}
+
+save_yaml_from_page() {
+  save_block_from_page "$1" "$2" yaml
+}
+
+# Write the YAML block from a page and apply it with the command the page uses.
+save_from_page() {
+  save_yaml_from_page "$1" "$2"
+  page_run "$1" "kubectl apply -f $2"
+}
+
+# Print a phrase that the page states, and fail when the page no longer has it.
+# A check uses it for the output the page promises, so a page edit that changes
+# the promise also changes the check.
+text_from_page() {
+  python3 - "$module_directory/$1" "$2" <<'PY'
+import sys
+page, phrase = sys.argv[1:]
+if ' '.join(phrase.split()) not in ' '.join(open(page).read().split()):
+    sys.exit('the page ' + page + ' does not say: ' + phrase)
+print(phrase, end='')
+PY
+}
+
+checks=0
+expect() {
+  checks=$((checks + 1))
+  printf 'check: %s\n' "$1"
+  [[ "$2" == *"$3"* ]] || { printf 'FAIL: %s\nwanted: %s\ngot: %s\n' "$1" "$3" "$2" >&2; exit 1; }
+}
+
+expect_equal() {
+  checks=$((checks + 1))
+  printf 'check: %s\n' "$1"
+  [[ "$2" == "$3" ]] || { printf 'FAIL: %s\nwanted exactly: %s\ngot: %s\n' "$1" "$3" "$2" >&2; exit 1; }
+}
+
+expect_no() {
+  checks=$((checks + 1))
+  printf 'check: %s\n' "$1"
+  [[ "$2" != *"$3"* ]] || { printf 'FAIL: %s\nunwanted: %s\ngot: %s\n' "$1" "$3" "$2" >&2; exit 1; }
+}
+
+# Run a command until its output contains the text, at most about 2 minutes.
+wait_for_output() {
+  local wanted="$1" output='' attempt
+  shift
+  for attempt in $(seq 1 40); do
+    output="$("$@" 2>&1 || true)"
+    [[ "$output" == *"$wanted"* ]] && break
+    sleep 3
+  done
+  printf '%s\n' "$output"
+}
+
+# The playground grader (validate.sh) must fail at the start, before any page
+# step, and pass once the guide's steps are done.
+if bash "$playground_directory/validate.sh" >/dev/null 2>&1; then
+  printf 'FAIL: the playground grader passes before the guide steps\n' >&2
   exit 1
 fi
-bash "$lab_directory/solution/apply.sh"
-for attempt in $(seq 1 20); do
-  if bash "$lab_directory/validate.sh"; then exit 0; fi
-  sleep 3
+
+# Stages, trust boundaries and evidence
+page=course-01-stages-trust-boundaries-and-evidence.md
+references="$(page_run "$page" "kubectl get pods -A -o jsonpath='{range .items[*].spec.containers[*]}{.image}{\"\n\"}{end}' | sort -u")"
+printf '%s\n' "$references"
+expect 'the list has the python image' "$references" docker.io/library/python:3.13-alpine
+expect 'the list has the busybox image' "$references" docker.io/library/busybox:1.37.0
+for component in kube-apiserver etcd coredns; do
+  expect "the list has the $component image from registry.k8s.io" "$(grep "$component" <<<"$references")" registry.k8s.io/
 done
-printf 'Reference result did not pass within the bounded retry period\n' >&2
-exit 1
+resolved="$(page_run "$page" "kubectl get pods -A -o jsonpath='{range .items[*].status.containerStatuses[*]}{.image}{\"  \"}{.imageID}{\"\n\"}{end}' | sort -u")"
+printf '%s\n' "$resolved"
+expect_equal 'each line pairs a reference with an imageID' "$(grep -cvE '^[^ ]+  ([^ ]+@)?sha256:[0-9a-f]{64}$' <<<"$resolved" || true)" 0
+
+# Software bills of materials with Syft (the syft and jq steps on its files are left out)
+page=course-02-software-bills-of-materials-with-syft.md
+page_run "$page" 'kubectl -n starfleet exec deploy/probe -- apk info -v | sort > apk-from-pod.txt'
+cat apk-from-pod.txt
+expect 'apk info -v prints each package with its version, such as musl' "$(grep '^musl-' apk-from-pod.txt)" 'musl-1.2.5-r'
+expect_equal 'every line has a name, a version and a release' "$(grep -cvE '^.+-[^-]+-r[0-9]+$' apk-from-pod.txt || true)" 0
+probe_id="$(page_run "$page" "kubectl -n starfleet get pod -l app=probe -o jsonpath='{.items[0].status.containerStatuses[0].imageID}{\"\n\"}'")"
+printf '%s\n' "$probe_id"
+expect 'the probe status has a digest' "$probe_id" 'sha256:'
+
+# Vulnerability scanning with Trivy (the trivy commands are left out)
+page=course-03-vulnerability-scanning-with-trivy.md
+page_run "$page" "running_image=\"\$(kubectl -n starfleet get pod -l app=probe -o jsonpath='{.items[0].status.containerStatuses[0].imageID}')\""
+echoed="$(page_run "$page" 'echo "$running_image"')"
+printf '%s\n' "$echoed"
+expect_equal 'the value is a repository digest or a sha256: image ID, as the page says' "$(grep -cE '^(docker\.io/library/python@)?sha256:[0-9a-f]{64}$' <<<"$echoed")" 1
+
+# CI/CD pipelines and artifact repositories
+page=course-04-ci-cd-pipelines-and-artifact-repositories.md
+save_block_from_page "$page" dockerconfig.json json
+expect_equal 'the auth value is the Base64 encoding of demo-user:demo-password' "$(printf 'demo-user:demo-password' | base64)" "$(python3 -c 'import json; print(json.load(open("dockerconfig.json"))["auths"]["registry.example"]["auth"])')"
+page_run "$page" 'kubectl -n starfleet create secret generic registry-credentials \
+  --type=kubernetes.io/dockerconfigjson \
+  --from-file=.dockerconfigjson=dockerconfig.json'
+page_run "$page" "kubectl -n starfleet patch serviceaccount default -p '{\"imagePullSecrets\":[{\"name\":\"registry-credentials\"}]}'"
+expect 'the first command prints the list with the Secret name' "$(page_run "$page" "kubectl -n starfleet get serviceaccount default -o jsonpath='{.imagePullSecrets}{\"\n\"}'")" '[{"name":"registry-credentials"}]'
+expect_equal 'the second command prints the JSON you saved' "$(page_run "$page" "kubectl -n starfleet get secret registry-credentials -o jsonpath='{.data.\\.dockerconfigjson}' | base64 -d")" "$(cat dockerconfig.json)"
+expect_equal 'the default ServiceAccount may not read Secrets' "$(page_fails "$page" 'kubectl auth can-i get secrets -n starfleet --as=system:serviceaccount:starfleet:default')" "$(text_from_page "$page" no)"
+page_run "$page" "kubectl -n starfleet patch serviceaccount default -p '{\"imagePullSecrets\":null}'"
+page_run "$page" 'kubectl -n starfleet delete secret registry-credentials'
+expect_equal 'the ServiceAccount has no pull Secret after the clean-up' "$(kubectl -n starfleet get serviceaccount default -o jsonpath='{.imagePullSecrets}')" ''
+
+# Playground guide
+page=playground/docs/overview.md
+pods="$(page_run "$page" 'kubectl -n starfleet get pods -o wide')"
+printf '%s\n' "$pods"
+expect_equal 'two probe replicas are Running' "$(grep -E '^probe-' <<<"$pods" | grep -c Running)" 2
+page_run "$page" 'kubectl get nodes -o wide'
+save_yaml_from_page "$page" configmap-supply-inventory.yaml
+save_block_from_page "$page" record-inventory.py python
+page_run "$page" 'python3 record-inventory.py'
+configmaps="$(page_run "$page" 'kubectl -n starfleet get configmaps')"
+printf '%s\n' "$configmaps"
+expect 'supply-inventory exists' "$configmaps" supply-inventory
+expect 'the probe Deployment is kept' "$(page_run "$page" 'kubectl -n starfleet get deployment probe -o yaml')" 'readyReplicas: 2'
+expect_equal 'the inventory scope is alpine-installed-packages' "$(kubectl -n starfleet get configmap supply-inventory -o jsonpath='{.data.scope}')" alpine-installed-packages
+expect_equal 'the inventory packages are the sorted apk info -v lines' "$(kubectl -n starfleet get configmap supply-inventory -o jsonpath='{.data.packages}' | python3 -c 'import json, sys; print("\n".join(json.load(sys.stdin)))')" "$(LC_ALL=C sort apk-from-pod.txt)"
+expect 'the playground grader passes after the guide steps' "$(bash "$playground_directory/validate.sh" 2>&1 && echo validate-passed)" validate-passed
+
+printf 'PASS: every page command gave the expected result (%s checks)\n' "$checks"
