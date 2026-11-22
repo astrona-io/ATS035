@@ -1,0 +1,246 @@
+# Knowledge check for section-010 module-02. Contract:
+# schemas/question-bank.schema.json. Keep question ids stable once published.
+schema_version: 1
+kind: question_bank
+id: ats035-010-02
+course_id: ATS035
+exam_code: CKS
+status: alpha
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: section-010/module-02
+  title: "Compare Base Images And Their Attack Surface"
+placement:
+  position: after
+  reading: sections/section-010/module-02/course-03-summary.md
+questions:
+  - id: ats035-010-02-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify what an Alpine base image contains."
+    source_readings:
+      - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    prompt: "Which set of parts describes an Alpine base image?"
+    options:
+      - id: a
+        text: "The GNU C library (`glibc`), the `bash` shell and the `apt` package manager"
+        explanation: "That set describes a Debian or Ubuntu image."
+      - id: b
+        text: "Only CA certificates, time zone data and a `/etc/passwd` file, with no shell"
+        explanation: "That set describes a distroless image."
+      - id: c
+        text: "The `musl` C library, the BusyBox program for the standard tools and the `apk` package manager"
+        explanation: "Correct. Alpine is a small Linux user space built on `musl`, BusyBox and `apk`."
+      - id: d
+        text: "No files at all"
+        explanation: "That is the `scratch` image."
+    correct_option: c
+    explanation: "Alpine keeps a shell and a package manager but replaces `glibc` with `musl` and the GNU tools with BusyBox."
+
+  - id: ats035-010-02-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain what a distroless image removes compared with Alpine."
+    source_readings:
+      - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    prompt: "A team moves a program from an Alpine image to a distroless image. What does the container lose?"
+    options:
+      - id: a
+        text: "The shell and the package manager"
+        explanation: "Correct. A distroless image keeps the run-time files the program needs but has no shell and no package manager."
+      - id: b
+        text: "The CA certificates and time zone data"
+        explanation: "A distroless image keeps these run-time files."
+      - id: c
+        text: "The Linux kernel"
+        explanation: "No container image holds a kernel. The node kernel runs every container."
+      - id: d
+        text: "Every file, so only a static binary can run"
+        explanation: "That describes `scratch`, not distroless."
+    correct_option: a
+    explanation: "Removing the shell and package manager removes tools an attacker could use after a first foothold."
+
+  - id: ats035-010-02-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose a base image for a static binary."
+    source_readings:
+      - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    prompt: "A Go program is built with `CGO_ENABLED=0`. On which base images can the same binary run?"
+    options:
+      - id: a
+        text: "Only on Debian, because Go needs `glibc`"
+        explanation: "A binary built with `CGO_ENABLED=0` links no C library."
+      - id: b
+        text: "Only on Alpine, because the binary needs `musl`"
+        explanation: "The binary needs neither `musl` nor `glibc`."
+      - id: c
+        text: "Only on images that have a shell"
+        explanation: "The binary does not start a shell, so a shell is not needed."
+      - id: d
+        text: "On Debian, Alpine, distroless and `scratch`"
+        explanation: "Correct. A static binary loads no shared libraries, so it runs on any of them."
+    correct_option: d
+    explanation: "A static binary contains all its code, which is why it allows the smallest images."
+
+  - id: ats035-010-02-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Interpret a BusyBox file listing in a running container."
+    source_readings:
+      - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    prompt: "In the BusyBox container, `ls -l /bin/sh` shows a regular file with a link count of about 400. What does that tell you?"
+    options:
+      - id: a
+        text: "The image holds about 400 different shell programs"
+        explanation: "There is only one program file. The count is the number of names for it."
+      - id: b
+        text: "`sh` and the other commands in `/bin` are hard links to the same BusyBox program"
+        explanation: "Correct. BusyBox is one program that provides many commands through hard links."
+      - id: c
+        text: "The `apk` package manager installed 400 packages"
+        explanation: "The BusyBox image has no package manager."
+      - id: d
+        text: "400 processes are using the shell"
+        explanation: "The link count in `ls -l` counts directory entries, not processes."
+    correct_option: b
+    explanation: "One BusyBox file serves many commands, which keeps the image small while it still has a shell and the standard tools."
+
+  - id: ats035-010-02-q05
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Evaluate a package count as a measure of risk."
+    source_readings:
+      - sections/section-010/module-02/course-01-what-each-base-image-contains.md
+    prompt: "Image A has 20 packages and image B has 70 packages. Which conclusion is correct?"
+    options:
+      - id: a
+        text: "Image A is always safer because it has fewer packages"
+        explanation: "One old, vulnerable package can matter more than many current ones."
+      - id: b
+        text: "Image B is safer because it has more security tools"
+        explanation: "More packages give more places for a vulnerability, not more protection."
+      - id: c
+        text: "Image A has fewer places for a vulnerability, but the count alone is not a risk score"
+        explanation: "Correct. The versions and known vulnerabilities of the packages still matter."
+      - id: d
+        text: "The counts cannot be compared, because packages are not files"
+        explanation: "Package counts can be compared. They just do not measure risk alone."
+    correct_option: c
+    explanation: "Fewer packages reduce the attack surface, but a scan of the actual versions decides the risk."
+
+  - id: ats035-010-02-q06
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Identify the default user of a container process."
+    source_readings:
+      - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+    prompt: "An image sets no user and the pod sets no security context. Which user ID does the container process run as?"
+    options:
+      - id: a
+        text: "0, which is root"
+        explanation: "Correct. A container process starts with the image user, and an image without a user runs as root."
+      - id: b
+        text: "65534, which is nobody"
+        explanation: "The runtime does not choose an unprivileged user by itself."
+      - id: c
+        text: "A random user ID chosen by the kubelet"
+        explanation: "Plain Kubernetes does not assign random user IDs."
+      - id: d
+        text: "The user ID of the person who ran `kubectl apply`"
+        explanation: "The client user has no effect on the user inside the container."
+    correct_option: a
+    explanation: "Many images set no user, so their process runs as user ID 0 unless the pod sets `runAsUser`."
+
+  - id: ats035-010-02-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Interpret the seccomp line in `/proc/1/status`."
+    source_readings:
+      - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+    prompt: "Inside a container, `grep Seccomp /proc/1/status` prints `Seccomp: 0`. What does this mean?"
+    options:
+      - id: a
+        text: "The `RuntimeDefault` profile applies"
+        explanation: "A filter that applies shows the value 2."
+      - id: b
+        text: "No seccomp filter applies, so the process runs unconfined"
+        explanation: "Correct. A pod without a seccomp setting runs unconfined in Kubernetes."
+      - id: c
+        text: "The process may use no system calls"
+        explanation: "A process that may use no system calls could not run at all."
+      - id: d
+        text: "The process has no Linux capabilities"
+        explanation: "Capabilities appear in the `CapEff` line, not the `Seccomp` line."
+    correct_option: b
+    explanation: "Set `seccompProfile.type: RuntimeDefault` to apply the runtime filter; the value then changes to 2."
+
+  - id: ats035-010-02-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Place security context fields at the correct level of a pod specification."
+    source_readings:
+      - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+    prompt: "Which field can be set only in the `securityContext` of a container, not in `spec.securityContext` of the pod?"
+    options:
+      - id: a
+        text: "`runAsUser`"
+        explanation: "`runAsUser` is valid at pod level and at container level."
+      - id: b
+        text: "`runAsNonRoot`"
+        explanation: "`runAsNonRoot` is valid at pod level and at container level."
+      - id: c
+        text: "`seccompProfile`"
+        explanation: "`seccompProfile` is valid at pod level and at container level."
+      - id: d
+        text: "`capabilities`"
+        explanation: "Correct. `capabilities`, `readOnlyRootFilesystem` and `allowPrivilegeEscalation` exist only in a container `securityContext`."
+    correct_option: d
+    explanation: "Put the user and seccomp settings on the pod if you like, but put capabilities and filesystem settings on each container."
+
+  - id: ats035-010-02-q09
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what `allowPrivilegeEscalation: false` prevents."
+    source_readings:
+      - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+    prompt: "What does `allowPrivilegeEscalation: false` stop a process from doing?"
+    options:
+      - id: a
+        text: "Gaining more rights than its parent process, for example through a set-user-ID program"
+        explanation: "Correct. The process cannot raise its rights above those it started with."
+      - id: b
+        text: "Writing to its root filesystem"
+        explanation: "That is the job of `readOnlyRootFilesystem: true`."
+      - id: c
+        text: "Using system calls outside the runtime filter"
+        explanation: "That is the job of a seccomp profile."
+      - id: d
+        text: "Starting as user ID 0"
+        explanation: "That is the job of `runAsNonRoot: true`."
+    correct_option: a
+    explanation: "Each of the five restricting settings removes one different default. They work together."
+
+  - id: ats035-010-02-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Predict the runtime effect of a restricted pod specification on an unchanged image."
+    source_readings:
+      - sections/section-010/module-02/course-02-measure-what-a-running-container-can-reach.md
+    prompt: "A pod runs the same BusyBox image as before, now with `runAsUser: 10001`, `capabilities.drop: [ALL]`, `readOnlyRootFilesystem: true` and the `RuntimeDefault` seccomp profile. What do you expect inside the container?"
+    options:
+      - id: a
+        text: "User ID 0, because the image did not change"
+        explanation: "The pod setting `runAsUser` overrides the image user."
+      - id: b
+        text: "User ID 10001, but `touch /file` still succeeds because the image is writable"
+        explanation: "`readOnlyRootFilesystem: true` mounts the root filesystem read-only."
+      - id: c
+        text: "User ID 10001, `CapEff` all zeros, `Seccomp: 2`, and a write to `/` fails"
+        explanation: "Correct. Only the pod specification changed, and it changed every one of these values."
+      - id: d
+        text: "The pod is refused, because BusyBox cannot run as a non-root user"
+        explanation: "BusyBox runs as a numeric non-root user without problems."
+    correct_option: c
+    explanation: "The image limits which files exist; the pod specification limits what the process may do with them."

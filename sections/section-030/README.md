@@ -12,7 +12,7 @@ A cluster that runs any image from any registry trusts every registry on the int
 2. Require Image Digests And Verify Signatures: a digest rule, signatures and attestations, key-based and keyless signing, and the limits of verification at admission.
 3. ImagePullSecrets, ImagePolicyWebhook And Admission Failure Modes: pull credentials, the ImagePolicyWebhook plugin, and audit-only, fail-open and exempted checks.
 
-Each module has a playground, a summary and a graded lab. The section has one knowledge check with ten questions that covers all three modules.
+Each module has a playground, a summary and a graded lab. The second and third modules each close with a ten-question knowledge check on that module, and the section ends with a ten-question knowledge check on all three modules.
 
 ## Learning Outcomes
 
