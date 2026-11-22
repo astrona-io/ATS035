@@ -215,7 +215,13 @@ page_run "$page" "running_image=\"\$(kubectl -n starfleet get pod -l app=probe -
 echoed="$(page_run "$page" 'echo "$running_image"')"
 printf '%s\n' "$echoed"
 expect_equal 'the value is a repository digest or a sha256: image ID, as the page says' "$(grep -cE '^(docker\.io/library/python@)?sha256:[0-9a-f]{64}$' <<<"$echoed")" 1
-expect_equal 'kind reports the repository digest form, which the page scans as it is' "$(grep -cE '^docker\.io/library/python@sha256:[0-9a-f]{64}$' <<<"$echoed")" 1
+# A pulled image reports the repository digest, which the page scans as it is.
+# A preloaded image reports only a sha256: image ID; the page then says to use the tag.
+if ! grep -qE '^docker\.io/library/python@sha256:[0-9a-f]{64}$' <<<"$echoed"; then
+  text_from_page "$page" 'use the tag `docker.io/library/python:3.13-alpine` instead' >/dev/null
+  running_image=docker.io/library/python:3.13-alpine
+  printf 'only an image ID, so the scan uses the tag %s as the page says\n' "$running_image"
+fi
 page_report "$page" 'trivy image "$running_image"' >trivy-full.txt
 tail -n 30 trivy-full.txt
 expect_equal 'the full scan exits with code 0' "$report_status" 0
