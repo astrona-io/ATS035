@@ -1,10 +1,10 @@
 # Use A Fresh Scan As Release Evidence
 
-A saved vulnerability report can be accurate for the wrong image or an old database. This independent VM downloads a Trivy database when it starts, then keeps that snapshot fixed while you and the grader scan the same cached image. A fixed snapshot makes the comparison reproducible within the lab; it is not permission to keep using an outdated database in a release pipeline.
+A saved vulnerability report can be accurate for the wrong image or an old database. The commands in this part need a Linux virtual machine (VM) with Docker and Trivy, not the Kubernetes playground. The lab VM on the next page downloads a Trivy database when it starts, then keeps that snapshot fixed while you and the grader scan the same cached image. A fixed snapshot makes the comparison reproducible within the lab; it is not permission to keep using an outdated database in a release pipeline.
 
 <!-- astrona:playground:renew -->
 
-Inspect the image identity and database timestamp inside the VM:
+Inspect the image identity and the database timestamp on the lab VM:
 
 ```sh
 sudo docker image inspect alpine:3.18.0 --format '{{.Id}}'

@@ -7,45 +7,48 @@ metadata:
     caseStudy: docs/case-study.md
     guide: solution.md
 runtime:
+  # The task scans an image from the Docker image cache on the host, so the
+  # lab runs in a VM. The image also carries a one-node kubeadm cluster,
+  # which the context guard and the shared grader use.
   type: qemu
   qemu:
   - image:
-      type: url
-      source: https://cloud-images.ubuntu.com/releases/noble/release-20261017/ubuntu-24.04-server-cloudimg-{ARCH}.img
-      checksums:
-        amd64: sha256:04e8f2461a16a44e78a370284471f29616cdd9baf1893df25807b71f985b6c94
-        arm64: sha256:50e24e1fb79e89116e939d90aa7738f7af48c442fa1bc2510131e0b39c50348e
+      type: oci
+      source: ghcr.io/astrona-io/ubuntu-qcow2-image:24.04-cks
     cpus: 2
-    memoryMB: 2048
-    diskSizeGB: 12
+    memoryMB: 4096
+    diskSizeGB: 25
+    display: false
 bootstrap:
   init:
-  - name: prepare-environment
+  - name: seed-private-environment
     type: file
-    source: bootstrap/setup.sh
+    source: vm/install.sh
+teardown:
+  keepCluster: false
 testing:
   init:
   - name: verify-start
+    description: Verify the starting state and reject the unfinished lab
     type: file
-    source: testing/verify-start.sh
-  - name: reference-solution
+    source: vm/verify-start.sh
+  - name: reference-result
     type: file
-    source: solution/apply.sh
-  - name: negative-cases
+    source: vm/apply-solution.sh
+  - name: wait-solved
+    description: Wait until the reference solution settles and every outcome passes
     type: file
-    source: testing/regression.sh
+    source: vm/wait-solved.sh
 validation:
   scripts:
   - name: fresh-scan
     description: The report matches a fresh scan of the supplied image with the lab database
     type: file
-    source: validation/validate-fresh-scan.sh
+    source: vm/validate-fresh-scan.sh
     points: 1
   - name: release-decision
     description: The decision records the current image, database timestamp and complete high/critical
       count
     type: file
-    source: validation/validate-release-decision.sh
+    source: vm/validate-release-decision.sh
     points: 1
-teardown:
-  keepCluster: false

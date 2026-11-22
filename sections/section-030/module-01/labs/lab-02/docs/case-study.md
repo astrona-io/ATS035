@@ -1,7 +1,7 @@
-# Case study
+---
+exam_objectives:
+- Secure your supply chain (permitted registries, sign and validate artifacts, etc.)
+---
+# Starting Environment
 
-
-
-The independent VM has a loopback registry, Cosign, a disposable training key pair and an unsigned image reference in `/srv/signing/image.txt`. The key password is `training-password`. A separate unsigned image is listed in `/srv/signing/unsigned.txt`.
-
-Allow about 15 minutes for the tasks.
+The lab VM runs Docker, a container registry on `127.0.0.1:5000` and a one-node kubeadm cluster. The registry holds two unsigned images, named in `/srv/signing/image.txt` and `/srv/signing/unsigned.txt` with their digests. `/srv/signing` holds the training key pair (password `training-password`), and `/opt/astrona-live/other.pub` is the public key of an unrelated key pair.

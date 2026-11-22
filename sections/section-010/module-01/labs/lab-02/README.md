@@ -1,0 +1,7 @@
+# Build A Minimal Runtime Image
+
+Rewrite a one-stage Dockerfile as a multi-stage build with a `scratch` final stage and UID 65532, then prove that the image builds offline, holds no compiler, shell or source, and serves HTTP under `--read-only`, `--cap-drop=ALL` and `--security-opt=no-new-privileges`.
+
+The task and solution use a VM from the pinned `24.04-cks` image with a one-node kubeadm cluster. The cluster only carries the context guard and the shared grader's readiness check; the task itself uses Docker. `bootstrap/setup.sh` installs `docker.io` (keeping the image's containerd configuration), pulls `gcc:15.2.0`, writes `/srv/build/server.c` and the one-stage Dockerfile, and keeps a root-owned copy of the source in `/opt/astrona-live/server.c`. `testing/live.py` rebuilds the Dockerfile with `--network=none --no-cache`, checks the size and image user, exports the container filesystem, then starts it with the restrictions and checks the HTTP response and the UID in `/proc/<pid>/status`.
+
+`vm/` holds the scripts astrona pipes into the VM; regenerate them with `python3 scripts/ci/vm-lab.py <this folder>` after you change a lab file. Run `astrona test` on this folder: `vm/install.sh` builds the cluster and runs `bootstrap/setup.sh` in the VM, `testing/verify-start.sh` checks that every outcome fails on the starting state, then `solution/apply.sh` applies the reference solution and every outcome must pass.
