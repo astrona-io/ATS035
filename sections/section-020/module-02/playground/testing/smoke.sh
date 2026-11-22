@@ -189,7 +189,8 @@ assert all(c['purl'] == 'pkg:apk/alpine/' + c['name'] + '@' + c['version'] for c
 PYTHON
 expect 'bom.json has one component with a purl per package line' "$(jq -r '.components[].purl' bom.json | wc -l | tr -d ' ')" "$package_count"
 
-# Matching an SBOM to vulnerabilities and an image digest (the syft and cosign commands are left out)
+# Matching an SBOM to vulnerabilities and an image digest (the syft and cosign
+# commands use placeholders such as <registry> and are left out)
 page=course-02-matching-an-sbom-to-vulnerabilities-and-an-image-digest.md
 replicas="$(page_run "$page" "kubectl -n starfleet get pod -l app=probe -o jsonpath='{range .items[*]}{.metadata.name}{\" \"}{.status.containerStatuses[0].imageID}{\"\n\"}{end}'")"
 printf '%s\n' "$replicas"

@@ -62,7 +62,7 @@ On your own machine, you can produce a report of the same shape from a real imag
 trivy image --format json --output report.json docker.io/library/busybox:1.37.0
 ```
 
-The file `report.json` has the same top-level fields, and a tool or script can read it. Use `--format table` for people and `--format json` or `--format sarif` for tools.
+The file `report.json` has the same `ArtifactName` field, and a tool or script can read it. For `busybox:1.37.0` it has no `Results` list at all. The image contains no package manager, so Trivy finds no package database to compare with its vulnerability database, and the log says `Supported files for scanner(s) not found.` A missing `Results` list therefore means that nothing was scanned, not that the image is clean. Use `--format table` for people and `--format json` or `--format sarif` for tools.
 
 ## Scan configuration and a folder
 

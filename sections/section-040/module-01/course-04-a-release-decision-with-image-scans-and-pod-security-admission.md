@@ -36,7 +36,7 @@ trivy image --severity HIGH,CRITICAL docker.io/library/busybox:1.37.0
 trivy config .
 ```
 
-The first command prints a table of vulnerabilities per package, or states that none matched the severity filter. The result depends on the database at scan time, so a scan today and a scan next month can differ. For this reason, record the image digest, the scanner version and the date with the result. The second command reports misconfigurations in the files of the folder.
+The first command prints a table of vulnerabilities per package when the image has a package database. The `busybox:1.37.0` image has none, because it contains no package manager. Trivy logs `Supported files for scanner(s) not found.` and its summary table shows `-` for vulnerabilities, which means not scanned. An empty result for this image is not proof that it has no vulnerabilities. The result also depends on the database at scan time, so a scan today and a scan next month can differ. For this reason, record the image digest, the scanner version and the date with the result. The second command reports misconfigurations in the files of the folder.
 
 ## Test the cluster check with a restricted namespace
 

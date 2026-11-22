@@ -33,7 +33,7 @@ trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 docker.io/li
 echo "exit code: $?"
 ```
 
-Read the exit code, not the table. A pipeline step succeeds on `0` and fails on any other value. The result today can differ from the result next month, because the database changes.
+Read the exit code, not the table. A pipeline step succeeds on `0` and fails on any other value. For `busybox:1.37.0` the command prints `exit code: 0`, but only because Trivy finds no package database in that image and logs `Supported files for scanner(s) not found.` A gate that passes an image it could not scan needs a second check, for example that the report has a `Results` list. The result today can differ from the result next month, because the database changes.
 
 ## The same rule on the saved report
 
